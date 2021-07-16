@@ -10,17 +10,23 @@ import {
 import "./Login.css";
 import { IonButton } from '@ionic/react';
 import { loginUser } from '../../firebaseConfig';
+import { useHistory } from "react-router";
 
 interface IProps {}
 
 const LoginComponent: FC<IProps> = (props) => {
+  const history = useHistory()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   async function onLogin(){
-    console.log(email, password)
     const res = await loginUser(email,password)
     console.log("login", res ? 'successful' : 'failed')
+    if(res){
+      history.push("/home")  
+    }else{
+
+    }
   }
   return (
     <IonCard>

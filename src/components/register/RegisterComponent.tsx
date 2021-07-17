@@ -8,6 +8,7 @@ import {
   IonItem,
   IonLabel,
 } from "@ionic/react";
+import { createUser } from "../../firebaseConfig";
 interface IProps {}
 
 const RegisterComponent: FC<IProps> = (props) => {
@@ -21,6 +22,7 @@ const RegisterComponent: FC<IProps> = (props) => {
         dni: dni
     }
     console.log("onRegister", user);
+    createUser(email, password, user)
   }
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -82,7 +84,7 @@ const RegisterComponent: FC<IProps> = (props) => {
             onIonChange={(event: any) => setRepeatPassword(event.target.value)}
           ></IonInput>
         </IonItem>
-        <IonButton expand="full">Registrarme</IonButton>
+        <IonButton expand="full" onClick={onRegister}>Registrarme</IonButton>
       </IonCardContent>
     </IonCard>
   );

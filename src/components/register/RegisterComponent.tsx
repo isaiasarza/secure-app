@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { IonButton } from "@ionic/react";
+import { IonButton, useIonToast } from "@ionic/react";
 import { User } from '../../model/user';
 import {
   IonCard,
@@ -9,9 +9,12 @@ import {
   IonLabel,
 } from "@ionic/react";
 import { createUser } from "../../firebaseConfig";
+import { useHistory } from "react-router";
 interface IProps {}
 
 const RegisterComponent: FC<IProps> = (props) => {
+  const history = useHistory()
+  const [present] = useIonToast();
   async function onRegister() {
     const user: User = {
         firstname: firstname,
@@ -22,7 +25,22 @@ const RegisterComponent: FC<IProps> = (props) => {
         dni: dni
     }
     console.log("onRegister", user);
-    createUser(email, password, user)
+    try{
+      const savedUser = await createUser(email, password, user)
+      console.log("savedUser", savedUser)
+      history.push("/home")
+      present({
+        message: 'El usuario fue registrado de forma exitosa',
+        duration: 3000,
+        color: 'success'
+      })
+    }catch(error){
+      present({
+        message: 'No se pudo registrar al usuario, intente nuevamente',
+        duration: 3000,
+        color: 'danger'
+      })
+    }
   }
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");

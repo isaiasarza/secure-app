@@ -1,5 +1,5 @@
-import firebase from 'firebase';
-import 'firebase/firestore';
+import firebase from "firebase";
+import "firebase/firestore";
 import { User } from "./model/user";
 
 const config = {
@@ -38,19 +38,15 @@ export async function createUser(
     const res = await firebase
       .auth()
       .createUserWithEmailAndPassword(username, password);
-    debugger;
     console.log("user credentials created!", res);
-    //res.user.uid
     if (res.user) {
       // debugger;
       try {
         console.log("saving user", user);
-        debugger;
-        const doc = db.collection("users").doc();
+        const doc = db.collection("users").doc(res.user.uid);
         console.log("doc", doc);
         const _res = await doc.set(user);
         console.log("user created!", _res);
-        debugger;
         return user;
       } catch (error) {
         debugger;

@@ -10,6 +10,7 @@ import {
 } from "@ionic/react";
 import { createUser } from "../../firebaseConfig";
 import { useHistory } from "react-router";
+import { presentSuccessToast, presentErrorToast } from '../../utils/toast';
 interface IProps {}
 
 const RegisterComponent: FC<IProps> = (props) => {
@@ -28,18 +29,10 @@ const RegisterComponent: FC<IProps> = (props) => {
     try{
       const savedUser = await createUser(email, password, user)
       console.log("savedUser", savedUser)
-      history.push("/home")
-      present({
-        message: 'El usuario fue registrado de forma exitosa',
-        duration: 3000,
-        color: 'success'
-      })
+      presentSuccessToast(present, "El usuario fue registrado de forma exitosa");
+      history.push("/home")      
     }catch(error){
-      present({
-        message: 'No se pudo registrar al usuario, intente nuevamente',
-        duration: 3000,
-        color: 'danger'
-      })
+      presentErrorToast(present,"No se pudo registrar al usuario, intente nuevamente");
     }
   }
   const [firstname, setFirstname] = useState("");

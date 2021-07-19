@@ -19,26 +19,17 @@ import FormInputWrapper from "../formInputWrapper/formInputWrapper";
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
+import { getValidations, getInitialValues } from './validations/LoginValidations';
 interface IProps {}
 
 const LoginComponent: FC<IProps> = (props) => {
   const history = useHistory();
   const [present] = useIonToast();
 
-  const schema = yup.object().shape({
-    email: yup.string().required("Campo requerido").email("Email inválido"),
-    password: yup.string().required(),
-  });
-
-  const initialValues: any = {
-    email: "",
-    password: "",
-  };
-
   const { handleSubmit, control } = useForm({
-    defaultValues: initialValues,
+    defaultValues: getInitialValues(),
     mode: "onChange",
-    resolver: yupResolver(schema)
+    resolver: yupResolver(getValidations())
   });
   const { isValid, errors } = useFormState({ control });
 
@@ -50,10 +41,7 @@ const LoginComponent: FC<IProps> = (props) => {
       presentSuccessToast(present, "Se inicio sesión de forma satisfactoria");
       history.push("/home");
     } else {
-      presentErrorToast(
-        present,
-        "No se pudo iniciar sesión, intente nuevamente"
-      );
+      presentErrorToast(present,"No se pudo iniciar sesión, intente nuevamente");
     }
   };
 

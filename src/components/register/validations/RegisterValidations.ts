@@ -9,12 +9,7 @@ export function getValidations() {
 }
 
 export function getInitialValues(): FieldValues{
- /*    firstname: firstname,
-        lastname: lastname,
-        email: email,
-        role: 'vigilant',
-        cuil_cuit: cuil_cuit,
-        dni: dni */
+
   const initialValues: FieldValues = {
     firstname:"",
     lastname:"",

@@ -67,13 +67,6 @@ const RegisterComponent: FC<IProps> = (props) => {
             label={"Nombre"}
           ></FormInputWrapper>
           <p>{errors.firstname?.message}</p>
-          {/* <IonItem>
-          <IonLabel position="stacked">Nombre</IonLabel>
-          <IonInput
-            type="text"
-            onIonChange={(event: any) => setFirstname(event.target.value)}
-          ></IonInput>
-        </IonItem> */}
           <FormInputWrapper
             position={"stacked"}
             name={"lastname"}
@@ -82,13 +75,6 @@ const RegisterComponent: FC<IProps> = (props) => {
             label={"Apellido"}
           ></FormInputWrapper>
           <p>{errors.lastname?.message}</p>
-          {/* <IonItem>
-          <IonLabel position="stacked">Apellido</IonLabel>
-          <IonInput
-            type="text"
-            onIonChange={(event: any) => setLastname(event.target.value)}
-          ></IonInput>
-        </IonItem> */}
           <FormInputWrapper
             position={"stacked"}
             name={"email"}
@@ -97,13 +83,6 @@ const RegisterComponent: FC<IProps> = (props) => {
             label={"Email"}
           ></FormInputWrapper>
           <p>{errors.email?.message}</p>
-          {/* <IonItem>
-          <IonLabel position="stacked">Email</IonLabel>
-          <IonInput
-            type="text"
-            onIonChange={(event: any) => setEmail(event.target.value)}
-          ></IonInput>
-        </IonItem> */}
           <FormInputWrapper
             position={"stacked"}
             name={"dni"}
@@ -112,13 +91,6 @@ const RegisterComponent: FC<IProps> = (props) => {
             label={"DNI"}
           ></FormInputWrapper>
           <p>{errors.dni?.message}</p>
-          {/* <IonItem>
-          <IonLabel position="stacked">DNI</IonLabel>
-          <IonInput
-            type="number"
-            onIonChange={(event: any) => setDNI(event.target.value)}
-          ></IonInput>
-        </IonItem> */}
           <FormInputWrapper
             position={"stacked"}
             name={"cuil_cuit"}
@@ -127,13 +99,6 @@ const RegisterComponent: FC<IProps> = (props) => {
             label={"CUIL/CUIT"}
           ></FormInputWrapper>
           <p>{errors.cuil_cuit?.message}</p>
-          {/* <IonItem>
-          <IonLabel position="stacked">CUIL/CUIT</IonLabel>
-          <IonInput
-            type="text"
-            onIonChange={(event: any) => setCuilCuit(event.target.value)}
-          ></IonInput>
-        </IonItem> */}
           <FormInputWrapper
             position={"stacked"}
             name={"password"}
@@ -142,13 +107,6 @@ const RegisterComponent: FC<IProps> = (props) => {
             label={"Contraseña"}
           ></FormInputWrapper>
           <p>{errors.password?.message}</p>
-          {/* <IonItem>
-          <IonLabel position="stacked">Contraseña</IonLabel>
-          <IonInput
-            type="password"
-            onIonChange={(event: any) => setPassword(event.target.value)}
-          ></IonInput>
-        </IonItem> */}
           <FormInputWrapper
             position={"stacked"}
             name={"repeat_password"}
@@ -157,13 +115,6 @@ const RegisterComponent: FC<IProps> = (props) => {
             label={"Repetir Contraseña"}
           ></FormInputWrapper>
           <p>{errors.repeat_password?.message}</p>
-          {/* <IonItem>
-          <IonLabel position="stacked">Repetir Contraseña</IonLabel>
-          <IonInput
-            type="password"
-            onIonChange={(event: any) => setRepeatPassword(event.target.value)}
-          ></IonInput>
-        </IonItem> */}
           <IonButton expand="full" type="submit" disabled={!isValid}>
             Registrarme
           </IonButton>

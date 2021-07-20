@@ -4,11 +4,7 @@ import { User } from "../../model/user";
 import {
   IonCard,
   IonCardContent,
-  IonInput,
-  IonItem,
-  IonLabel,
 } from "@ionic/react";
-import { createUser } from "../../firebaseConfig";
 import { useHistory } from "react-router";
 import { presentSuccessToast, presentErrorToast } from "../../utils/toast";
 import {
@@ -18,12 +14,14 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, useFormState } from "react-hook-form";
 import FormInputWrapper from "../formInputWrapper/formInputWrapper";
+import { AuthService } from '../../service/auth/auth.service';
+import { injector, AuthServiceToken } from '../../injector/injector';
 interface IProps {}
 
 const RegisterComponent: FC<IProps> = (props) => {
   const history = useHistory();
   const [present] = useIonToast();
-
+  const [authService] = useState<AuthService>(injector.get(AuthServiceToken))
   const { handleSubmit, control } = useForm({
     defaultValues: getInitialValues(),
     mode: "onChange",
@@ -31,21 +29,18 @@ const RegisterComponent: FC<IProps> = (props) => {
   });
   const { isValid, errors } = useFormState({ control });
   const onSubmit = async (data: any) => {
+    
     console.log("onSubmit", data);
-  };
-
-  /* async function onRegister() {
     const user: User = {
-      firstname: firstname,
-      lastname: lastname,
-      email: email,
+      firstname: data.firstname,
+      lastname: data.lastname,
+      email: data.email,
       role: "vigilant",
-      cuil_cuit: cuil_cuit,
-      dni: dni,
+      cuil_cuit: data.cuil_cuit,
+      dni: data.dni,
     };
-    console.log("onRegister", user);
     try {
-      const savedUser = await createUser(email, password, user);
+      const savedUser = await authService.register(data.email, data.password, user)
       console.log("savedUser", savedUser);
       presentSuccessToast(
         present,
@@ -58,7 +53,7 @@ const RegisterComponent: FC<IProps> = (props) => {
         "No se pudo registrar al usuario, intente nuevamente"
       );
     }
-  } */
+  };
 
   return (
     <IonCard>

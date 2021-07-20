@@ -13,16 +13,21 @@ import "./Home.css";
 import HeaderComponent from "../../components/header/HeaderComponent";
 import { logOut } from "ionicons/icons";
 import { useHistory } from 'react-router';
+import { AuthService } from '../../service/auth/auth.service';
+import { injector, AuthServiceToken } from '../../injector/injector';
+import { useState } from "react";
 
 const HomePage: React.FC = () => {
   const history = useHistory()
+  const [authService] = useState<AuthService>(injector.get(AuthServiceToken))
   return (
     <IonPage>
       <HeaderComponent
         icon={logOut}
         onClick={() => {
           console.log("logOut");
-          history.push("login")
+          authService.logout()
+          history.push("/")
         }}
       ></HeaderComponent>
       <IonContent fullscreen>

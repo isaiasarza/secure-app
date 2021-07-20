@@ -1,7 +1,8 @@
 import { User } from '../../model/user';
-export interface UserService{
-    add(user: User): Promise<any>;
-    update(user: User): Promise<any>;
-    getByEmail(email: string): Promise<any>;
-    delete(email: string): Promise<any>
+export abstract class UserService{
+    public abstract add(uid: string,user: User): Promise<User>;
+    public abstract update(user: User): Promise<any>;
+    public abstract getByEmail(email: string): Promise<any>;
+    public abstract delete(email: string): Promise<any>
+    public abstract getByUID(uid: string): Promise<User>;
 }

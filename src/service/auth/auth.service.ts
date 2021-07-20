@@ -1,9 +1,10 @@
 import { User } from '../../model/user';
-import { injectable } from 'inversify';
-import { ReactiveService } from 'react-injection';
 
 export abstract class AuthService{
  
-   abstract auth(email: string, password: string): Promise<boolean>; 
+   abstract auth(email: string, password: string): Promise<User>; 
    abstract register(email: string, password: string, user: User): Promise<User | null>;
+   abstract logout(): Promise<void>;
+   abstract suscribeChanges(handler: any): any;
+   abstract isLogged(): boolean;
 }

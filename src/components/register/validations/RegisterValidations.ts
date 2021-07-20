@@ -13,7 +13,7 @@ export function getValidations() {
   })
   //!value || (Number.isFinite(Number(value)) && String(value).length <= 8)
   yup.addMethod(yup.string, 'max', function (max, msg) {
-    //debugger
+    
     return this.test({
       name: 'max',
       exclusive: true,

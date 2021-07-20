@@ -13,6 +13,7 @@ const config = {
 
 export const firebaseApp = firebase.initializeApp(config);
 export const db = firebaseApp.firestore();
+export const auth = firebaseApp.auth()
 export async function loginUser(
   username: string,
   password: string
@@ -40,7 +41,7 @@ export async function createUser(
       .createUserWithEmailAndPassword(username, password);
     console.log("user credentials created!", res);
     if (res.user) {
-      // debugger;
+      // ;
       try {
         console.log("saving user", user);
         const doc = db.collection("users").doc(res.user.uid);
@@ -49,7 +50,7 @@ export async function createUser(
         console.log("user created!", _res);
         return user;
       } catch (error) {
-        debugger;
+        ;
         console.error("createUser error", error);
         return null;
       }
@@ -59,4 +60,9 @@ export async function createUser(
     return null;
   }
   return null;
+}
+
+
+export async function logout(){
+  return firebase.auth().signOut()
 }

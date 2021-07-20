@@ -26,6 +26,7 @@ const LoginComponent: FC<IProps> = (props) => {
   const [authService] = useState<AuthService>(injector.get(AuthServiceToken))
 
   
+  
 
   const { handleSubmit, control } = useForm({
     defaultValues: getInitialValues(),
@@ -36,7 +37,7 @@ const LoginComponent: FC<IProps> = (props) => {
 
   const onSubmit = async (data: any) => {
     console.log("onSubmit", data);
-    debugger
+    
     const res = await authService.auth(data.email, data.password)
     console.log("login", res ? "successful" : "failed");
     if (res) {

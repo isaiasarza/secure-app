@@ -9,7 +9,6 @@ interface IProps {
     position: any;
     label: string;
     component?: JSX.Element;
-    rules: any;
   }
 
 const FormInputWrapper:FC<IProps> = (props) => {

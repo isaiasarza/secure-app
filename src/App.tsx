@@ -23,8 +23,10 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import LoginPage from './pages/login/LoginPage';
 import RegisterPage from './pages/register/RegisterPage';
+import { firebaseApp } from './firebaseConfig';
 
 const App: React.FC = () => (
+  
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>

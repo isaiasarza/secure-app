@@ -1,5 +1,9 @@
 import { User } from '../../model/user';
-export interface AuthService{
-   auth(email: string, password: string): Promise<boolean>; 
-   register(email: string, password: string, user: User): Promise<User | null>;
+import { injectable } from 'inversify';
+import { ReactiveService } from 'react-injection';
+
+export abstract class AuthService{
+ 
+   abstract auth(email: string, password: string): Promise<boolean>; 
+   abstract register(email: string, password: string, user: User): Promise<User | null>;
 }

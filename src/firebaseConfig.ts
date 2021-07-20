@@ -11,8 +11,8 @@ const config = {
   appId: "1:137675311703:web:103438c8965df55786b112",
 };
 
-const app = firebase.initializeApp(config);
-const db = app.firestore();
+export const firebaseApp = firebase.initializeApp(config);
+export const db = firebaseApp.firestore();
 export async function loginUser(
   username: string,
   password: string

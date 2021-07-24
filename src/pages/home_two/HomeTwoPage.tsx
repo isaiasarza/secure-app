@@ -73,7 +73,7 @@ export default class HomePageTwo extends React.Component<IAppProps, IAppState> {
     });
   }
 
-  closeModal() {
+  closeModal = () => {
     let state = { ...this.state };
     state.showModal = false;
     this.setState(state);

@@ -42,7 +42,7 @@ const LoginComponent: FC<IProps> = (props) => {
     console.log("login", res ? "successful" : "failed");
     if (res) {
       presentSuccessToast(present, "Se inicio sesión de forma satisfactoria");
-      history.push("/home");
+      history.push("/home",{props:{user: res}});
     } else {
       presentErrorToast(present,"No se pudo iniciar sesión, intente nuevamente");
     }

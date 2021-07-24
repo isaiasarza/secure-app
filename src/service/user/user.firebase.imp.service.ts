@@ -25,19 +25,14 @@ export class UserFirebaseImpService extends UserService {
     return Promise.reject("Funcionalidad no implementada");
   }
 
-  public getByUID(uid: string): Promise<User> {
+  public async getByUID(uid: string): Promise<User> {
     
-    return db
-      .collection(this.COLLECTION_NAME)
-      .doc(uid)
-      .get()
-      .then((data) => {
-        
-        const user = data.data() as User
-        if(!user)
-          return Promise.reject("Usuario no encontrado")
-        return Promise.resolve(user);
-      });
+    const data = await db
+    .collection(this.COLLECTION_NAME)
+    .doc(uid)
+    .get()
+    
+    return data.data() as User
   }
   public delete(email: string): Promise<any> {
     return Promise.resolve();

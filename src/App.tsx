@@ -1,7 +1,8 @@
-import { Redirect, Route } from "react-router-dom";
+import { Redirect, Route, useHistory } from "react-router-dom";
 import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import HomePage from "./pages/home/Home";
+import * as React from 'react';
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -24,13 +25,17 @@ import "./theme/variables.css";
 import LoginPage from "./pages/login/LoginPage";
 import RegisterPage from "./pages/register/RegisterPage";
 
-import { AuthService } from "./service/auth/auth.service";
-import { injector, AuthServiceToken } from "./injector/injector";
+import { injector,  UserContextServiceToken } from './injector/injector';
 import { useState } from "react";
+import { UserContextService } from './service/user-context/user-context.service';
+
+import HomePageTwo from './pages/home_two/HomeTwoPage';
 
 
 const App: React.FC = () => {
-  const [authService] = useState<AuthService>(injector.get(AuthServiceToken))
+  const [userContextService] = useState<UserContextService>(injector.get(UserContextServiceToken));
+  const history = useHistory();
+ 
   return (
     <IonApp>
       <IonReactRouter>
@@ -42,14 +47,14 @@ const App: React.FC = () => {
           <Route exact path="/register">
             <RegisterPage />
           </Route>
-         {/*  <Route exact path="/home">
-             <HomePage />
+          {/* <Route exact path="/home">
+             <HomePageTwo />
           </Route> */}
           <Route
             exact
             path="/home"
-            render={(props) => {
-              return authService.isLogged() ? <HomePage/> : <LoginPage />;
+            render={() => {              
+              return userContextService.getCurrentUser() != null ? <HomePageTwo history={history}/> : <LoginPage />;
             }}
           />
           <Route exact path="/">

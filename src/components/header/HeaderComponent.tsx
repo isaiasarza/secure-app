@@ -7,15 +7,12 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import React, { FC } from "react";
-import { home, options } from "ionicons/icons";
 import { HeaderOption } from "../../model/headerOption";
-import { useHistory } from "react-router";
 interface IProps {
   options: HeaderOption[];
 }
 
 const HeaderComponent: FC<IProps> = (props) => {
-  const history = useHistory();
   return (
     <IonHeader>
       <IonToolbar color="primary">
@@ -28,9 +25,6 @@ const HeaderComponent: FC<IProps> = (props) => {
               </IonButton>
             );
           })}
-          {/* <IonButton onClick={props.onClick}>
-              <IonIcon slot="icon-only" icon={props.icon_2}></IonIcon>
-            </IonButton> */}
         </IonButtons>
       </IonToolbar>
     </IonHeader>

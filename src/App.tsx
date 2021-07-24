@@ -1,7 +1,6 @@
-import { Redirect, Route, useHistory } from "react-router-dom";
+import { Redirect, Route } from "react-router-dom";
 import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import HomePage from "./pages/home/Home";
 import * as React from 'react';
 
 /* Core CSS required for Ionic components to work properly */
@@ -29,12 +28,11 @@ import { injector,  UserContextServiceToken } from './injector/injector';
 import { useState } from "react";
 import { UserContextService } from './service/user-context/user-context.service';
 
-import HomePageTwo from './pages/home_two/HomeTwoPage';
+import HomePage from './pages/home/HomePage';
 
 
 const App: React.FC = () => {
   const [userContextService] = useState<UserContextService>(injector.get(UserContextServiceToken));
-  const history = useHistory();
  
   return (
     <IonApp>
@@ -51,7 +49,7 @@ const App: React.FC = () => {
             exact
             path="/home"
             render={(routeProps) => {              
-              return userContextService.getCurrentUser() != null ? <HomePageTwo {...routeProps}/> : <LoginPage />;
+              return userContextService.getCurrentUser() != null ? <HomePage {...routeProps}/> : <LoginPage />;
             }}
           />
           <Route exact path="/">

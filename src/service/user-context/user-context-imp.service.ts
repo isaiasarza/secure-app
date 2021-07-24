@@ -1,7 +1,6 @@
 import { UserContextService } from "./user-context.service";
-import { Storage } from "@capacitor/storage";
 import { User } from "../../model/user";
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 
 export class UserContextImpService extends UserContextService {
   public currentUser: BehaviorSubject<User | null> =

@@ -17,8 +17,8 @@ import {
 } from "@ionic/react";
 import HeaderComponent from "../../components/header/HeaderComponent";
 import ProfileComponent from "../../components/profile/ProfileComponent";
-import ExploreContainer from "../../components/ExploreContainer";
 import { RouteComponentProps } from "react-router";
+import HomeComponent from '../../components/home/HomeComponent';
 
 export interface IAppProps {
   history: RouteComponentProps["history"];
@@ -30,7 +30,7 @@ export interface IAppState {
   showModal: boolean;
 }
 
-export default class HomePageTwo extends React.Component<IAppProps, IAppState> {
+export default class HomePage extends React.Component<IAppProps, IAppState> {
   private options: HeaderOption[] = [
     {
       key: "home_to_profile",
@@ -47,7 +47,6 @@ export default class HomePageTwo extends React.Component<IAppProps, IAppState> {
       icon: logOut,
       onClick: () => {
         console.log("on Log Out");
-        //  authService.logout();
         this.props.history.push("/");
       },
     },
@@ -97,7 +96,7 @@ export default class HomePageTwo extends React.Component<IAppProps, IAppState> {
                 </IonButtons>
               </IonToolbar>
             </IonHeader>
-            <ExploreContainer />
+           <HomeComponent></HomeComponent>
             <IonModal isOpen={showModal}>
               <ProfileComponent
                 user={user}

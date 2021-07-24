@@ -47,14 +47,11 @@ const App: React.FC = () => {
           <Route exact path="/register">
             <RegisterPage />
           </Route>
-          {/* <Route exact path="/home">
-             <HomePageTwo />
-          </Route> */}
           <Route
             exact
             path="/home"
-            render={() => {              
-              return userContextService.getCurrentUser() != null ? <HomePageTwo history={history}/> : <LoginPage />;
+            render={(routeProps) => {              
+              return userContextService.getCurrentUser() != null ? <HomePageTwo {...routeProps}/> : <LoginPage />;
             }}
           />
           <Route exact path="/">

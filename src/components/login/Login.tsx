@@ -34,7 +34,9 @@ const LoginComponent: FC<IProps> = (props) => {
     resolver: yupResolver(getValidations())
   });
   const { isValid, errors } = useFormState({ control });
-
+  const isFormValid = () => {
+    return isValid
+  }
   const onSubmit = async (data: any) => {
     console.log("onSubmit", data);
     
@@ -70,8 +72,11 @@ const LoginComponent: FC<IProps> = (props) => {
             ></FormInputWrapper>
           <p>{errors.password?.message}</p>
         
-          <IonButton type="submit" expand="full" disabled={!isValid}>
+          <IonButton data-testid="submit_button" type="submit" expand="full" disabled={!isFormValid()}>
             Iniciar Sesión
+          </IonButton>
+          <IonButton data-testid="is_valid_button" type="submit" expand="full" onClick={isFormValid}>
+            Is Form Valid
           </IonButton>
         </IonCardContent>
       </form>

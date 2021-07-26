@@ -3,7 +3,10 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom/extend-expect';
+import { mockIonicReact } from '@ionic/react-test-utils';
+//mockIonicReact();
 
+//import "@testing-library/jest-dom";
 // Mock matchmedia
 window.matchMedia = window.matchMedia || function() {
   return {

@@ -13,7 +13,7 @@ interface IProps {
 
 const FormInputWrapper:FC<IProps> = (props) => {
     return (
-        <>
+       
          <IonItem>
             <IonLabel position={props.position}>{props.label}</IonLabel>
             <Controller
@@ -23,10 +23,11 @@ const FormInputWrapper:FC<IProps> = (props) => {
                 field: { onChange, onBlur, value, name, ref },
                 fieldState: { invalid, isTouched, isDirty, error },
                 formState,
-              }) => <IonInput type={props.type} onIonChange={onChange}></IonInput>}
+              }) => <IonInput type={props.type}  
+              data-testid={props.name} onIonChange={onChange}></IonInput>}
             />
           </IonItem>
-        </>
+      
       );
 };
 

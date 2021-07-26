@@ -23,6 +23,8 @@ Se trata de una aplicación para el personal de seguridad de una compañia.
 
 * Frontend: Ionic + React.
 * Backend: Firebase.
+* Forms: React Hook Form.
+* Test: Jest.
 
 ## Setup
 

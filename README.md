@@ -46,6 +46,6 @@ Se trata de una aplicación para el personal de seguridad de una compañia.
 * [Ionic Installation](https://ionicframework.com/docs/intro/cli)
 * [Ionic React](https://ionicframework.com/docs/react)
 * [Ionic React Testing Tools](https://ionicframework.com/blog/testing-ionic-react-apps-with-jest-and-react-testing-library/)
-* [React Hook Form](https://react-hook-form.com/)}
+* [React Hook Form](https://react-hook-form.com/)
 * [Firebase API](https://www.npmjs.com/package/firebase)
 * [Dependency Injection](https://thomasburlesonia.medium.com/https-medium-com-thomasburlesonia-universal-dependency-injection-86a8c0881cbc)

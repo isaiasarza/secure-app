@@ -1,18 +1,8 @@
-import { UserService } from "./user.service";
 import { User } from "../../model/user";
-import { db } from "../../firebaseConfig";
-
-export class UserFirebaseImpService extends UserService {
-  private readonly COLLECTION_NAME = "users";
+import { UserService } from './user.service';
+export class UserTestImpService extends UserService {
   public add(uid: string, user: User): Promise<User> {
-    return db
-      .collection(this.COLLECTION_NAME)
-      .doc(uid)
-      .set(user)
-      .then(() => {
-        
-        return Promise.resolve(user)
-      })
+    return Promise.resolve(user)
   }
   public update(user: User): Promise<any> {
     // TODO
@@ -24,13 +14,16 @@ export class UserFirebaseImpService extends UserService {
   }
 
   public async getByUID(uid: string): Promise<User> {
-    
-    const data = await db
-    .collection(this.COLLECTION_NAME)
-    .doc(uid)
-    .get()
-    
-    return data.data() as User
+    const user = {
+      cuil_cuit: "2032111110",
+      dni: "32111111",
+      email: "imacoria@gmail.com",
+      firstname: "Imanol",
+      lastname: "Coria",
+      role: "vigilant",
+    };
+
+    return Promise.resolve(user);
   }
   public delete(email: string): Promise<any> {
     return Promise.resolve();

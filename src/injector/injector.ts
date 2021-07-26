@@ -8,6 +8,7 @@ import { UserContextImpService } from '../service/user-context/user-context-imp.
 export const AuthServiceToken = new InjectionToken<AuthService>( "AUTH_SERVICE_TOKEN" );
 export const UserServiceToken = new InjectionToken<UserService>( "USER_SERVICE_TOKEN" );
 export const UserContextServiceToken = new InjectionToken<UserContextService>( "USER_CONTEXT_SERVICE_TOKEN" );
+
 export const injector: DependencyInjector = makeInjector([
     {provide: AuthServiceToken , useClass: AuthFirebaseImp},
     {provide: UserServiceToken, useClass: UserFirebaseImpService},

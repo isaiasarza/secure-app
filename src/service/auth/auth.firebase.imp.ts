@@ -15,30 +15,16 @@ export class AuthFirebaseImp extends AuthService {
     UserContextServiceToken
   );
 
-
   public async auth(email: string, password: string): Promise<User> {
-    /* 
     const data = await auth.signInWithEmailAndPassword(email, password);
-    
+
     if (!data?.user?.uid)
       return Promise.reject("Error al authenticar el usuario");
-    
+
     const user = await this.userService.getByUID(data.user.uid);
-    if (!user) return Promise.reject("Error al authenticar el usuario"); */
-    const user = {cuil_cuit:"2032111110",dni:"32111111",email:"imacoria@gmail.com",firstname:"Imanol",lastname:"Coria",role:"vigilant",}
-    
+    if (!user) return Promise.reject("Error al authenticar el usuario");
     await this.userContextService.setCurrentUser(user);
     return Promise.resolve(user);
-    /* return 
-      .then(async (data) => {
-        
-        if (!data?.user?.uid)
-          return Promise.reject("Error al authenticar el usuario");
-        const user = await  this.userService.getByUID(data.user.uid)  
-        if(!user) return Promise.reject("Error al authenticar el usuario");
-        await this.userContextService.setCurrentUser(user)
-        return Promise.resolve(user)
-      }); */
   }
 
   public register(email: string, password: string, user: User): Promise<User> {

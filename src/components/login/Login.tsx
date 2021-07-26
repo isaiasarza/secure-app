@@ -76,9 +76,6 @@ const LoginComponent: FC<IProps> = (props) => {
           <IonButton data-testid="submit_button" type="submit" expand="full" disabled={!isFormValid()}>
             Iniciar Sesión
           </IonButton>
-          <IonButton data-testid="is_valid_button" type="submit" expand="full" onClick={isFormValid}>
-            Is Form Valid
-          </IonButton>
         </IonCardContent>
       </form>
     </IonCard>

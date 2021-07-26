@@ -23,6 +23,7 @@ interface IProps {}
 const LoginComponent: FC<IProps> = (props) => {
   const history = useHistory();
   const [present] = useIonToast();
+  
   const [authService] = useState<AuthService>(injector.get(AuthServiceToken))
 
   

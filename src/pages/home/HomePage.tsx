@@ -99,7 +99,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
               </IonToolbar>
             </IonHeader>
             <HomeComponent></HomeComponent>
-            <IonModal isOpen={showModal}>
+            <IonModal isOpen={showModal} cssClass='my-custom-class' showBackdrop={true}>
               <ProfileComponent
                 user={user}
                 closeAction={this.closeModal}

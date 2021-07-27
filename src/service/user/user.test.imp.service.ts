@@ -21,6 +21,7 @@ export class UserTestImpService extends UserService {
       firstname: "Imanol",
       lastname: "Coria",
       role: "vigilant",
+      uid: "AAAZZZAAA"
     };
 
     return Promise.resolve(user);

@@ -14,11 +14,12 @@ import {
   IonButton,
   IonIcon,
   IonModal,
+  IonBackButton,
 } from "@ionic/react";
 import HeaderComponent from "../../components/header/HeaderComponent";
 import ProfileComponent from "../../components/profile/ProfileComponent";
 import { RouteComponentProps } from "react-router";
-import HomeComponent from '../../components/home/HomeComponent';
+import HomeComponent from "../../components/home/HomeComponent";
 
 export interface IAppProps {
   history: RouteComponentProps["history"];
@@ -76,7 +77,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
     let state = { ...this.state };
     state.showModal = false;
     this.setState(state);
-  }
+  };
 
   public render() {
     if (this.state.user) {
@@ -85,6 +86,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
       return (
         <IonPage>
           <HeaderComponent options={this.options}></HeaderComponent>
+
           <IonContent fullscreen>
             <IonHeader collapse="condense">
               <IonToolbar color="primary">
@@ -96,7 +98,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
                 </IonButtons>
               </IonToolbar>
             </IonHeader>
-           <HomeComponent></HomeComponent>
+            <HomeComponent></HomeComponent>
             <IonModal isOpen={showModal}>
               <ProfileComponent
                 user={user}

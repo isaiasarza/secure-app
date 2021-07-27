@@ -8,16 +8,21 @@ import {
   IonItem,
   IonFab,
   IonFabButton,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonAvatar,
 } from "@ionic/react";
 import React, { FC, useState } from "react";
 import { User } from "../../model/user";
-
+import "./ProfileComponent.css";
 import { AuthService } from "../../service/auth/auth.service";
 import { injector, AuthServiceToken } from "../../injector/injector";
-import { IonInput, IonImg } from "@ionic/react";
+import { IonInput, IonImg, IonContent } from "@ionic/react";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
-import { add, camera } from "ionicons/icons";
-import { UserPhoto } from '../../model/user.photo';
+import { add, camera, person } from "ionicons/icons";
+import { UserPhoto } from "../../model/user.photo";
 
 interface IProps {
   user: User;
@@ -27,36 +32,24 @@ interface IProps {
 const ProfileComponent: FC<IProps> = (props) => {
   const [authService] = useState<AuthService>(injector.get(AuthServiceToken));
   const [photo, setPhoto] = useState<UserPhoto>();
+
   const takePicture = async () => {
     const image = await Camera.getPhoto({
-      quality: 90,
+      quality: 100,
       source: CameraSource.Camera,
       resultType: CameraResultType.Uri,
+      height: 1000,
+      width: 1000
     });
-    debugger
-    console.log("photo taked", image)
-    var imageUrl = image.webPath;
-    debugger
+    console.log("photo taked", image);
     const fileName = new Date().getTime() + ".jpeg";
     // Can be set to the src of an image now
     setPhoto({
-      filepath:fileName,
-      webviewPath: image.webPath
+      filepath: fileName,
+      webviewPath: image.webPath,
     });
-    debugger
   };
-  /* var user: User = {
-    firstname: "",
-    lastname: "",
-    dni: "",
-    cuil_cuit: "",
-    role: "",
-    email: "",
-  }; */
-  /*  authService.suscribeChanges((_user: User) => {
-    user = _user;
-    console.log("home user value changed", user);
-  }); */
+
   return (
     <IonGrid>
       <IonRow>
@@ -95,17 +88,17 @@ const ProfileComponent: FC<IProps> = (props) => {
           </IonItem>
         </IonCol>
       </IonRow>
-     {/*  <img style={{ border: "1px solid black", minHeight: "100px" }}
-        src={photo.imageUrl} alt=""/> */}
-      {
-        photo?.webviewPath?.length ? <IonImg src={photo.webviewPath} /> : null
-      }
-      <IonFab slot="fixed">
-        <IonFabButton onClick={() => takePicture()}>
-          <IonIcon icon={camera} />
-        </IonFabButton>
-      </IonFab>
-
+      {photo?.webviewPath?.length ? (
+        <IonRow>
+          <IonCol size="12">
+            <div className="avatar-container">
+              <div className="avatar">
+                <img alt="" src={photo.webviewPath} />
+              </div>
+            </div>
+          </IonCol>
+        </IonRow>
+      ) : null}
       <IonRow>
         <IonCol className="ion-align-items-center" size="4">
           <IonButton onClick={() => takePicture()}>

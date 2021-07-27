@@ -1,0 +1,28 @@
+ion-img {
+  border-radius: 50%;
+}
+
+.avatar-container {
+  left: 10%;
+  width: 80%;
+  padding-top: 80%;
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.avatar img {
+  position: absolute;
+  left: -30%;
+  top:-10%;
+  max-width: 150%;
+  max-height: auto;
+}
+.avatar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow: visible;
+}

@@ -3,34 +3,23 @@ import {
   IonGrid,
   IonRow,
   IonLabel,
-  IonButton,
   IonIcon,
   IonItem,
-  IonFab,
   IonFabButton,
-  IonHeader,
-  IonToolbar,
-  IonButtons,
-  IonBackButton,
-  IonAvatar,
   IonCardContent,
-  IonCardTitle,
 } from "@ionic/react";
 import React, { FC, useState } from "react";
 import { User } from "../../model/user";
 import "./ProfileComponent.css";
-import { AuthService } from "../../service/auth/auth.service";
-import { injector, AuthServiceToken, CloudFilesServiceToken } from '../../injector/injector';
+import { injector,  CloudFilesServiceToken } from '../../injector/injector';
 import {
   IonInput,
-  IonImg,
-  IonContent,
   IonCard,
   IonCardHeader,
   IonCardSubtitle,
 } from "@ionic/react";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
-import { add, camera, close, person } from "ionicons/icons";
+import {  camera, close} from "ionicons/icons";
 import { UserPhoto } from "../../model/user.photo";
 import { CloudFilesService } from '../../service/cloud-files/cloud-files.service';
 

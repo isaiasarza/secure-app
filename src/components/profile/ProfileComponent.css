@@ -19,7 +19,6 @@ ion-img {
   top:-10%;
   max-width: 150%;
   max-height: auto;
-
 }
 
 .avatar.default-user{
@@ -37,6 +36,8 @@ ion-img {
   right: 0;
   
   border-radius: 50%;
+  
+  border: 2px solid var(--ion-color-primary);
   overflow: hidden;
 }
 

@@ -6,4 +6,5 @@ export interface User{
     role: string;
     dni: string;
     cuil_cuit: string;
+    selfie_url?: string;
 }

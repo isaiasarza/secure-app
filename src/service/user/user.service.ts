@@ -5,4 +5,5 @@ export abstract class UserService{
     public abstract getByEmail(email: string): Promise<any>;
     public abstract delete(email: string): Promise<any>
     public abstract getByUID(uid: string): Promise<User>;
+    public abstract setSelfie(user: User, selfieName: string, selfie: string): Promise<User>;
 }

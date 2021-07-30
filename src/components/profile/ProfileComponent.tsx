@@ -47,7 +47,7 @@ const ProfileComponent: FC<IProps> = (props) => {
   const [present] = useIonToast();
   const [userService] = useState<UserService>(injector.get(UserServiceToken));
   const [photo, setPhoto] = useState<UserPhoto>();
-
+ // if(props.selfie?.length) setSelfie(props.selfie)
   const takePicture = async () => {
     const image: Photo = await Camera.getPhoto({
       quality: 100,
@@ -69,8 +69,11 @@ const ProfileComponent: FC<IProps> = (props) => {
       filepath: fileName,
       webviewPath: image.webPath,
     });
-   
-    userService.setSelfie(props.user, fileName, image.webPath);
+    
+    const res = await fetch(image.webPath);
+    const blob = await res.blob();
+    
+    userService.setSelfie(props.user, fileName, blob);
     //cloudFilesService.uploadFile("asdf",fileName,image)
   };
 
@@ -96,9 +99,9 @@ const ProfileComponent: FC<IProps> = (props) => {
             <IonCol size="10">
               <div className="avatar-container">
                 <div className="avatar">
-                  {photo?.webviewPath?.length ? (
+                  {props.user?.local_selfie_url?.length || photo?.webviewPath?.length ? (
                     <div className="selfie">
-                      <img alt="" src={photo.webviewPath} />
+                      <img alt="" src={props.user?.local_selfie_url?.length ? props.user?.local_selfie_url : photo?.webviewPath?.length ? photo?.webviewPath : ''} />
                     </div>
                   ) : (
                     <div className="default-user">

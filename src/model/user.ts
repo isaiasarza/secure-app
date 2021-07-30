@@ -7,4 +7,5 @@ export interface User{
     dni: string;
     cuil_cuit: string;
     selfie_url?: string;
+    local_selfie_url?: string;
 }

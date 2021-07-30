@@ -13,13 +13,9 @@ export class UserTestImpService extends UserService {
     return Promise.reject("Funcionalidad no implementada");
   }
 
-  public async setSelfie(user: User, selfieName: string, selfieUri: string): Promise<User>{
+  public async setSelfie(user: User, selfieName: string, selfie: Blob): Promise<User>{
     //TODO
-    debugger
-    const res = await fetch(selfieUri)
-    const blob: Blob = await res.blob()
-    debugger
-    user.selfie_url = selfieUri;
+    user.selfie_url = "selfieUri";
     return Promise.resolve(user);
   }
 

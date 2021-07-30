@@ -20,6 +20,7 @@ import HeaderComponent from "../../components/header/HeaderComponent";
 import ProfileComponent from "../../components/profile/ProfileComponent";
 import { RouteComponentProps } from "react-router";
 import HomeComponent from "../../components/home/HomeComponent";
+import { Subscription } from "rxjs";
 
 export interface IAppProps {
   history: RouteComponentProps["history"];
@@ -32,6 +33,8 @@ export interface IAppState {
 }
 
 export default class HomePage extends React.Component<IAppProps, IAppState> {
+  public _isMounted: boolean = false
+  public subscription: Subscription | null = null;
   private options: HeaderOption[] = [
     {
       key: "home_to_profile",
@@ -64,13 +67,64 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
   }
 
   componentDidMount() {
+    this._isMounted = true
+    console.log("componentDidMount");
     const userContextService = this.state.userContextService;
-    userContextService.currentUser.subscribe((currentUser) => {
-      console.log("current user", currentUser);
-      let state = { ...this.state };
-      state.user = currentUser;
-      this.setState(state);
-    });
+    if (!userContextService.currentUser.observed)
+      this.subscription = userContextService.currentUser.subscribe((user) => {
+        console.log("current user", user);
+      /*   setTimeout(() => { */
+          if (user) {
+            let state = { ...this.state };
+            state.user = user;
+            this.setState(state);
+          }
+       /*  }, 500); */
+      });
+    /*  userContextService.userSelfie.subscribe((selfie) => {
+      console.log("user selfie", selfie);
+      if (selfie) {
+        let state = { ...this.state };
+        state.selfie = 
+        this.setState(state);
+      }
+    }); */
+  }
+  
+  componentDidUpdate() {
+    console.log("componentDidUpdate")
+  }
+  /* componentDidUpdate() {
+    console.log("componentDidUpdate")
+    const userContextService = this.state.userContextService;
+    if (userContextService.currentUser.closed) {
+      userContextService.currentUser.subscribe((user) => {
+        console.log("current user", user);
+        if (user) {
+          let state = { ...this.state };
+          state.user = user;
+          this.setState(state);
+        }
+      });
+    }
+    if (userContextService.userSelfie.closed) {
+      userContextService.userSelfie.subscribe((selfie) => {
+        console.log("user selfie", selfie);
+        if (selfie) {
+          let state = { ...this.state };
+          state.selfie = URL.createObjectURL(selfie);
+          this.setState(state);
+        }
+      });
+    }
+  }*/
+
+  componentWillUnmount() {
+    console.log("componentWillUnmount");
+    this._isMounted = false
+    if (this.subscription){
+      this.subscription.unsubscribe()
+    }
   }
 
   closeModal = () => {
@@ -99,7 +153,11 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
               </IonToolbar>
             </IonHeader>
             <HomeComponent></HomeComponent>
-            <IonModal isOpen={showModal} cssClass='my-custom-class' showBackdrop={true}>
+            <IonModal
+              isOpen={showModal}
+              cssClass="my-custom-class"
+              showBackdrop={true}
+            >
               <ProfileComponent
                 user={user}
                 closeAction={this.closeModal}

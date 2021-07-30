@@ -2,13 +2,18 @@ import { UserService } from "./user.service";
 import { User } from "../../model/user";
 import { db } from "../../firebaseConfig";
 import { CloudFilesService } from "../cloud-files/cloud-files.service";
-import { CloudFilesServiceToken, injector } from "../../injector/injector";
+import {
+  CloudFilesServiceToken,
+  injector,
+} from "../../injector/injector";
 
 export class UserFirebaseImpService extends UserService {
   private readonly COLLECTION_NAME = "users";
   private cloudFilesService: CloudFilesService = injector.get(
     CloudFilesServiceToken
   );
+
+  
   public add(uid: string, user: User): Promise<User> {
     user.uid = uid;
     return db
@@ -33,17 +38,17 @@ export class UserFirebaseImpService extends UserService {
   public async setSelfie(
     user: User,
     selfieName: string,
-    selfieUri: string
+    selfie: Blob
   ): Promise<User> {
-    const res = await fetch(selfieUri);
-    const blob: Blob = await res.blob();
+    
     return this.cloudFilesService
-      .uploadFile("users_photos", selfieName, blob)
+      .uploadFile("users_photos", selfieName, selfie)
       .then(async (snap) => {
         const downloadUrl = await snap?.ref?.getDownloadURL();
         if (!downloadUrl)
           return Promise.reject("Ha ocurrido un error al persistir la selfie");
         user.selfie_url = downloadUrl;
+
         return this.update(user);
       });
     //return Promise.reject("Funcionalidad no implementada");

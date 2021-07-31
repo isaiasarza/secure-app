@@ -13,7 +13,14 @@ export class UserTestImpService extends UserService {
     return Promise.reject("Funcionalidad no implementada");
   }
 
+  public async setSelfie(user: User, selfieName: string, selfie: Blob): Promise<User>{
+    //TODO
+    user.selfie_url = "selfieUri";
+    return Promise.resolve(user);
+  }
+
   public async getByUID(uid: string): Promise<User> {
+    
     const user = {
       cuil_cuit: "2032111110",
       dni: "32111111",
@@ -21,6 +28,7 @@ export class UserTestImpService extends UserService {
       firstname: "Imanol",
       lastname: "Coria",
       role: "vigilant",
+      uid: "AAAZZZAAA"
     };
 
     return Promise.resolve(user);

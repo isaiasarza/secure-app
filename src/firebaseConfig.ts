@@ -1,6 +1,6 @@
 import firebase from "firebase";
 import "firebase/firestore";
-
+import "firebase/storage"
 const config = {
   apiKey: "AIzaSyCAHDpeAc4tEBIpm2adraLdi7UUgJbkx9c",
   authDomain: "app-2a067.firebaseapp.com",
@@ -12,5 +12,6 @@ const config = {
 
 export const firebaseApp = firebase.initializeApp(config);
 export const db = firebaseApp.firestore();
+export const storage = firebaseApp.storage("gs://app-2a067.appspot.com")
 export const auth = firebaseApp.auth()
 

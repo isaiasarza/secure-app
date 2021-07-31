@@ -23,7 +23,11 @@ export class AuthFirebaseImp extends AuthService {
 
     const user = await this.userService.getByUID(data.user.uid);
     if (!user) return Promise.reject("Error al authenticar el usuario");
+
     await this.userContextService.setCurrentUser(user);
+    if (user?.selfie_url) {
+      user.local_selfie_url = await this.getLocalSelfieUrl(user?.selfie_url);
+    }
     return Promise.resolve(user);
   }
 
@@ -36,6 +40,14 @@ export class AuthFirebaseImp extends AuthService {
 
   public logout() {
     this.userContextService.clearCurrentUser();
+   // this.userContextService.clearUserSelfie();
     return auth.signOut();
+  }
+
+  private async getLocalSelfieUrl(selfieUrl: string): Promise<string> {
+    const res = await fetch(selfieUrl);
+    const selfie: Blob = await res.blob();
+    return URL.createObjectURL(selfie);
+    // this.userContextService.setUserSelfie(selfie)
   }
 }

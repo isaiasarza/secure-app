@@ -21,6 +21,7 @@ export class AuthTestImpService extends AuthService {
       firstname: "Imanol",
       lastname: "Coria",
       role: "vigilant",
+      uid: "aaazzzaaa"
     };
 
     await this.userContextService.setCurrentUser(user);

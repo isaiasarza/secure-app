@@ -1,6 +1,10 @@
 /* Ionic Variables and Theming. For more info, please see:
 http://ionicframework.com/docs/theming/ */
+.my-custom-class .modal-wrapper {
 
+  height: 80%!important;
+  width: 90%!important;
+}
 /** Ionic CSS Variables **/
 :root {
   --ion-background-color: #515151;
@@ -231,4 +235,6 @@ http://ionicframework.com/docs/theming/ */
 
     --ion-card-background: #1e1e1e;
   }
+
+  
 }

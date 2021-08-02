@@ -1,15 +1,29 @@
-import { IonCard, IonCardSubtitle, IonImg, IonCol, IonCardHeader, IonRow, IonGrid } from '@ionic/react';
+import {
+  IonCard,
+  IonCardSubtitle,
+  IonImg,
+  IonCol,
+  IonCardHeader,
+  IonRow,
+  IonGrid,
+} from "@ionic/react";
 import { FC } from "react";
+import { useHistory } from "react-router";
 import "./HomeComponent.css";
 interface IProps {}
 
 const HomeComponent: FC<IProps> = (props) => {
+  const history = useHistory()
+  const onFaceScan = async () => {
+    console.log("on go to photo")
+    history.push("/photo")
+  };
   return (
     <div className="container">
       <IonGrid>
         <IonRow>
           <IonCol>
-            <IonCard>
+            <IonCard onClick={onFaceScan}>
               <IonImg src="/assets/images/face-recognition.png"></IonImg>
               <IonCardHeader color="primary">
                 <IonCardSubtitle>Face Scan</IonCardSubtitle>

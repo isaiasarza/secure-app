@@ -1,1 +1,1 @@
-export const STRATEGY_TYPE: string = "FIREBASE";
+export const STRATEGY_TYPE: string = "TEST";

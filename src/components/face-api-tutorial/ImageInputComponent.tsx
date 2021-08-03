@@ -1,43 +1,75 @@
 import * as React from "react";
-import { getFullFaceDescription, loadModels } from "../../service/face-api/face-api.service";
-const testImg = require("./test.jpeg");
+import {
+  createMatcher,
+  getFullFaceDescription,
+  loadModels,
+} from "../../service/face-api/face-api.service";
+const testImg = window.location.origin + "/assets/face-api-test/test_3.jpg";
 
 export interface IAppProps {
   imageURL: any;
   fullDesc: any;
-  detections: any[];
+  detections: any;
   loading: boolean;
+  faceMatcher: any;
+  match: any;
+  descriptors: any;
 }
+// Import face profile
+const JSON_PROFILE = require("./descriptors/rolling-stones.json");
+
+// Initial State
 const INIT_STATE = {
-  imageURL: window.location.origin + '/assets/face-api-test/test.jpeg',
+  imageURL: testImg,
   fullDesc: null,
-  detections: [],
+  detections: null,
+  descriptors: null,
+  match: null,
   loading: false,
 };
-export default class ImageInputComponent extends React.Component<{},IAppProps> {
-  private readonly TAG = ImageInputComponent
+export default class ImageInputComponent extends React.Component<
+  {},
+  IAppProps
+> {
+  private readonly TAG = ImageInputComponent;
   constructor(props: IAppProps) {
     super(props);
-    this.state = { ...INIT_STATE };
+    this.state = { ...INIT_STATE, faceMatcher: null };
   }
   componentWillMount = async () => {
-    console.log(this.TAG, "componentWillMount")
+    console.log(this.TAG,"componentWillMount", JSON_PROFILE)
     await loadModels();
+    this.setState({ faceMatcher: await createMatcher(JSON_PROFILE) });
     await this.handleImage(this.state.imageURL);
   };
 
   handleImage = async (image = this.state.imageURL) => {
-    await getFullFaceDescription(image).then(fullDesc => {
-      console.log(fullDesc);
-      this.setState({ fullDesc });
+    await getFullFaceDescription(image).then((fullDesc) => {
+      if (!!fullDesc) {
+        fullDesc.forEach((fd: any, i: number)=>{
+          console.log(this.TAG,"fullDesc descriptor #" + i, Array.from(fd.descriptor));
+        })
+        this.setState({
+          fullDesc,
+          detections: fullDesc.map((fd) => fd.detection),
+          descriptors: fullDesc.map((fd) => fd.descriptor),
+        });
+      }
     });
+
+    if (!!this.state.descriptors && !!this.state.faceMatcher) {
+      let match = await this.state.descriptors.map((descriptor: any) =>
+        this.state.faceMatcher.findBestMatch(descriptor)
+      );
+      this.setState({ match });
+    }
   };
 
   handleFileChange = async (event: any) => {
     this.resetState();
     await this.setState({
       imageURL: URL.createObjectURL(event.target.files[0]),
-      loading: true
+      loading: true,
     });
     this.handleImage();
   };
@@ -47,11 +79,11 @@ export default class ImageInputComponent extends React.Component<{},IAppProps> {
   };
 
   render() {
-    const { imageURL, detections } = this.state;
+    const { imageURL, detections, match } = this.state;
 
     let drawBox = null;
-    if (detections.length > 0) {
-      drawBox = detections.map((detection: any, i) => {
+    if (!!detections) {
+      drawBox = detections.map((detection: any, i: number) => {
         let _H = detection.box.height;
         let _W = detection.box.width;
         let _X = detection.box._x;
@@ -60,14 +92,30 @@ export default class ImageInputComponent extends React.Component<{},IAppProps> {
           <div key={i}>
             <div
               style={{
-                position: 'absolute',
-                border: 'solid',
-                borderColor: 'blue',
+                position: "absolute",
+                border: "solid",
+                borderColor: "blue",
                 height: _H,
                 width: _W,
-                transform: `translate(${_X}px,${_Y}px)`
+                transform: `translate(${_X}px,${_Y}px)`,
               }}
-            />
+            >
+              {!!match && !!match[i] ? (
+                <p
+                  style={{
+                    backgroundColor: "blue",
+                    border: "solid",
+                    borderColor: "blue",
+                    width: _W,
+                    marginTop: 0,
+                    color: "#fff",
+                    transform: `translate(-3px,${_H}px)`,
+                  }}
+                >
+                  {match[i]._label}
+                </p>
+              ) : null}
+            </div>
           </div>
         );
       });
@@ -81,8 +129,8 @@ export default class ImageInputComponent extends React.Component<{},IAppProps> {
           onChange={this.handleFileChange}
           accept=".jpg, .jpeg, .png"
         />
-        <div style={{ position: 'relative' }}>
-          <div style={{ position: 'absolute' }}>
+        <div style={{ position: "relative" }}>
+          <div style={{ position: "absolute" }}>
             <img src={imageURL} alt="imageURL" />
           </div>
           {!!drawBox ? drawBox : null}

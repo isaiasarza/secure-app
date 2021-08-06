@@ -3,24 +3,7 @@ import * as yup from 'yup';
 
 
 export function getValidations() {  
-/*   yup.addMethod(yup.string, 'min', function (min, msg) {
-    return this.test({
-      name: 'min',
-      exclusive: true,
-      message: msg,
-      test: value => !value || (Number.isFinite(Number(value)) &&  (value + '').length >= min)
-    })
-  })
-  //!value || (Number.isFinite(Number(value)) && String(value).length <= 8)
-  yup.addMethod(yup.string, 'max', function (max, msg) {
-    
-    return this.test({
-      name: 'max',
-      exclusive: true,
-      message: msg,
-      test: value => false
-    })
-  }) */
+
   return yup.object().shape({
     firstname: yup.string().required("Campo requerido"),
     lastname: yup.string().required("Campo requerido"),
@@ -30,6 +13,7 @@ export function getValidations() {
     email: yup.string().required("Campo requerido").email("Email inválido"),
     password: yup.string().required("Campo requerido"),
     repeat_password: yup.string().required().oneOf([yup.ref('password'), null], 'Las contraseñas no coinciden'),
+    webPath: yup.string().required("La selfie es obligatoria")
   });;
 }
 
@@ -43,7 +27,8 @@ export function getInitialValues(): FieldValues{
     role:"vigilant",
     email: "",
     password: "",
-    repeat_password:""
+    repeat_password:"",
+    webPath:""
   }
   return initialValues
 }

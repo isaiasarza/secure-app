@@ -16,22 +16,52 @@ import { useForm, useFormState } from "react-hook-form";
 import FormInputWrapper from "../formInputWrapper/formInputWrapper";
 import { AuthService } from '../../service/auth/auth.service';
 import { injector, AuthServiceToken } from '../../injector/injector';
+import SelfieComponent from '../selfie/SelfieComponent';
+import { getFullFaceDescription, loadModels } from "../../service/face-api/face-api.service";
 interface IProps {}
 
 const RegisterComponent: FC<IProps> = (props) => {
   const history = useHistory();
   const [present] = useIonToast();
+  const [user,setUser] = useState<User>({
+    firstname: "",
+    lastname: "",
+    email:"",
+    role: "",
+    cuil_cuit: "",
+    dni: "",
+  });
   const [authService] = useState<AuthService>(injector.get(AuthServiceToken))
-  const { handleSubmit, control } = useForm({
+  const { handleSubmit, control,setValue  } = useForm({
     defaultValues: getInitialValues(),
-    mode: "onChange",
+    mode: "all",
     resolver: yupResolver(getValidations()),
   });
   const { isValid, errors } = useFormState({ control });
+  const handler = async (webPath: string, fileName: string) => {
+   // const res = await fetch(webPath);
+   // const blob = await res.blob();
+    setValue('webPath',webPath,{shouldValidate:true})
+  //  userService.setSelfie(props.user, fileName, blob);
+  };
   const onSubmit = async (data: any) => {
-    
+    await loadModels();
+    await getFullFaceDescription(data.webPath).then((fullDesc) => {
+      if (!!fullDesc) {
+        fullDesc.forEach((fd: any, i: number)=>{
+          console.log("fullDesc descriptor #" + i, Array.from(fd.descriptor));
+        })
+        /* this.setState({
+          fullDesc,
+          detections: fullDesc.map((fd) => fd.detection),
+          descriptors: fullDesc.map((fd) => fd.descriptor),
+        }); */
+      }
+    });
+     const res = await fetch(data.webPath);
+    const blob = await res.blob();
     console.log("onSubmit", data);
-    const user: User = {
+    const _user: User = {
       firstname: data.firstname,
       lastname: data.lastname,
       email: data.email,
@@ -39,8 +69,9 @@ const RegisterComponent: FC<IProps> = (props) => {
       cuil_cuit: data.cuil_cuit,
       dni: data.dni,
     };
+    setUser(_user)
     try {
-      const savedUser = await authService.register(data.email, data.password, user)
+      const savedUser = await authService.register(data.email, data.password, _user, blob)
       console.log("savedUser", savedUser);
       presentSuccessToast(
         present,
@@ -59,6 +90,11 @@ const RegisterComponent: FC<IProps> = (props) => {
     <IonCard>
       <form onSubmit={handleSubmit(onSubmit)}>
         <IonCardContent>
+          <div>
+            <SelfieComponent user={user} handler={handler}></SelfieComponent>
+          </div>
+          <p>{errors.webPath?.message}</p>
+          <p>{errors.fileName?.message}</p>
           <FormInputWrapper
             position={"stacked"}
             name={"firstname"}

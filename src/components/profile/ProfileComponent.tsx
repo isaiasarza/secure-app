@@ -5,7 +5,6 @@ import {
   IonLabel,
   IonIcon,
   IonItem,
-  IonFabButton,
   IonCardContent,
 } from "@ionic/react";
 import React, { FC, useState } from "react";
@@ -22,18 +21,11 @@ import {
   IonCardHeader,
   IonCardSubtitle,
 } from "@ionic/react";
-import {
-  Camera,
-  CameraResultType,
-  CameraSource,
-  Photo,
-} from "@capacitor/camera";
-import { camera, close } from "ionicons/icons";
-import { UserPhoto } from "../../model/user.photo";
+
+import {  close } from "ionicons/icons";
 import { CloudFilesService } from "../../service/cloud-files/cloud-files.service";
 import { UserService } from "../../service/user/user.service";
-import { presentErrorToast } from '../../utils/toast';
-import { useIonToast } from '@ionic/react';
+import SelfieComponent from '../selfie/SelfieComponent';
 
 interface IProps {
   user: User;
@@ -44,38 +36,13 @@ const ProfileComponent: FC<IProps> = (props) => {
   const [cloudFilesService] = useState<CloudFilesService>(
     injector.get(CloudFilesServiceToken)
   );
-  const [present] = useIonToast();
   const [userService] = useState<UserService>(injector.get(UserServiceToken));
-  const [photo, setPhoto] = useState<UserPhoto>();
- // if(props.selfie?.length) setSelfie(props.selfie)
-  const takePicture = async () => {
-    const image: Photo = await Camera.getPhoto({
-      quality: 100,
-      source: CameraSource.Camera,
-      resultType: CameraResultType.Uri,
-      height: 1000,
-      width: 1000,
-    });
-
-    if(!image?.webPath) {
-      presentErrorToast(present, "Ha ocurrido un error al tomar la foto, intente nuevamente")
-      return
-    }
-
-    console.log("photo taked", image);
-    const fileName = props.user.uid + "_selfie.jpeg";
-    // Can be set to the src of an image now
-    setPhoto({
-      filepath: fileName,
-      webviewPath: image.webPath,
-    });
-    
-    const res = await fetch(image.webPath);
+  const handler = async (webPath: string, fileName: string) => {
+    const res = await fetch(webPath);
     const blob = await res.blob();
-    
     userService.setSelfie(props.user, fileName, blob);
-    //cloudFilesService.uploadFile("asdf",fileName,image)
   };
+  
 
   return (
     <IonGrid>
@@ -97,24 +64,7 @@ const ProfileComponent: FC<IProps> = (props) => {
           <IonRow>
             <IonCol size="1"></IonCol>
             <IonCol size="10">
-              <div className="avatar-container">
-                <div className="avatar">
-                  {props.user?.local_selfie_url?.length || photo?.webviewPath?.length ? (
-                    <div className="selfie">
-                      <img alt="" src={props.user?.local_selfie_url?.length ? props.user?.local_selfie_url : photo?.webviewPath?.length ? photo?.webviewPath : ''} />
-                    </div>
-                  ) : (
-                    <div className="default-user">
-                      <img alt="" src="/assets/images/default-user.png" />
-                    </div>
-                  )}
-                </div>
-                <div className="avatar-button">
-                  <IonFabButton size="small" onClick={() => takePicture()}>
-                    <IonIcon icon={camera}></IonIcon>
-                  </IonFabButton>
-                </div>
-              </div>
+              <SelfieComponent user={props.user} handler={handler}></SelfieComponent>
             </IonCol>
             <IonCol size="1"></IonCol>
           </IonRow>

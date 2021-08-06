@@ -28,7 +28,8 @@ export class AuthTestImpService extends AuthService {
     return Promise.resolve(user);
   }
 
-  public register(email: string, password: string, user: User): Promise<User> {
+  public register(email: string, password: string, user: User, selfie: Blob): Promise<User> {
+    console.log("register", email, password, user, selfie)
     return Promise.resolve(user);
   }
 

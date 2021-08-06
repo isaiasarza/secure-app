@@ -14,13 +14,16 @@ export class UserFirebaseImpService extends UserService {
   );
 
   
-  public add(uid: string, user: User): Promise<User> {
+  public add(uid: string, user: User, selfie?: Blob): Promise<User> {
     user.uid = uid;
     return db
       .collection(this.COLLECTION_NAME)
       .doc(uid)
       .set(user)
-      .then(() => Promise.resolve(user));
+      .then(async () => {
+        if(selfie) await this.setSelfie(user,user.uid + "_selfie",selfie)
+        return Promise.resolve(user)
+      });
   }
   public update(user: User): Promise<any> {
     //user.uid = uid;

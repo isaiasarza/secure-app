@@ -41,10 +41,11 @@ export async function createMatcher(faceProfile: User[]) {
       descriptors: [user.descriptors]
     }
   });
+
   let labeledDescriptors = filtered.map(
     (member) =>
       new faceapi.LabeledFaceDescriptors(
-        member.firstname + "_" + member.lastname,
+        member.firstname + " " + member.lastname,
         member.descriptors.map(
           (descriptor: any) => new Float32Array(descriptor)
         ) 

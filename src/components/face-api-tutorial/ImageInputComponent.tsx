@@ -6,6 +6,7 @@ import {
   getFullFaceDescription,
   loadModels,
 } from "../../service/face-api/face-api.service";
+import { User } from "../../model/user";
 const testImg = window.location.origin + "/assets/face-api-test/test_3.jpg";
 
 export interface IAppProps {
@@ -17,6 +18,7 @@ export interface IAppProps {
   match: any;
   descriptors: any;
   userService: UserService;
+  users: User[];
 }
 // Import face profile
 const JSON_PROFILE = require("./descriptors/rolling-stones.json");
@@ -29,6 +31,7 @@ const INIT_STATE = {
   descriptors: null,
   match: null,
   loading: false,
+  users:[]
 };
 export default class ImageInputComponent extends React.Component<
   {},
@@ -48,11 +51,9 @@ export default class ImageInputComponent extends React.Component<
     await loadModels();
     const users = await this.state.userService.getAllUsers();
     console.log("users", users);
-    //debugger
     const faceMatcher = await createMatcher(users);
     console.log("faceMatcher", faceMatcher);
-    //debugger
-    this.setState({ faceMatcher: faceMatcher });
+    this.setState({ faceMatcher: faceMatcher, users: users });
     await this.handleImage(this.state.imageURL);
   };
 
@@ -130,7 +131,7 @@ export default class ImageInputComponent extends React.Component<
                     transform: `translate(-3px,${_H}px)`,
                   }}
                 >
-                  {match[i]._label}
+                  {match[i]._label.toLowerCase() === "unknown" ? 'No reconocido' :  match[i]._label}
                 </p>
               ) : null}
             </div>

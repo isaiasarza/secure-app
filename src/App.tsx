@@ -30,11 +30,20 @@ import { UserContextService } from "./service/user-context/user-context.service"
 
 import HomePage from "./pages/home/HomePage";
 import ImageInputPage from "./pages/face-api-tutorial/ImageInputPage";
+import { loadModels } from "./service/face-api/face-api.service";
 
 const App: React.FC = () => {
   const [userContextService] = useState<UserContextService>(
     injector.get(UserContextServiceToken)
   );
+
+  /* React.useEffect(() => {
+    async function run(){
+      console.log("loading models")
+      await loadModels()
+    }
+    run()
+  }); */
 
   return (
     <IonApp>

@@ -1,4 +1,6 @@
 import * as React from "react";
+import { UserService } from "../../service/user/user.service";
+import { injector, UserServiceToken } from "../../injector/injector";
 import {
   createMatcher,
   getFullFaceDescription,
@@ -14,6 +16,7 @@ export interface IAppProps {
   faceMatcher: any;
   match: any;
   descriptors: any;
+  userService: UserService;
 }
 // Import face profile
 const JSON_PROFILE = require("./descriptors/rolling-stones.json");
@@ -34,21 +37,35 @@ export default class ImageInputComponent extends React.Component<
   private readonly TAG = ImageInputComponent;
   constructor(props: IAppProps) {
     super(props);
-    this.state = { ...INIT_STATE, faceMatcher: null };
+    this.state = {
+      ...INIT_STATE,
+      faceMatcher: null,
+      userService: injector.get(UserServiceToken) as UserService,
+    };
   }
   componentWillMount = async () => {
-    console.log(this.TAG,"componentWillMount", JSON_PROFILE)
+    console.log(this.TAG, "componentWillMount");
     await loadModels();
-    this.setState({ faceMatcher: await createMatcher(JSON_PROFILE) });
+    const users = await this.state.userService.getAllUsers();
+    console.log("users", users);
+    //debugger
+    const faceMatcher = await createMatcher(users);
+    console.log("faceMatcher", faceMatcher);
+    //debugger
+    this.setState({ faceMatcher: faceMatcher });
     await this.handleImage(this.state.imageURL);
   };
 
   handleImage = async (image = this.state.imageURL) => {
     await getFullFaceDescription(image).then((fullDesc) => {
       if (!!fullDesc) {
-        fullDesc.forEach((fd: any, i: number)=>{
-          console.log(this.TAG,"fullDesc descriptor #" + i, Array.from(fd.descriptor));
-        })
+        fullDesc.forEach((fd: any, i: number) => {
+          console.log(
+            this.TAG,
+            "fullDesc descriptor #" + i,
+            Array.from(fd.descriptor).length
+          );
+        });
         this.setState({
           fullDesc,
           detections: fullDesc.map((fd) => fd.detection),
@@ -58,9 +75,10 @@ export default class ImageInputComponent extends React.Component<
     });
 
     if (!!this.state.descriptors && !!this.state.faceMatcher) {
-      let match = await this.state.descriptors.map((descriptor: any) =>
-        this.state.faceMatcher.findBestMatch(descriptor)
-      );
+      let match = await this.state.descriptors.map((descriptor: any) => {
+        console.log("descriptor length", descriptor.length);
+        return this.state.faceMatcher.findBestMatch(descriptor);
+      });
       this.setState({ match });
     }
   };

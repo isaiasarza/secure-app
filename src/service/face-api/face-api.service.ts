@@ -1,4 +1,5 @@
 import * as faceapi from "face-api.js";
+import { User } from "../../model/user";
 
 export async function loadModels() {
   const MODEL_URL = process.env.PUBLIC_URL + "/models";
@@ -30,16 +31,23 @@ export async function getFullFaceDescription(blob: any, inputSize = 512) {
 }
 
 const maxDescriptorDistance = 0.5;
-export async function createMatcher(faceProfile: any) {
+export async function createMatcher(faceProfile: User[]) {
   // Create labeled descriptors of member from profile
-  let members = Object.keys(faceProfile);
-  let labeledDescriptors = members.map(
-    member =>
+  // let members = Object.keys(faceProfile);
+  const filtered: any[] = faceProfile.filter((user) => user?.descriptors && user?.descriptors?.length > 0).map(user => {
+    return {
+      firstname: user.firstname,
+      lastname: user.lastname,
+      descriptors: [user.descriptors]
+    }
+  });
+  let labeledDescriptors = filtered.map(
+    (member) =>
       new faceapi.LabeledFaceDescriptors(
-        faceProfile[member].name,
-        faceProfile[member].descriptors.map(
+        member.firstname + "_" + member.lastname,
+        member.descriptors.map(
           (descriptor: any) => new Float32Array(descriptor)
-        )
+        ) 
       )
   );
 

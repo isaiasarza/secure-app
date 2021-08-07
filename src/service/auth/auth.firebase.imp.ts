@@ -33,8 +33,13 @@ export class AuthFirebaseImp extends AuthService {
 
   public register(email: string, password: string, user: User, selfie?:Blob): Promise<User> {
     return auth.createUserWithEmailAndPassword(email, password).then((data) => {
+      
       if (!data?.user?.uid) return Promise.reject("Error al crear el usuario");
-      return this.userService.add(data.user?.uid, user, selfie);
+      return this.userService.add(data.user?.uid, user, selfie)
+      .catch((error) => {
+        // borrar cuenta
+        return Promise.reject(error)
+      });
     });
   }
 

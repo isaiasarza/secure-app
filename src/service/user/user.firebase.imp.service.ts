@@ -2,10 +2,7 @@ import { UserService } from "./user.service";
 import { User } from "../../model/user";
 import { db } from "../../firebaseConfig";
 import { CloudFilesService } from "../cloud-files/cloud-files.service";
-import {
-  CloudFilesServiceToken,
-  injector,
-} from "../../injector/injector";
+import { CloudFilesServiceToken, injector } from "../../injector/injector";
 
 export class UserFirebaseImpService extends UserService {
   private readonly COLLECTION_NAME = "users";
@@ -13,7 +10,6 @@ export class UserFirebaseImpService extends UserService {
     CloudFilesServiceToken
   );
 
-  
   public add(uid: string, user: User, selfie?: Blob): Promise<User> {
     user.uid = uid;
     return db
@@ -21,8 +17,14 @@ export class UserFirebaseImpService extends UserService {
       .doc(uid)
       .set(user)
       .then(async () => {
-        if(selfie) await this.setSelfie(user,user.uid + "_selfie",selfie)
-        return Promise.resolve(user)
+        if (selfie)
+          await this.setSelfie(user, user.uid + "_selfie.png", selfie);
+
+        return Promise.resolve(user);
+      })
+      .catch((error) => {
+        console.log("add user error", error);
+        return Promise.reject(error);
       });
   }
   public update(user: User): Promise<any> {
@@ -43,7 +45,6 @@ export class UserFirebaseImpService extends UserService {
     selfieName: string,
     selfie: Blob
   ): Promise<User> {
-    
     return this.cloudFilesService
       .uploadFile("users_photos", selfieName, selfie)
       .then(async (snap) => {
@@ -65,5 +66,16 @@ export class UserFirebaseImpService extends UserService {
   }
   public delete(email: string): Promise<any> {
     return Promise.resolve();
+  }
+
+  public getAllUsers(): Promise<User[]> {
+    //debugger;
+    return db
+      .collection(this.COLLECTION_NAME)
+      .get()
+      .then((snap) => {
+        const users = snap.docs.map((doc) => doc.data() as User);
+        return Promise.resolve(users);
+      });
   }
 }

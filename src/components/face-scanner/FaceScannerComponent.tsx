@@ -27,11 +27,13 @@ export default class FaceScannerComponent extends React.Component<
     this.state = {};
   }
 
-  setPreview(container: any) {
+  setPreview(container: HTMLDivElement) {
+    console.log("on Change Container", container);
     if (container?.clientWidth > 0) {
       console.log(
-        "on Change Container",
+        "width:",
         container.clientWidth,
+        "height:",
         container.clientHeight
       );
       this.cameraPreviewOpts.height = container.clientHeight;
@@ -42,7 +44,6 @@ export default class FaceScannerComponent extends React.Component<
 
   componentDidMount() {
     console.log(this.TAG, "componentDidMount", this.container.clientWidth);
-
   }
 
   componentDidUpdate() {
@@ -54,7 +55,7 @@ export default class FaceScannerComponent extends React.Component<
       <div
         id="cameraPreview"
         className="cameraPreview"
-        ref={(el) => this.setPreview(el)}
+        ref={(el: HTMLDivElement) => this.setPreview(el)}
       ></div>
     );
   }

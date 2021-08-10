@@ -6,20 +6,38 @@ import {
   IonCardHeader,
   IonRow,
   IonGrid,
+  IonModal,
 } from "@ionic/react";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useHistory } from "react-router";
 import "./HomeComponent.css";
+import FaceScannerComponent from '../face-scanner/FaceScannerComponent';
 interface IProps {}
 
 const HomeComponent: FC<IProps> = (props) => {
-  const history = useHistory()
+  const history = useHistory();
+  const [showModal,setShowModal] = useState(false)
+
+  const closeModal = () => {
+    setShowModal(false)
+  };
+
   const onFaceScan = async () => {
-    console.log("on go to photo")
-    history.push("/photo")
+    //console.log("on go to photo");
+    setShowModal(true)
+   // history.push("/photo");
   };
   return (
     <div className="container">
+      <IonModal
+        isOpen={showModal}
+        cssClass="my-custom-class"
+        showBackdrop={true}
+      >
+        <FaceScannerComponent
+          closeAction={closeModal}
+        ></FaceScannerComponent>
+      </IonModal>
       <IonGrid>
         <IonRow>
           <IonCol>

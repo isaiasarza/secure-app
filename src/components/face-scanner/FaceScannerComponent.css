@@ -1,0 +1,7 @@
+.cameraPreview{
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    top: 5%;
+    left: 5%;
+}

@@ -122,9 +122,9 @@ export default class ImageInputComponent extends React.Component<
               {!!match && !!match[i] ? (
                 <p
                   style={{
-                    backgroundColor: "blue",
+                    backgroundColor: "var(--ion-color-secondary)",
                     border: "solid",
-                    borderColor: "blue",
+                    borderColor: "var(--ion-color-secondary)",
                     width: _W,
                     marginTop: 0,
                     color: "#fff",

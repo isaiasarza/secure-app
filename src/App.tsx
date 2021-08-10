@@ -31,6 +31,7 @@ import { UserContextService } from "./service/user-context/user-context.service"
 import HomePage from "./pages/home/HomePage";
 import ImageInputPage from "./pages/face-api-tutorial/ImageInputPage";
 import { loadModels } from "./service/face-api/face-api.service";
+import FaceScannerComponent from './components/face-scanner/FaceScannerComponent';
 
 const App: React.FC = () => {
   const [userContextService] = useState<UserContextService>(
@@ -55,11 +56,11 @@ const App: React.FC = () => {
           <Route exact path="/register">
             <RegisterPage />
           </Route>
-          <Route
+          {/* <Route
             exact
             path="/photo"
-            render={(routeProps) => <ImageInputPage {...routeProps} />}
-          />
+            render={(routeProps) => <FaceScannerComponent {...routeProps} />}
+          /> */}
           <Route
             exact
             path="/home"

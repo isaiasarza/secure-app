@@ -1,5 +1,7 @@
 {
   "name": "secure-app",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "react"
 }

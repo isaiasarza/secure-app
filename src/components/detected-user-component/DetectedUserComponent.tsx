@@ -1,62 +1,35 @@
 import {
-  IonCol,
   IonGrid,
-  IonRow,
-  IonLabel,
-  IonIcon,
-  IonItem,
-  IonCardContent,
-} from "@ionic/react";
-import React, { FC, useState } from "react";
-import { User } from "../../model/user";
-import "./ProfileComponent.css";
-import {
-  injector,
-  CloudFilesServiceToken,
-  UserServiceToken,
-} from "../../injector/injector";
-import {
-  IonInput,
   IonCard,
   IonCardHeader,
+  IonRow,
+  IonCol,
   IonCardSubtitle,
+  IonIcon,
+  IonCardContent,
+  IonItem,
+  IonLabel,
+  IonInput,
 } from "@ionic/react";
-
-import {  close } from "ionicons/icons";
-import { CloudFilesService } from "../../service/cloud-files/cloud-files.service";
-import { UserService } from "../../service/user/user.service";
-import SelfieComponent from '../selfie/SelfieComponent';
+import { close } from "ionicons/icons";
+import React, { FC } from "react";
+import { User } from "../../model/user";
+import SelfieComponent from "../selfie/SelfieComponent";
 
 interface IProps {
   user: User;
   closeAction: Function;
 }
 
-const ProfileComponent: FC<IProps> = (props) => {
-  const [cloudFilesService] = useState<CloudFilesService>(
-    injector.get(CloudFilesServiceToken)
-  );
-  const [userService] = useState<UserService>(injector.get(UserServiceToken));
-  const handler = async (webPath: string, fileName: string) => {
-    const res = await fetch(webPath);
-    const blob = await res.blob();
-    userService.setSelfie(props.user, fileName, blob);
-  };
-  
-
+const DetectedUserComponent: FC<IProps> = (props) => {
+  const handler = async (webPath: string, fileName: string) => {};
   return (
     <IonGrid>
       <IonCard>
         <IonCardHeader>
           <IonRow>
             <IonCol size="11">
-              <IonCardSubtitle>Mis Datos Personales</IonCardSubtitle>
-            </IonCol>
-            <IonCol size="1">
-              <IonIcon
-                onClick={() => props.closeAction()}
-                icon={close}
-              ></IonIcon>
+              <IonCardSubtitle>Usuario Detectado</IonCardSubtitle>
             </IonCol>
           </IonRow>
         </IonCardHeader>
@@ -64,9 +37,18 @@ const ProfileComponent: FC<IProps> = (props) => {
           <IonRow>
             <IonCol size="1"></IonCol>
             <IonCol size="10">
-              <SelfieComponent readonly={false} user={props.user} handler={handler}></SelfieComponent>
+              <SelfieComponent
+                user={props.user}
+                readonly={true}
+                handler={handler}
+              ></SelfieComponent>
             </IonCol>
-            <IonCol size="1"></IonCol>
+            <IonCol size="1">
+              <IonIcon
+                onClick={() => props.closeAction()}
+                icon={close}
+              ></IonIcon>
+            </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
@@ -119,4 +101,4 @@ const ProfileComponent: FC<IProps> = (props) => {
   );
 };
 
-export default ProfileComponent;
+export default DetectedUserComponent;

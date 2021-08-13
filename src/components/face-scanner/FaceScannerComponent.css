@@ -1,7 +1,30 @@
 .cameraPreview{
     position: absolute;
     width: 90%;
-    height: 90%;
+    height: 80%;
     top: 5%;
     left: 5%;
 }
+
+.buttons{
+    position: absolute;
+    width: 90%;
+    height: 20%;
+    top: 80%;
+    left: 5%;
+}
+
+.preview-container{
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.canvas{
+    position: absolute;
+}
+
+.box{
+    position: absolute;
+}
+

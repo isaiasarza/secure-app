@@ -112,7 +112,7 @@ const RegisterComponent: FC<IProps> = (props) => {
         <IonCardContent>
           <IonLoading isOpen={showLoading} message={"Please wait..."} />
           <div>
-            <SelfieComponent user={user} handler={handler}></SelfieComponent>
+            <SelfieComponent readonly={false} user={user} handler={handler}></SelfieComponent>
           </div>
           <p>{errors.webPath?.message}</p>
           <p>{errors.descriptors?.message}</p>

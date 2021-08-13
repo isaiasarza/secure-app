@@ -30,6 +30,28 @@ export async function getFullFaceDescription(blob: any, inputSize = 512) {
   return fullDesc;
 }
 
+export async function getFullFaceDescription2(input: any, inputSize = 512) {
+  console.log("input", input);
+  // tiny_face_detector options
+  let scoreThreshold = 0.5;
+  const OPTION = new faceapi.TinyFaceDetectorOptions({
+    inputSize,
+    scoreThreshold,
+  });
+  const useTinyModel = true;
+
+  // fetch image to api
+  //let img = await faceapi.fetchImage(blob);
+
+  // detect all faces and generate full description from image
+  // including landmark and descriptor of each face
+  let fullDesc = await faceapi
+    .detectAllFaces(input, OPTION)
+    .withFaceLandmarks(useTinyModel)
+    .withFaceDescriptors();
+  return fullDesc;
+}
+
 const maxDescriptorDistance = 0.5;
 export async function createMatcher(faceProfile: User[]) {
   // Create labeled descriptors of member from profile
@@ -38,6 +60,7 @@ export async function createMatcher(faceProfile: User[]) {
     return {
       firstname: user.firstname,
       lastname: user.lastname,
+      uid: user.uid,
       descriptors: [user.descriptors]
     }
   });
@@ -45,7 +68,7 @@ export async function createMatcher(faceProfile: User[]) {
   let labeledDescriptors = filtered.map(
     (member) =>
       new faceapi.LabeledFaceDescriptors(
-        member.firstname + " " + member.lastname,
+        member.uid,
         member.descriptors.map(
           (descriptor: any) => new Float32Array(descriptor)
         ) 

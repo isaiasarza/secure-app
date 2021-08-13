@@ -1,5 +1,6 @@
 import { User } from "../../model/user";
 import { UserService } from "./user.service";
+
 export class UserTestImpService extends UserService {
   private readonly user = {
     cuil_cuit: "2032111110",
@@ -33,15 +34,18 @@ export class UserTestImpService extends UserService {
   }
 
   public async getByUID(uid: string): Promise<User> {
-  
-
     return Promise.resolve(this.user);
   }
   public delete(email: string): Promise<any> {
     return Promise.resolve();
   }
 
-  public getAllUsers(): Promise<User[]> {
-    return Promise.resolve([this.user]);
+  public getAllUsers(): Promise<any[]> {
+    return fetch("assets/data/users.json").then(data => {
+     const users = data.json();
+      console.log("getAllUsers", users);
+      if (!users) return Promise.reject("error ajksdf");
+      return Promise.resolve(users);
+    });
   }
 }

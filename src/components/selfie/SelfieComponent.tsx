@@ -14,6 +14,7 @@ import { presentErrorToast } from "../../utils/toast";
 interface IProps {
   user: User | null;
   handler: Function;
+  readonly: boolean;
 }
 
 const SelfieComponent: FC<IProps> = (props) => {
@@ -47,7 +48,9 @@ const SelfieComponent: FC<IProps> = (props) => {
   return (
     <div className="avatar-container">
       <div className="avatar">
-        {props.user?.local_selfie_url?.length || photo?.webviewPath?.length ? (
+        {props.user?.local_selfie_url?.length ||
+        photo?.webviewPath?.length ||
+        props.user?.selfie_url?.length ? (
           <div className="selfie">
             <img
               alt=""
@@ -56,6 +59,8 @@ const SelfieComponent: FC<IProps> = (props) => {
                   ? props.user?.local_selfie_url
                   : photo?.webviewPath?.length
                   ? photo?.webviewPath
+                  : props.user?.selfie_url?.length
+                  ? props.user?.selfie_url
                   : ""
               }
             />
@@ -67,7 +72,11 @@ const SelfieComponent: FC<IProps> = (props) => {
         )}
       </div>
       <div className="avatar-button">
-        <IonFabButton size="small" onClick={() => takePicture()}>
+        <IonFabButton
+          hidden={props.readonly}
+          size="small"
+          onClick={() => takePicture()}
+        >
           <IonIcon icon={camera}></IonIcon>
         </IonFabButton>
       </div>

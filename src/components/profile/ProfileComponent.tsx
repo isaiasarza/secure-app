@@ -12,7 +12,6 @@ import { User } from "../../model/user";
 import "./ProfileComponent.css";
 import {
   injector,
-  CloudFilesServiceToken,
   UserServiceToken,
 } from "../../injector/injector";
 import {
@@ -23,7 +22,6 @@ import {
 } from "@ionic/react";
 
 import {  close } from "ionicons/icons";
-import { CloudFilesService } from "../../service/cloud-files/cloud-files.service";
 import { UserService } from "../../service/user/user.service";
 import SelfieComponent from '../selfie/SelfieComponent';
 
@@ -33,9 +31,6 @@ interface IProps {
 }
 
 const ProfileComponent: FC<IProps> = (props) => {
-  const [cloudFilesService] = useState<CloudFilesService>(
-    injector.get(CloudFilesServiceToken)
-  );
   const [userService] = useState<UserService>(injector.get(UserServiceToken));
   const handler = async (webPath: string, fileName: string) => {
     const res = await fetch(webPath);

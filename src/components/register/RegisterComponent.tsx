@@ -2,7 +2,6 @@ import React, { FC, useState } from "react";
 import {
   IonButton,
   IonLoading,
-  useIonLoading,
   useIonToast,
 } from "@ionic/react";
 import { User } from "../../model/user";

@@ -4,18 +4,14 @@ import {
   CameraPreviewOptions,
 } from "@capacitor-community/camera-preview";
 import {
-  IonContent,
-  IonPage,
-  withIonLifeCycle,
+
   IonButton,
-  IonGrid,
   IonRow,
   IonCol,
 } from "@ionic/react";
 import "./FaceScannerComponent.css";
-import { scan, thumbsDown } from "ionicons/icons";
+import { scan } from "ionicons/icons";
 import * as faceapi from "face-api.js";
-import { detectAllFaces, detectSingleFace } from "face-api.js";
 import {
   createMatcher,
   getFullFaceDescription2,
@@ -180,12 +176,6 @@ export default class FaceScannerComponent extends React.Component<
                 <IonIcon icon={scan}></IonIcon>
               </IonButton>
             </IonCol>
-
-            {/* <IonCol size="auto" className="ion-justify-content-center">
-              <IonButton color="primary" onClick={this.onScanFace}>
-                <IonIcon icon={scan}></IonIcon>
-              </IonButton>
-            </IonCol> */}
           </IonRow>
         </div>
       </div>

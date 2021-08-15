@@ -1,9 +1,16 @@
 /* Ionic Variables and Theming. For more info, please see:
 http://ionicframework.com/docs/theming/ */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500&display=swap');
+
 .my-custom-class .modal-wrapper {
 
   height: 80%!important;
   width: 90%!important;
+}
+
+@font-face {
+  font-family: 'OpenSans-Regular';
+  src: local('OpenSans-Regular'), url(../fonts/open-sans/OpenSans-Regular.ttf) format('truetype');
 }
 /** Ionic CSS Variables **/
 :root {
@@ -237,4 +244,20 @@ http://ionicframework.com/docs/theming/ */
   }
 
   
+
+  
 }
+
+* {
+  font-family: 'OpenSans-Regular' !important;
+}
+
+ion-item {
+  --color: var(--ion-color-background-contrast);
+}
+
+ion-card-subtitle{
+  --color: var(--ion-color-background-contrast);
+}
+
+

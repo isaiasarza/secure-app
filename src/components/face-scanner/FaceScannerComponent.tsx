@@ -3,12 +3,7 @@ import {
   CameraPreview,
   CameraPreviewOptions,
 } from "@capacitor-community/camera-preview";
-import {
-
-  IonButton,
-  IonRow,
-  IonCol,
-} from "@ionic/react";
+import { IonButton, IonRow, IonCol, IonProgressBar } from "@ionic/react";
 import "./FaceScannerComponent.css";
 import { scan } from "ionicons/icons";
 import * as faceapi from "face-api.js";
@@ -19,9 +14,12 @@ import {
 } from "../../service/face-api/face-api.service";
 import { UserService } from "../../service/user/user.service";
 import { injector, UserServiceToken } from "../../injector/injector";
-import { IonIcon } from "@ionic/react";
+import { IonIcon, IonContent } from "@ionic/react";
 import { User } from "../../model/user";
-import DetectedUserComponent from '../detected-user-component/DetectedUserComponent';
+import DetectedUserComponent, {
+  DetectionTypeEnum,
+} from "../detected-user/DetectedUserComponent";
+import { number } from "yup";
 export interface IAppProps {
   closeAction: Function;
 }
@@ -33,9 +31,10 @@ export interface IAppState {
   userService: UserService;
   faceMatcher: any;
   users: any;
-  match: any;
-  detectedUser: User | null;
+  detectedUser?: User;
   scanning: boolean;
+  scanningProgress: number;
+  detectionType?: DetectionTypeEnum;
 }
 
 export default class FaceScannerComponent extends React.Component<
@@ -44,7 +43,7 @@ export default class FaceScannerComponent extends React.Component<
 > {
   private cameraPreviewOpts: CameraPreviewOptions = {
     className: "preview-container",
-    parent: "cameraPreview",
+    parent: "camera-preview",
 
     position: "front",
   };
@@ -53,14 +52,14 @@ export default class FaceScannerComponent extends React.Component<
   constructor(props: IAppProps) {
     super(props);
     this.state = {
-      detectedUser: null,
+      detectedUser: undefined,
       users: null,
       faceMatcher: null,
       ref: null,
       preview: null,
       detections: null,
-      match: null,
       scanning: false,
+      scanningProgress: 0,
       userService: injector.get(UserServiceToken) as UserService,
     };
   }
@@ -77,11 +76,64 @@ export default class FaceScannerComponent extends React.Component<
   };
 
   closeAction = async () => {
-    this.setState({match: null, detectedUser: null, scanning: false, detections: null})
-  }
+    this.setState({
+      detectedUser: undefined,
+      scanning: false,
+      detections: null,
+      detectionType: undefined,
+    });
+  };
+
+  matchFace = async (
+    video: HTMLVideoElement,
+    displaySize: any
+  ): Promise<void> => {
+    let x: number = 0;
+    const refreshIntervalId = setInterval(async () => {
+      x++;
+      this.setState({scanningProgress: x/10})
+      console.log("tick", x);
+      await loadModels();
+      const detectionsWithLandmarks = await getFullFaceDescription2(video);
+      const resizedDetections = faceapi.resizeResults(
+        detectionsWithLandmarks,
+        displaySize
+      );
+      console.log("resizedDetections", resizedDetections);
+      if (x === 10 && (!resizedDetections || resizedDetections.length === 0)) {
+        clearInterval(refreshIntervalId);
+        this.setState({ detectionType: DetectionTypeEnum.UNKNOWN });
+        return Promise.reject();
+      }
+      if (resizedDetections.length > 0) {
+        this.setState({ detections: resizedDetections[0].detection, scanningProgress: 0.9 });
+        let match = await detectionsWithLandmarks.map((a: any) => {
+          console.log("descriptor length", a.descriptor.length);
+          return this.state.faceMatcher.findBestMatch(a.descriptor);
+        });
+        if (match.length > 0) {
+          console.log("match label", match[0]._label);
+          const user = this.state.users.find(
+            (u: any) => u.uid === match[0]._label
+          );
+          if (user?.uid) {
+            console.log("user finded", user);
+            this.setState({
+              detectedUser: user,
+              detectionType: DetectionTypeEnum.RELIABLE,
+              scanning: false,
+              scanningProgress: 1,
+            });
+          }
+        }
+        clearInterval(refreshIntervalId);
+        return Promise.resolve();
+      }
+    }, 2000);
+  };
 
   onScanFace = async () => {
-    this.setState({scanning: true})
+    this.setState({ scanning: true });
     const video = this.container?.childNodes[0] as HTMLVideoElement;
     console.log(
       video.offsetHeight,
@@ -96,33 +148,7 @@ export default class FaceScannerComponent extends React.Component<
       width: video.offsetWidth,
       height: video.offsetHeight,
     };
-    const refreshIntervalId = setInterval(async () => {
-      await loadModels();
-      const detectionsWithLandmarks = await getFullFaceDescription2(video);
-      const resizedDetections = faceapi.resizeResults(
-        detectionsWithLandmarks,
-        displaySize
-      );
-      console.log("resizedDetections", resizedDetections);
-      if (resizedDetections.length > 0) {
-        this.setState({ detections: resizedDetections[0].detection });
-        let match = await detectionsWithLandmarks.map((a: any) => {
-          console.log("descriptor length", a.descriptor.length);
-          return this.state.faceMatcher.findBestMatch(a.descriptor);
-        });
-        if (match.length > 0) {
-          console.log("match label", match[0]._label);
-          const user = this.state.users.find(
-            (u: any) => u.uid === match[0]._label
-          );
-          if(user?.uid){
-            console.log("user finded", user);
-            this.setState({detectedUser: user, match: match, scanning: false})
-          }
-        }
-        clearInterval(refreshIntervalId);
-      }
-    }, 100);
+    await this.matchFace(video, displaySize);
   };
 
   componentWillMount = async () => {
@@ -144,41 +170,59 @@ export default class FaceScannerComponent extends React.Component<
   }
   public render() {
     return (
-      <div>
-        <div
-          id="cameraPreview"
-          className="cameraPreview"
-          hidden={this.state.detectedUser != null}
-          ref={(el: HTMLDivElement) => (this.container = el)}
-        ></div>
-        {this.state.detectedUser != null ? (
-          <DetectedUserComponent user={this.state.detectedUser} closeAction={this.closeAction}></DetectedUserComponent>
-        ) : ''}
-        {this.state.detections && this.state.detectedUser == null ? (
+      <IonContent>
+        <div>
+          {this.state.scanning === true ? 
+          <div className="progress-bar">
+            <IonProgressBar value={this.state.scanningProgress} buffer={this.state.scanningProgress}></IonProgressBar>
+          </div>
+          : ''}
           <div
-            className="box"
-            style={{
-              position: "absolute",
-              border: "solid",
-              borderColor: "var(--ion-color-secondary)",
-              height: this.state.detections.box.height,
-              width: this.state.detections.box.width,
-              transform: `translate(${this.state.detections.box._x}px,${this.state.detections.box._y}px)`,
-            }}
+            id="camera-preview"
+            className="camera-preview"
+            hidden={this.state.detectedUser != null}
+            ref={(el: HTMLDivElement) => (this.container = el)}
           ></div>
-        ) : (
-          ""
-        )}
-        <div className="buttons">
-          <IonRow className="ion-justify-content-center">
-            <IonCol size="auto" className="ion-justify-content-center">
-              <IonButton disabled={this.state.scanning || this.state.detectedUser != null} color="primary" onClick={this.onScanFace}>
-                <IonIcon icon={scan}></IonIcon>
-              </IonButton>
-            </IonCol>
-          </IonRow>
+          {this.state.detectionType != null ? (
+            <DetectedUserComponent
+              detectionType={this.state.detectionType}
+              user={this.state.detectedUser}
+              closeAction={this.closeAction}
+            ></DetectedUserComponent>
+          ) : (
+            ""
+          )}
+          {this.state.detections && this.state.detectedUser == null ? (
+            <div
+              className="box"
+              style={{
+                position: "absolute",
+                border: "solid",
+                borderColor: "var(--ion-color-secondary)",
+                height: this.state.detections.box.height,
+                width: this.state.detections.box.width,
+                transform: `translate(${this.state.detections.box._x}px,${this.state.detections.box._y}px)`,
+              }}
+            ></div>
+          ) : (
+            ""
+          )}
+          <div className="buttons">
+            <IonRow className="ion-justify-content-center">
+              <IonCol size="auto" className="ion-justify-content-center">
+                <IonButton
+                  disabled={this.state.scanning}
+                  hidden={this.state.detectedUser != null}
+                  color="primary"
+                  onClick={this.onScanFace}
+                >
+                  <IonIcon icon={scan}></IonIcon>
+                </IonButton>
+              </IonCol>
+            </IonRow>
+          </div>
         </div>
-      </div>
+      </IonContent>
     );
   }
 }

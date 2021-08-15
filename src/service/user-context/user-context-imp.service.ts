@@ -7,9 +7,9 @@ export class UserContextImpService extends UserContextService {
     new BehaviorSubject<User | null>(null);
   public userSelfie: BehaviorSubject<Blob | null> =
     new BehaviorSubject<any | null>(null);
-  public getCurrentUser(): User {
-    if (!this.currentUser.value)
-      throw new Error("Ha ocurrido un error, no hay usuario ");
+  public getCurrentUser(): User | null {
+   /*  if (!this.currentUser.value)
+      throw new Error("Ha ocurrido un error, no hay usuario "); */
     return this.currentUser.value;
   }
   public setCurrentUser(user: User) {

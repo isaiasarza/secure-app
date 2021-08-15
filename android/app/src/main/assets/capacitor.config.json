@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "secure-app",
+	"webDir": "build",
+	"bundledWebRuntime": false
+}

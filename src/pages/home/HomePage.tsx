@@ -73,51 +73,17 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
     if (!userContextService.currentUser.observed)
       this.subscription = userContextService.currentUser.subscribe((user) => {
         console.log("current user", user);
-      /*   setTimeout(() => { */
           if (user) {
             let state = { ...this.state };
             state.user = user;
             this.setState(state);
           }
-       /*  }, 500); */
       });
-    /*  userContextService.userSelfie.subscribe((selfie) => {
-      console.log("user selfie", selfie);
-      if (selfie) {
-        let state = { ...this.state };
-        state.selfie = 
-        this.setState(state);
-      }
-    }); */
   }
   
   componentDidUpdate() {
     console.log("componentDidUpdate")
   }
-  /* componentDidUpdate() {
-    console.log("componentDidUpdate")
-    const userContextService = this.state.userContextService;
-    if (userContextService.currentUser.closed) {
-      userContextService.currentUser.subscribe((user) => {
-        console.log("current user", user);
-        if (user) {
-          let state = { ...this.state };
-          state.user = user;
-          this.setState(state);
-        }
-      });
-    }
-    if (userContextService.userSelfie.closed) {
-      userContextService.userSelfie.subscribe((selfie) => {
-        console.log("user selfie", selfie);
-        if (selfie) {
-          let state = { ...this.state };
-          state.selfie = URL.createObjectURL(selfie);
-          this.setState(state);
-        }
-      });
-    }
-  }*/
 
   componentWillUnmount() {
     console.log("componentWillUnmount");

@@ -9,6 +9,7 @@ import {
 import { UserService } from "../user/user.service";
 import { UserContextService } from "../user-context/user-context.service";
 
+
 export class AuthFirebaseImp extends AuthService {
   private userService: UserService = injector.get(UserServiceToken);
   private userContextService: UserContextService = injector.get(
@@ -31,10 +32,15 @@ export class AuthFirebaseImp extends AuthService {
     return Promise.resolve(user);
   }
 
-  public register(email: string, password: string, user: User): Promise<User> {
+  public register(email: string, password: string, user: User, selfie?:Blob): Promise<User> {
     return auth.createUserWithEmailAndPassword(email, password).then((data) => {
+      
       if (!data?.user?.uid) return Promise.reject("Error al crear el usuario");
-      return this.userService.add(data.user?.uid, user);
+      return this.userService.add(data.user?.uid, user, selfie)
+      .catch((error) => {
+        // borrar cuenta
+        return Promise.reject(error)
+      });
     });
   }
 

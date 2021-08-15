@@ -8,21 +8,29 @@ import {
   IonTextarea,
 } from "@ionic/react";
 import SelfieComponent from "../selfie/SelfieComponent";
-import { IonButton } from '@ionic/react';
+import { IonButton } from "@ionic/react";
 
 interface IProps {}
 
 const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
+  const handler = async (webPath: string, fileName: string) => {};
   return (
     <div>
       <IonRow className="ion-padding-top">
         <IonCol size="1"></IonCol>
         <IonCol size="10">
-          {/* <SelfieComponent
-            user={props.user}
+          <SelfieComponent
+            user={{
+              firstname: "",
+              lastname: "",
+              email: "",
+              role: "",
+              cuil_cuit: "",
+              dni: "",
+            }}
             readonly={true}
             handler={handler}
-          ></SelfieComponent> */}
+          ></SelfieComponent>
         </IonCol>
         <IonCol size="1"></IonCol>
       </IonRow>

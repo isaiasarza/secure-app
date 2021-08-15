@@ -81,6 +81,7 @@ export default class FaceScannerComponent extends React.Component<
       scanning: false,
       detections: null,
       detectionType: undefined,
+      scanningProgress: 0,
     });
   };
 
@@ -212,7 +213,7 @@ export default class FaceScannerComponent extends React.Component<
               <IonCol size="auto" className="ion-justify-content-center">
                 <IonButton
                   disabled={this.state.scanning}
-                  hidden={this.state.detectedUser != null}
+                  hidden={this.state.detectionType !== undefined}
                   color="primary"
                   onClick={this.onScanFace}
                 >

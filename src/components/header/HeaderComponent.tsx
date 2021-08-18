@@ -7,7 +7,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import React, { FC } from "react";
-import { HeaderOption } from "../../model/headerOption";
+import { HeaderOption } from "../../model/header.option";
 interface IProps {
   options: HeaderOption[];
 }

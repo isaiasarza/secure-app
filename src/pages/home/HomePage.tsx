@@ -2,7 +2,7 @@ import * as React from "react";
 import { UserContextService } from "../../service/user-context/user-context.service";
 import { injector, UserContextServiceToken } from "../../injector/injector";
 import { User } from "../../model/user";
-import { HeaderOption } from "../../model/headerOption";
+import { HeaderOption } from "../../model/header.option";
 import { logOut, personOutline } from "ionicons/icons";
 import {
   IonPage,

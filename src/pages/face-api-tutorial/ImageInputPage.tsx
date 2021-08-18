@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IonPage, IonContent } from '@ionic/react';
-import { HeaderOption } from "../../model/headerOption";
+import { HeaderOption } from "../../model/header.option";
 import { logOut } from "ionicons/icons";
 import { RouteComponentProps } from "react-router";
 import HeaderComponent from '../../components/header/HeaderComponent';

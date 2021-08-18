@@ -54,7 +54,7 @@ const LoginComponent: FC<IProps> = (props) => {
   return (
     <IonCard>
       <IonImg src="/assets/images/security-app-logo.png"></IonImg>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form id="login-form" onSubmit={handleSubmit(onSubmit)}>
         <IonCardContent>
           <FormInputWrapper
             position={"stacked"}

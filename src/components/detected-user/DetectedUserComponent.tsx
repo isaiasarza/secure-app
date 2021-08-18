@@ -178,7 +178,10 @@ const DetectedUserComponent: FC<IProps> = (props) => {
               ""
             )}
           
-          {props.detectionType === DetectionTypeEnum.UNKNOWN ? <ReportSuspiciousPersonComponent></ReportSuspiciousPersonComponent> : '' }
+          {props.detectionType === DetectionTypeEnum.UNKNOWN ? 
+          <div className="suspicious-person">
+            <ReportSuspiciousPersonComponent></ReportSuspiciousPersonComponent>
+          </div> : '' }
           </div>
         </IonCardContent>
       </IonCard>

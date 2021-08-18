@@ -1,9 +1,5 @@
 import React, { FC, useState } from "react";
-import {
-  IonButton,
-  IonLoading,
-  useIonToast,
-} from "@ionic/react";
+import { IonButton, IonLoading, useIonToast } from "@ionic/react";
 import { User } from "../../model/user";
 import { IonCard, IonCardContent } from "@ionic/react";
 import { useHistory } from "react-router";
@@ -18,7 +14,7 @@ import FormInputWrapper from "../formInputWrapper/formInputWrapper";
 import { AuthService } from "../../service/auth/auth.service";
 import { injector, AuthServiceToken } from "../../injector/injector";
 import SelfieComponent from "../selfie/SelfieComponent";
-import { UserRegisterForm } from './validations/RegisterValidations';
+import { UserRegisterForm } from "./validations/RegisterValidations";
 import {
   getFullFaceDescription,
   loadModels,
@@ -29,8 +25,8 @@ const RegisterComponent: FC<IProps> = (props) => {
   const history = useHistory();
   const [present] = useIonToast();
   const [showLoading, setShowLoading] = useState(false);
-  const [blob,setBlob] = useState<Blob>()
-  const [descriptorsError, setDescriptorsError] = useState(false)
+  const [blob, setBlob] = useState<Blob>();
+  const [descriptorsError, setDescriptorsError] = useState(false);
   const [user, setUser] = useState<User>({
     firstname: "",
     lastname: "",
@@ -52,15 +48,15 @@ const RegisterComponent: FC<IProps> = (props) => {
     setValue("webPath", webPath, { shouldValidate: true });
     const res = await fetch(webPath);
     const _blob = await res.blob();
-    setBlob(_blob)
+    setBlob(_blob);
     setShowLoading(true);
     await loadModels();
     const fullDesc = await getFullFaceDescription(webPath);
     if (!!fullDesc) {
-      const descriptors: number[] = Array.from(fullDesc[0].descriptor)//.map((fd) => Array.from(fd.descriptor));
-      console.log("descriptors",descriptors)
-      if(descriptors.length <= 0){
-        setDescriptorsError(true)
+      const descriptors: number[] = Array.from(fullDesc[0].descriptor); //.map((fd) => Array.from(fd.descriptor));
+      console.log("descriptors", descriptors);
+      if (descriptors.length <= 0) {
+        setDescriptorsError(true);
       }
       setValue("descriptors", descriptors, { shouldValidate: true });
     }
@@ -74,10 +70,8 @@ const RegisterComponent: FC<IProps> = (props) => {
       role: "vigilant",
       cuil_cuit: data.cuil_cuit,
       dni: data.dni,
-      descriptors: data.descriptors
+      descriptors: data.descriptors,
     };
-
-   
 
     console.log("onSubmit", _user);
     setShowLoading(false);
@@ -107,11 +101,15 @@ const RegisterComponent: FC<IProps> = (props) => {
 
   return (
     <IonCard>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form id="registration-form" onSubmit={handleSubmit(onSubmit)}>
         <IonCardContent>
           <IonLoading isOpen={showLoading} message={"Please wait..."} />
           <div>
-            <SelfieComponent readonly={false} user={user} handler={handler}></SelfieComponent>
+            <SelfieComponent
+              readonly={false}
+              user={user}
+              handler={handler}
+            ></SelfieComponent>
           </div>
           <p>{errors.webPath?.message}</p>
           <p>{errors.descriptors?.message}</p>

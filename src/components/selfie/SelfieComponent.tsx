@@ -7,19 +7,27 @@ import {
 import { IonFabButton, IonIcon, useIonToast } from "@ionic/react";
 import { camera } from "ionicons/icons";
 import React, { FC, useState } from "react";
-import { User } from "../../model/user";
 import { UserPhoto } from "../../model/user.photo";
 import { presentErrorToast } from "../../utils/toast";
 
 interface IProps {
-  user: User | null;
+  /* user: User | null; */
   handler: Function;
   readonly: boolean;
+  selfieUrl: string;
 }
 
 const SelfieComponent: FC<IProps> = (props) => {
   const [photo, setPhoto] = useState<UserPhoto>();
   const [present] = useIonToast();
+
+  const getSelfieUrl = () => {
+    return photo?.webviewPath?.length
+      ? photo?.webviewPath
+      : props.selfieUrl.length
+      ? props.selfieUrl
+      : "";
+  };
 
   const takePicture = async () => {
     const image: Photo = await Camera.getPhoto({
@@ -37,30 +45,28 @@ const SelfieComponent: FC<IProps> = (props) => {
       );
       return;
     }
-    const fileName = props.user?.uid + "_selfie";
-    setPhoto({
-      filepath: fileName,
+    //const fileName = props.user?.uid + "_selfie";
+    await setPhoto({
+      filepath: "props.fileName",
       webviewPath: image.webPath,
     });
+    console.log("webviewPath", image.webPath);
+    console.log("photo", photo);
 
-    props.handler(image.webPath, fileName);
+    props.handler(image.webPath);
   };
   return (
     <div className="avatar-container">
       <div className="avatar">
-        {props.user?.local_selfie_url?.length ||
-        photo?.webviewPath?.length ||
-        props.user?.selfie_url?.length ? (
+        {props.selfieUrl?.length ? (
           <div className="selfie">
             <img
               alt=""
               src={
-                props.user?.local_selfie_url?.length
-                  ? props.user?.local_selfie_url
-                  : photo?.webviewPath?.length
+                photo?.webviewPath?.length
                   ? photo?.webviewPath
-                  : props.user?.selfie_url?.length
-                  ? props.user?.selfie_url
+                  : props.selfieUrl.length
+                  ? props.selfieUrl
                   : ""
               }
             />

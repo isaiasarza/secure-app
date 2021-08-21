@@ -15,7 +15,7 @@ interface IProps {
 const FormInputWrapper: FC<IProps> = (props) => {
   return (
     <IonItem>
-      <IonLabel position={props.position}>{props.label}</IonLabel>
+      <IonLabel className="ion-text-wrap" position={props.position}>{props.label}</IonLabel>
       <Controller
         control={props.control}
         name={props.name}

@@ -30,6 +30,7 @@ import { number } from "yup";
 import { presentErrorToast } from "../../utils/toast";
 export interface IAppProps {
   closeAction: Function;
+  user: User;
 }
 
 export interface IAppState {
@@ -217,7 +218,8 @@ export default class FaceScannerComponent extends React.Component<
           {this.state.detectionType != null ? (
             <DetectedUserComponent
               detectionType={this.state.detectionType}
-              user={this.state.detectedUser}
+              matchedUser={this.state.detectedUser}
+              user={this.props.user}
               closeAction={this.closeAction}
             ></DetectedUserComponent>
           ) : (
@@ -240,9 +242,10 @@ export default class FaceScannerComponent extends React.Component<
           )}
           <IonToast
             isOpen={this.state.noneFaceDetectedError === true}
+            duration={3000}
+            animated={true}
             onDidDismiss={() => {this.setState({noneFaceDetectedError: false})}}
             message="No se ha podido detectar ningún rostro. Por favor, acerquesé a la cámara y revise la iluminación del lugar antes de volver a intentar."
-           
           />
           <div className="buttons">
             <IonRow className="ion-justify-content-center">

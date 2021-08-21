@@ -7,8 +7,9 @@ import {
   IonInput,
   IonTextarea,
 } from "@ionic/react";
+import  moment from 'moment'
 import SelfieComponent from "../selfie/SelfieComponent";
-import { IonButton, IonLoading } from "@ionic/react";
+import { IonButton, IonLoading, IonGrid } from "@ionic/react";
 import FormInputWrapper from "../formInputWrapper/formInputWrapper";
 import { useForm, useFormState } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -17,59 +18,63 @@ import {
   getValidations,
   SuspiciousPersonForm,
 } from "./validations/RegisterValidations";
+import {
+  getFullFaceDescription,
+  loadModels,
+} from "../../service/face-api/face-api.service";
+import { ReportedPerson } from "../../model/reported.person";
+import { User } from "../../model/user";
+import { ReportService } from "../../service/report/report.service";
+import { injector, ReportServiceToken } from "../../injector/injector";
+import { Geolocation } from '@capacitor/geolocation';
 
-interface IProps {}
+interface IProps {
+  user: User;
+}
 
 const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
+  const TAG = "ReportSuspiciousPersonComponent";
+  const [reportService] = useState<ReportService>(
+    injector.get(ReportServiceToken)
+  );
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: getInitialValues(),
     mode: "all",
     resolver: yupResolver(getValidations()),
   });
+  const [blob, setBlob] = useState<Blob>();
+  const [descriptorsError, setDescriptorsError] = useState(false);
   const { isValid, errors } = useFormState({ control });
   const onSubmit = async (data: SuspiciousPersonForm) => {
-    /*  const _user: User = {
+    const reportedPerson: ReportedPerson = {
       firstname: data.firstname,
       lastname: data.lastname,
-      email: data.email,
-      role: "vigilant",
-      cuil_cuit: data.cuil_cuit,
       dni: data.dni,
-      descriptors: data.descriptors,
+      lat: "",
+      long: "",
+      date: moment().toISOString(),
+      time: moment().toISOString(),
+      description: data.reason,
+      reporterUid: props.user.uid || "",
+      reporterDni: props.user.dni,
+      reporterFirstname: props.user.firstname,
+      reporterLastname: props.user.lastname,
+      reporterSelfieUrl: props.user.selfie_url || "",
     };
+    const coordinates = await Geolocation.getCurrentPosition();
 
-    console.log("onSubmit", _user);
-    setShowLoading(false);
-    setUser(_user);
-    try {
-      const savedUser = await authService.register(
-        data.email,
-        data.password,
-        _user,
-        blob
-      );
-      console.log("savedUser", savedUser);
-      setShowLoading(false);
-      presentSuccessToast(
-        present,
-        "El usuario fue registrado de forma exitosa"
-      );
-      history.push("/home");
-    } catch (error) {
-      setShowLoading(false);
-      presentErrorToast(
-        present,
-        "No se pudo registrar al usuario, intente nuevamente"
-      );
-    } */
+    console.log('Current position:', coordinates);
+    reportService.add(reportedPerson, blob);
   };
-  const handler = async (webPath: string, fileName: string) => {
+  const handler = async (webPath: string) => {
     // const res = await fetch(webPath);
     // const blob = await res.blob();
+    const fileName = "";
+    console.log(TAG, "selfie handler", webPath, fileName);
     setValue("webPath", webPath, { shouldValidate: true });
     const res = await fetch(webPath);
-    /*const _blob = await res.blob();
-     setBlob(_blob);
+    const _blob = await res.blob();
+    setBlob(_blob);
     setShowLoading(true);
     await loadModels();
     const fullDesc = await getFullFaceDescription(webPath);
@@ -80,20 +85,23 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
         setDescriptorsError(true);
       }
       setValue("descriptors", descriptors, { shouldValidate: true });
-    } */
+    }
     setShowLoading(false);
   };
   const [showLoading, setShowLoading] = useState(false);
   return (
-
-      <form id="report-suspicious-person-form" onSubmit={handleSubmit(onSubmit)}>
+    <IonGrid style={{ width: "100%" }}>
+      <form
+        id="report-suspicious-person-form"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <IonLoading isOpen={showLoading} message={"Please wait..."} />
         <div>
-          {/* <SelfieComponent
-              readonly={false}
-              user={user}
-              handler={handler}
-            ></SelfieComponent> */}
+          <SelfieComponent
+            readonly={false}
+            selfieUrl={""}
+            handler={handler}
+          ></SelfieComponent>
         </div>
         <p>{errors.webPath?.message}</p>
         <p>{errors.descriptors?.message}</p>
@@ -125,6 +133,18 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
           <IonCol>
             <FormInputWrapper
               position={"stacked"}
+              name={"dni"}
+              type={"text"}
+              control={control}
+              label={"DNI"}
+            ></FormInputWrapper>
+            <p>{errors.dni?.message}</p>
+          </IonCol>
+        </IonRow>
+        <IonRow>
+          <IonCol>
+            <FormInputWrapper
+              position={"stacked"}
               name={"reason"}
               type={"text"}
               control={control}
@@ -140,6 +160,7 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
           Enviar Reporte
         </IonButton>
       </form>
+    </IonGrid>
   );
 };
 

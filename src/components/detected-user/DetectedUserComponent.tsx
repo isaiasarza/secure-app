@@ -13,7 +13,6 @@ import {
 } from "@ionic/react";
 import {
   alertCircleOutline,
-  checkmarkCircle,
   checkmarkCircleOutline,
   close,
   warningOutline,
@@ -24,7 +23,8 @@ import SelfieComponent from "../selfie/SelfieComponent";
 import "./DetectedUserComponent.css";
 import ReportSuspiciousPersonComponent from '../report-suspicious-person/ReportSuspiciousPersonComponent';
 interface IProps {
-  user?: User;
+  user: User;
+  matchedUser?: User;
   closeAction: Function;
   detectionType: DetectionTypeEnum;
 }
@@ -34,7 +34,10 @@ export enum DetectionTypeEnum {
   UNKNOWN = "UNKNOWN",
 }
 const DetectedUserComponent: FC<IProps> = (props) => {
-  const handler = async (webPath: string, fileName: string) => {};
+  const TAG = "DetectedUserComponent"
+  const handler = async (webPath: string, fileName: string) => {
+    console.log(TAG,"selfie handler", webPath, fileName)
+  };
   const getIcon = () => {
     switch(props.detectionType){
       case DetectionTypeEnum.RELIABLE:
@@ -109,13 +112,19 @@ const DetectedUserComponent: FC<IProps> = (props) => {
                 color={getIconColor()}
               ></IonIcon>
             </div>
-            {props.detectionType === DetectionTypeEnum.RELIABLE && props.user?.uid? (
+            {props.detectionType === DetectionTypeEnum.RELIABLE && props.matchedUser?.uid? (
               <div>
                 <IonRow className="ion-padding-top">
                   <IonCol size="1"></IonCol>
                   <IonCol size="10">
                     <SelfieComponent
-                      user={props.user}
+                      selfieUrl={
+                        props.matchedUser.local_selfie_url?.length
+                          ? props.matchedUser.local_selfie_url
+                          : props.matchedUser?.selfie_url?.length
+                          ? props.matchedUser.selfie_url
+                          : ""
+                      }
                       readonly={true}
                       handler={handler}
                     ></SelfieComponent>
@@ -127,7 +136,7 @@ const DetectedUserComponent: FC<IProps> = (props) => {
                     <IonItem>
                       <IonLabel position="stacked">Nombre</IonLabel>
                       <IonInput
-                        value={props.user.firstname}
+                        value={props.matchedUser.firstname}
                         disabled={true}
                       ></IonInput>
                     </IonItem>
@@ -136,7 +145,7 @@ const DetectedUserComponent: FC<IProps> = (props) => {
                     <IonItem>
                       <IonLabel position="stacked">Apellido</IonLabel>
                       <IonInput
-                        value={props.user.lastname}
+                        value={props.matchedUser.lastname}
                         disabled={true}
                       ></IonInput>
                     </IonItem>
@@ -147,7 +156,7 @@ const DetectedUserComponent: FC<IProps> = (props) => {
                     <IonItem>
                       <IonLabel position="stacked">DNI</IonLabel>
                       <IonInput
-                        value={props.user.dni}
+                        value={props.matchedUser.dni}
                         disabled={true}
                       ></IonInput>
                     </IonItem>
@@ -156,7 +165,7 @@ const DetectedUserComponent: FC<IProps> = (props) => {
                     <IonItem>
                       <IonLabel position="stacked">CUIL/CUIT</IonLabel>
                       <IonInput
-                        value={props.user.cuil_cuit}
+                        value={props.matchedUser.cuil_cuit}
                         disabled={true}
                       ></IonInput>
                     </IonItem>
@@ -167,7 +176,7 @@ const DetectedUserComponent: FC<IProps> = (props) => {
                     <IonItem>
                       <IonLabel position="stacked">Email</IonLabel>
                       <IonInput
-                        value={props.user.email}
+                        value={props.matchedUser.email}
                         disabled={true}
                       ></IonInput>
                     </IonItem>
@@ -180,7 +189,7 @@ const DetectedUserComponent: FC<IProps> = (props) => {
           
           {props.detectionType === DetectionTypeEnum.UNKNOWN ? 
           <div className="suspicious-person">
-            <ReportSuspiciousPersonComponent></ReportSuspiciousPersonComponent>
+            <ReportSuspiciousPersonComponent user={props.user}></ReportSuspiciousPersonComponent>
           </div> : '' }
           </div>
         </IonCardContent>

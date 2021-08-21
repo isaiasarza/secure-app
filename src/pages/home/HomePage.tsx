@@ -118,7 +118,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
                 </IonButtons>
               </IonToolbar>
             </IonHeader>
-            <HomeComponent></HomeComponent>
+            <HomeComponent user={this.state.user}></HomeComponent>
             <IonModal
               isOpen={showModal}
               cssClass="my-custom-class"

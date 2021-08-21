@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export interface Report{
     id: string;
     long: string;
@@ -5,5 +7,5 @@ export interface Report{
     description: string;
     date: string;
     time: string;
-    personUid?: string;
+    reporterData?: User;
 }

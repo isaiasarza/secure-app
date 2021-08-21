@@ -42,7 +42,7 @@ const RegisterComponent: FC<IProps> = (props) => {
     resolver: yupResolver(getValidations()),
   });
   const { isValid, errors } = useFormState({ control });
-  const handler = async (webPath: string, fileName: string) => {
+  const handler = async (webPath: string) => {
     // const res = await fetch(webPath);
     // const blob = await res.blob();
     setValue("webPath", webPath, { shouldValidate: true });
@@ -107,7 +107,7 @@ const RegisterComponent: FC<IProps> = (props) => {
           <div>
             <SelfieComponent
               readonly={false}
-              user={user}
+              selfieUrl={user.local_selfie_url?.length ? user.local_selfie_url : user?.selfie_url?.length ? user.selfie_url : ''}
               handler={handler}
             ></SelfieComponent>
           </div>

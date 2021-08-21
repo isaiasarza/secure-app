@@ -15,6 +15,8 @@ import { CloudFilesService } from "../service/cloud-files/cloud-files.service";
 import { CloudFilesTestImpService } from "../service/cloud-files/cloud-files.test.imp.service";
 import { CloudFilesFirebaseImpService } from "../service/cloud-files/cloud-files.firebase.imp.service";
 import { STRATEGY_TYPE } from "../config/injector.config";
+import { ReportService } from "../service/report/report.service";
+import { ReportTestImpService } from "../service/report/report.test.imp";
 export const AuthServiceToken = new InjectionToken<AuthService>(
   "AUTH_SERVICE_TOKEN"
 );
@@ -26,6 +28,10 @@ export const UserContextServiceToken = new InjectionToken<UserContextService>(
 );
 export const CloudFilesServiceToken = new InjectionToken<CloudFilesService>(
   "CLOUD_SERVICE_TOKEN"
+);
+
+export const ReportServiceToken = new InjectionToken<ReportService>(
+  "REPORT_SERVICE_TOKEN"
 );
 export const FIREBASE_STRATEGY = [
   { provide: AuthServiceToken, useClass: AuthFirebaseImp },
@@ -39,6 +45,7 @@ export const TEST_STRATEGY = [
   { provide: UserServiceToken, useClass: UserTestImpService },
   { provide: UserContextServiceToken, useClass: UserContextImpService },
   { provide: CloudFilesServiceToken, useClass: CloudFilesTestImpService },
+  { provide: ReportServiceToken, useClass: ReportTestImpService },
 ];
 export const injector: DependencyInjector = makeInjector(
   STRATEGY_TYPE === "TEST" ? TEST_STRATEGY : FIREBASE_STRATEGY

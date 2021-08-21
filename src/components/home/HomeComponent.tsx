@@ -12,7 +12,10 @@ import { FC, useState } from "react";
 import { useHistory } from "react-router";
 import "./HomeComponent.css";
 import FaceScannerComponent from '../face-scanner/FaceScannerComponent';
-interface IProps {}
+import { User } from "../../model/user";
+interface IProps {
+  user: User;
+}
 
 const HomeComponent: FC<IProps> = (props) => {
   const history = useHistory();
@@ -36,6 +39,7 @@ const HomeComponent: FC<IProps> = (props) => {
       >
         <FaceScannerComponent
           closeAction={closeModal}
+          user={props.user}
         ></FaceScannerComponent>
       </IonModal>
       <IonGrid>

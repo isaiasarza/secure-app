@@ -8,6 +8,7 @@ import { ReportService } from '../../service/report/report.service';
 import { injector, ReportServiceToken } from '../../injector/injector';
 import { ReportedPerson } from "../../model/reported.person";
 import ReportsComponent from "../../components/reports/ReportsComponent";
+import moment from "moment";
 
 export interface IAppProps {
     history: RouteComponentProps["history"];
@@ -49,7 +50,8 @@ export default class ReportsPage extends React.Component<IAppProps, IAppState> {
   }
 
   async componentDidMount(){
-      const reports = await this.state.reportService.get()
+      const reports: ReportedPerson[] = (await this.state.reportService.get())
+
       this.setState({reports: reports})
   }
 

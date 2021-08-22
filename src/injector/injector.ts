@@ -17,6 +17,9 @@ import { CloudFilesFirebaseImpService } from "../service/cloud-files/cloud-files
 import { STRATEGY_TYPE } from "../config/injector.config";
 import { ReportService } from "../service/report/report.service";
 import { ReportTestImpService } from "../service/report/report.test.imp";
+import { PositionLoggerService } from "../service/position-logger/position-logger.service";
+import { PositionLoggerTestImpService } from "../service/position-logger/position-logger.test.imp";
+import { PositionLoggerFirebaseImpService } from '../service/position-logger/position-logger.firebase.imp';
 export const AuthServiceToken = new InjectionToken<AuthService>(
   "AUTH_SERVICE_TOKEN"
 );
@@ -33,11 +36,18 @@ export const CloudFilesServiceToken = new InjectionToken<CloudFilesService>(
 export const ReportServiceToken = new InjectionToken<ReportService>(
   "REPORT_SERVICE_TOKEN"
 );
+
+export const PositionLoggerServiceToken =
+  new InjectionToken<PositionLoggerService>("POSITION_LOGGER_SERVICE_TOKEN");
 export const FIREBASE_STRATEGY = [
   { provide: AuthServiceToken, useClass: AuthFirebaseImp },
   { provide: UserServiceToken, useClass: UserFirebaseImpService },
   { provide: UserContextServiceToken, useClass: UserContextImpService },
   { provide: CloudFilesServiceToken, useClass: CloudFilesFirebaseImpService },
+  {
+    provide: PositionLoggerServiceToken,
+    useClass: PositionLoggerFirebaseImpService,
+  },
 ];
 
 export const TEST_STRATEGY = [
@@ -46,6 +56,10 @@ export const TEST_STRATEGY = [
   { provide: UserContextServiceToken, useClass: UserContextImpService },
   { provide: CloudFilesServiceToken, useClass: CloudFilesTestImpService },
   { provide: ReportServiceToken, useClass: ReportTestImpService },
+  {
+    provide: PositionLoggerServiceToken,
+    useClass: PositionLoggerTestImpService,
+  },
 ];
 export const injector: DependencyInjector = makeInjector(
   STRATEGY_TYPE === "TEST" ? TEST_STRATEGY : FIREBASE_STRATEGY

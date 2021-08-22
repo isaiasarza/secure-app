@@ -11,31 +11,39 @@ import {
 import { FC, useState } from "react";
 import { useHistory } from "react-router";
 import "./HomeComponent.css";
-import FaceScannerComponent from '../face-scanner/FaceScannerComponent';
+import FaceScannerComponent from "../face-scanner/FaceScannerComponent";
 import { User } from "../../model/user";
+import PositionLoggerComponent from "../position-logger/PositionLoggerComponent";
 interface IProps {
   user: User;
 }
 
 const HomeComponent: FC<IProps> = (props) => {
   const history = useHistory();
-  const [showModal,setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
 
   const closeModal = () => {
-    setShowModal(false)
+    setShowModal(false);
   };
+
+  const getPeriod = (minutes: number) => {
+    return minutes * 60000
+  }
 
   const onFaceScan = async () => {
     //console.log("on go to photo");
-    setShowModal(true)
-   // history.push("/photo");
+    setShowModal(true);
+    // history.push("/photo");
   };
 
-  const onViewReports = async() => {
-    history.push("/reports")
-  }
+  const onViewReports = async () => {
+    history.push("/reports");
+  };
   return (
     <div className="container">
+      <div hidden={true}>
+        <PositionLoggerComponent period={getPeriod(3)} user={props.user}></PositionLoggerComponent>
+      </div>
       <IonModal
         isOpen={showModal}
         cssClass="my-custom-class"

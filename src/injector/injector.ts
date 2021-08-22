@@ -20,6 +20,7 @@ import { ReportTestImpService } from "../service/report/report.test.imp";
 import { PositionLoggerService } from "../service/position-logger/position-logger.service";
 import { PositionLoggerTestImpService } from "../service/position-logger/position-logger.test.imp";
 import { PositionLoggerFirebaseImpService } from '../service/position-logger/position-logger.firebase.imp';
+import { ReportFirebaseImpService } from '../service/report/report.firebase.imp';
 export const AuthServiceToken = new InjectionToken<AuthService>(
   "AUTH_SERVICE_TOKEN"
 );
@@ -44,6 +45,7 @@ export const FIREBASE_STRATEGY = [
   { provide: UserServiceToken, useClass: UserFirebaseImpService },
   { provide: UserContextServiceToken, useClass: UserContextImpService },
   { provide: CloudFilesServiceToken, useClass: CloudFilesFirebaseImpService },
+  { provide: ReportServiceToken, useClass: ReportFirebaseImpService },
   {
     provide: PositionLoggerServiceToken,
     useClass: PositionLoggerFirebaseImpService,

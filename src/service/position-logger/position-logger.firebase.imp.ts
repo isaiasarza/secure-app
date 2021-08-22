@@ -9,17 +9,12 @@ export class PositionLoggerFirebaseImpService extends PositionLoggerService {
     return db.collection(this.COLLECTION_NAME).add(positionLog).then(() => Promise.resolve());
   }
   public get(): Promise<PositionLog[]> {
-    return fetch("assets/data/reports.json").then(async (data) => {
-      const logs: PositionLog[] = (await data.json()) as PositionLog[];
-      console.log("getPositionLogs", logs);
-      if (!logs) return Promise.reject("error ajksdf");
-      return db
+    return db
       .collection(this.COLLECTION_NAME)
       .get()
       .then((snap) => {
         const logs: PositionLog[] = snap.docs.map((doc) => doc.data() as PositionLog).sort((a, b) => moment(b.date).valueOf() - moment(a.date).valueOf());
         return Promise.resolve(logs);
       });
-    });
   }
 }

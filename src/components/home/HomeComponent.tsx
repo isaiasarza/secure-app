@@ -30,6 +30,10 @@ const HomeComponent: FC<IProps> = (props) => {
     setShowModal(true)
    // history.push("/photo");
   };
+
+  const onViewReports = async() => {
+    history.push("/reports")
+  }
   return (
     <div className="container">
       <IonModal
@@ -63,7 +67,7 @@ const HomeComponent: FC<IProps> = (props) => {
         </IonRow>
         <IonRow>
           <IonCol>
-            <IonCard>
+            <IonCard onClick={onViewReports}>
               <IonImg src="/assets/images/documento.png"></IonImg>
               <IonCardHeader color="primary">
                 <IonCardSubtitle>Reportes</IonCardSubtitle>

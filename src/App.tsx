@@ -32,6 +32,7 @@ import HomePage from "./pages/home/HomePage";
 import ImageInputPage from "./pages/face-api-tutorial/ImageInputPage";
 import { loadModels } from "./service/face-api/face-api.service";
 import FaceScannerComponent from './components/face-scanner/FaceScannerComponent';
+import ReportsPage from "./pages/reports/ReportsPage";
 
 const App: React.FC = () => {
   const [userContextService] = useState<UserContextService>(
@@ -67,6 +68,17 @@ const App: React.FC = () => {
             render={(routeProps) => {
               return userContextService.getCurrentUser() != null ? (
                 <HomePage {...routeProps} />
+              ) : (
+                <LoginPage />
+              );
+            }}
+          />
+          <Route
+            exact
+            path="/reports"
+            render={(routeProps) => {
+              return userContextService.getCurrentUser() != null ? (
+                <ReportsPage {...routeProps} />
               ) : (
                 <LoginPage />
               );

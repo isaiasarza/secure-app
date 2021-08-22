@@ -27,6 +27,8 @@ import { User } from "../../model/user";
 import { ReportService } from "../../service/report/report.service";
 import { injector, ReportServiceToken } from "../../injector/injector";
 import { Geolocation } from '@capacitor/geolocation';
+import { v4 as uuid } from 'uuid';
+
 
 interface IProps {
   user: User;
@@ -46,12 +48,17 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
   const [descriptorsError, setDescriptorsError] = useState(false);
   const { isValid, errors } = useFormState({ control });
   const onSubmit = async (data: SuspiciousPersonForm) => {
+    
+    const coordinates = await Geolocation.getCurrentPosition();
+
+    console.log('Current position:', coordinates);
     const reportedPerson: ReportedPerson = {
+      uuid: uuid(),
       firstname: data.firstname,
       lastname: data.lastname,
       dni: data.dni,
-      lat: "",
-      long: "",
+      lat: coordinates.coords.latitude,
+      long: coordinates.coords.longitude,
       date: moment().toISOString(),
       time: moment().toISOString(),
       description: data.reason,
@@ -61,9 +68,6 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
       reporterLastname: props.user.lastname,
       reporterSelfieUrl: props.user.selfie_url || "",
     };
-    const coordinates = await Geolocation.getCurrentPosition();
-
-    console.log('Current position:', coordinates);
     reportService.add(reportedPerson, blob);
   };
   const handler = async (webPath: string) => {

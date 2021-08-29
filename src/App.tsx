@@ -29,7 +29,6 @@ import { useState } from "react";
 import { UserContextService } from "./service/user-context/user-context.service";
 
 import HomePage from "./pages/home/HomePage";
-import ImageInputPage from "./pages/face-api-tutorial/ImageInputPage";
 import { loadModels } from "./service/face-api/face-api.service";
 import FaceScannerComponent from './components/face-scanner/FaceScannerComponent';
 import ReportsPage from "./pages/reports/ReportsPage";
@@ -57,11 +56,6 @@ const App: React.FC = () => {
           <Route exact path="/register">
             <RegisterPage />
           </Route>
-          {/* <Route
-            exact
-            path="/photo"
-            render={(routeProps) => <FaceScannerComponent {...routeProps} />}
-          /> */}
           <Route
             exact
             path="/home"

@@ -41,8 +41,8 @@ export class UserTestImpService extends UserService {
   }
 
   public getAllUsers(): Promise<any[]> {
-    return fetch("assets/data/users.json").then(data => {
-     const users = data.json();
+    return fetch("assets/data/users.json").then(async (data) => {
+      const users = await data.json();
       console.log("getAllUsers", users);
       if (!users) return Promise.reject("error ajksdf");
       return Promise.resolve(users);

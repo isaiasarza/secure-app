@@ -9,7 +9,7 @@ interface IProps {
 const ReportsComponent: FC<IProps> = (props) => {
   return (
     <div>
-      {props.reports.map((r: ReportedPerson, index: number) => {
+      {props.reports.map((r: ReportedPerson) => {
         return (
           <div>
             <ReportItem report={r}></ReportItem>

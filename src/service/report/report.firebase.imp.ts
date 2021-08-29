@@ -12,7 +12,10 @@ export class ReportFirebaseImpService extends ReportService {
   public async add(reportedPerson: ReportedPerson, photo?: Blob) {
     console.log();
     if (photo) {
-      const selfieUrl = await this.setSelfie(reportedPerson.uuid + "_selfie", photo);
+      const selfieUrl = await this.setSelfie(
+        reportedPerson.uuid + "_selfie",
+        photo
+      );
       reportedPerson.selfie_url = selfieUrl;
     }
     return db
@@ -26,10 +29,16 @@ export class ReportFirebaseImpService extends ReportService {
       .collection(this.COLLECTION_NAME)
       .get()
       .then((snap) => {
-        const logs: ReportedPerson[] = snap.docs
-          .map((doc) => doc.data() as ReportedPerson)
+        const reports: ReportedPerson[] = snap.docs
+          /* .map((doc) => ) */
+          .map((doc, index) => {
+            const rep = doc.data() as ReportedPerson;
+            rep.number = index + 1 + "";
+            return rep;
+          })
           .sort((a, b) => moment(b.date).valueOf() - moment(a.date).valueOf());
-        return Promise.resolve(logs);
+        console.log("reports", reports);
+        return Promise.resolve(reports);
       });
   }
 

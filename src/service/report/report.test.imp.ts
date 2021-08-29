@@ -6,7 +6,12 @@ export class ReportTestImpService extends ReportService {
   private readonly TAG = "ReportTestImpService";
   public add(reportedPerson: ReportedPerson, photo?: Blob) {
     console.log();
-    return Promise.resolve();
+    const timeout = new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 5000);
+    });
+    return timeout;
   }
 
   public get(): Promise<ReportedPerson[]> {

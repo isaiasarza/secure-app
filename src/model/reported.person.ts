@@ -8,7 +8,7 @@ export interface ReportedPerson{
     lastname: string;
     dni: string;
     selfie_url?: string;
-    descriptors?: number[];
+    descriptors: number[];
     local_selfie_url?: string;
     long: number;
     lat: number;

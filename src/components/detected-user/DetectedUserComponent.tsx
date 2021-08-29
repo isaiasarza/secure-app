@@ -27,6 +27,7 @@ interface IProps {
   matchedUser?: User;
   closeAction: Function;
   detectionType: DetectionTypeEnum;
+  goHome: Function;
 }
 export enum DetectionTypeEnum {
   SUSPICIOUS = "SUSPICIOUS",
@@ -189,7 +190,7 @@ const DetectedUserComponent: FC<IProps> = (props) => {
           
           {props.detectionType === DetectionTypeEnum.UNKNOWN ? 
           <div className="suspicious-person">
-            <ReportSuspiciousPersonComponent user={props.user}></ReportSuspiciousPersonComponent>
+            <ReportSuspiciousPersonComponent user={props.user} goHome={props.goHome} closeAction={props.closeAction}></ReportSuspiciousPersonComponent>
           </div> : '' }
           </div>
         </IonCardContent>

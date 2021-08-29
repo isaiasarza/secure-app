@@ -27,7 +27,7 @@ const ReportItem: FC<IProps> = (props) => {
     setShowMap(true);
   };
   return (
-    <div className="report-item" id={"report_" + props.report.uuid}>
+    <div className="report-item" id={"report_" + props.report.uuid} key={props.report.uuid}>
       <IonModal isOpen={showMap} cssClass="my-custom-class" showBackdrop={true}>
         <MapComponent
           isMarkerShown
@@ -43,37 +43,40 @@ const ReportItem: FC<IProps> = (props) => {
         {/*  */}
         <IonRow>
           <IonCol>
-            <h3>Reporte #{" " + props.report.number}</h3>
+            <h3>Reporte # {props.report.number}</h3>
           </IonCol>
         </IonRow>
         <div className="sub-item">
           <h4>Persona Reportada</h4>
           <IonRow>
-            <IonCol>DNI: {props.report.firstname}</IonCol>
+            <IonCol><b>DNI:</b> {props.report.dni}</IonCol>
           </IonRow>
           <IonRow>
-            <IonCol>Nombre: {props.report.firstname}</IonCol>
-            <IonCol>Apellido: {props.report.lastname}</IonCol>
+            <IonCol><b>Nombre:</b> {props.report.firstname}</IonCol>
+            <IonCol><b>Apellido:</b> {props.report.lastname}</IonCol>
           </IonRow>
         </div>
         <div className="sub-item">
           <h4>Reportado Por</h4>
           <IonRow>
-            <IonCol>DNI: {props.report.reporterDni}</IonCol>
+            <IonCol><b>DNI:</b> {props.report.reporterDni}</IonCol>
           </IonRow>
           <IonRow>
-            <IonCol>Nombre: {props.report.reporterFirstname}</IonCol>
-            <IonCol>Apellido: {props.report.reporterLastname}</IonCol>
+            <IonCol><b>Nombre:</b> {props.report.reporterFirstname}</IonCol>
+            <IonCol><b>Apellido:</b> {props.report.reporterLastname}</IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol><b>Motivo:</b> {props.report.description}</IonCol>
           </IonRow>
         </div>
         <div className="sub-item">
           <h4>Otros Datos</h4>
           <IonRow>
             <IonCol size="6">
-              Fecha: {moment(props.report.date).format("DD/MM/yyyy")}
+              <b>Fecha:</b> {moment(props.report.date).format("DD/MM/yyyy")}
             </IonCol>
             <IonCol size="6">
-              Hora: {moment(props.report.date).format("HH:mm")}
+              <b>Hora:</b> {moment(props.report.date).format("HH:mm")}
             </IonCol>
           </IonRow>
           <IonRow>

@@ -51,14 +51,14 @@ const SelfieComponent: FC<IProps> = (props) => {
       webviewPath: image.webPath,
     });
     console.log("webviewPath", image.webPath);
-    console.log("photo", photo);
+    //console.log("photo", photo);
 
     props.handler(image.webPath);
   };
   return (
     <div className="avatar-container">
       <div className="avatar">
-        {props.selfieUrl?.length ? (
+        {photo?.webviewPath?.length || props.selfieUrl?.length ? (
           <div className="selfie">
             <img
               alt=""

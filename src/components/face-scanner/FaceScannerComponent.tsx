@@ -16,11 +16,16 @@ import { scan } from "ionicons/icons";
 import * as faceapi from "face-api.js";
 import {
   createMatcher,
+  getFullFaceDescription,
   getFullFaceDescription2,
   loadModels,
 } from "../../service/face-api/face-api.service";
 import { UserService } from "../../service/user/user.service";
-import { injector, UserServiceToken } from "../../injector/injector";
+import {
+  injector,
+  ReportServiceToken,
+  UserServiceToken,
+} from "../../injector/injector";
 import { IonIcon, IonContent } from "@ionic/react";
 import { User } from "../../model/user";
 import DetectedUserComponent, {
@@ -28,6 +33,9 @@ import DetectedUserComponent, {
 } from "../detected-user/DetectedUserComponent";
 import { number } from "yup";
 import { presentErrorToast } from "../../utils/toast";
+import { ReportService } from "../../service/report/report.service";
+import { Face, FaceTypeEnum } from "../../model/face";
+import { ReportedPerson } from '../../model/reported.person';
 export interface IAppProps {
   closeAction: Function;
   user: User;
@@ -38,9 +46,12 @@ export interface IAppState {
   preview: any;
   detections: any;
   userService: UserService;
+  reportsService: ReportService;
   faceMatcher: any;
-  users: any;
+  users: User[];
+  reports: ReportedPerson[];
   detectedUser?: User;
+  detectedReportedPerson?: ReportedPerson;
   scanning: boolean;
   scanningProgress: number;
   detectionType?: DetectionTypeEnum;
@@ -63,7 +74,8 @@ export default class FaceScannerComponent extends React.Component<
     super(props);
     this.state = {
       detectedUser: undefined,
-      users: null,
+      users: [],
+      reports: [],
       faceMatcher: null,
       ref: null,
       preview: null,
@@ -71,7 +83,8 @@ export default class FaceScannerComponent extends React.Component<
       scanning: false,
       scanningProgress: 0,
       userService: injector.get(UserServiceToken) as UserService,
-      noneFaceDetectedError: false
+      reportsService: injector.get(ReportServiceToken) as ReportService,
+      noneFaceDetectedError: false,
     };
   }
   onSetToast = () => {};
@@ -94,6 +107,8 @@ export default class FaceScannerComponent extends React.Component<
       detections: null,
       detectionType: undefined,
       scanningProgress: 0,
+      users: [],
+      reports: [],
     });
   };
 
@@ -113,7 +128,7 @@ export default class FaceScannerComponent extends React.Component<
         displaySize
       );
       console.log("resizedDetections", resizedDetections);
-      if(resizedDetections.length > 0){
+      if (resizedDetections.length > 0) {
         this.setState({
           detections: resizedDetections[0].detection,
         });
@@ -121,31 +136,56 @@ export default class FaceScannerComponent extends React.Component<
       if (x === 5 && (!resizedDetections || resizedDetections.length === 0)) {
         /* clearInterval(refreshIntervalId);
         this.setState({ detectionType: DetectionTypeEnum.UNKNOWN }); */
-        this.setState({noneFaceDetectedError: true, scanning: false, scanningProgress: 1, detectionType: undefined, detections: null})
+        this.setState({
+          noneFaceDetectedError: true,
+          scanning: false,
+          scanningProgress: 1,
+          detectionType: undefined,
+          detections: null,
+        });
         clearInterval(refreshIntervalId);
         return Promise.reject();
       }
       if (x === 5 && resizedDetections.length > 0) {
-        
         let match = await detectionsWithLandmarks.map((a: any) => {
           console.log("descriptor length", a.descriptor.length);
           return this.state.faceMatcher.findBestMatch(a.descriptor);
         });
-        console.log("match", match[0]);
+        
         if (match.length > 0 && match[0]._label !== "unknown") {
-          const user = this.state.users.find(
-            (u: any) => u.uid === match[0]._label
-          );
-          if (user?.uid) {
-            console.log("user finded", user);
-            this.setState({
-              detectedUser: user,
-              detectionType: DetectionTypeEnum.RELIABLE,
-              scanning: false,
-              scanningProgress: 1,
-            });
+          console.log("match", match[0]);
+          const type = match[0]._label.split("_")[0]
+          const id = match[0]._label.split("_")[1]
+          if(type == FaceTypeEnum.USER){
+            const user = this.state.users.find(
+              (u: any) => u.uid === id
+            );
+            if (user?.uid) {
+              console.log("user finded", user);
+              this.setState({
+                detectedUser: user,
+                detectionType: DetectionTypeEnum.RELIABLE,
+                scanning: false,
+                scanningProgress: 1,
+              });
+            }
           }
-        }else{
+          if(type == FaceTypeEnum.REPORTED){
+            const reportedPerson = this.state.reports.find(
+              (r: ReportedPerson) => r.uuid === id
+            );
+            if (reportedPerson?.uuid) {
+              console.log("reportedPerson finded", reportedPerson);
+              this.setState({
+                detectedReportedPerson: reportedPerson,
+                detectionType: DetectionTypeEnum.SUSPICIOUS,
+                scanning: false,
+                scanningProgress: 1,
+              });
+            }
+          }
+          
+        } else {
           console.log("unknown face");
           this.setState({
             detectionType: DetectionTypeEnum.UNKNOWN,
@@ -180,10 +220,13 @@ export default class FaceScannerComponent extends React.Component<
 
   componentWillMount = async () => {
     await loadModels();
+
+    //console.log("users", users);
     const users = await this.state.userService.getAllUsers();
-    console.log("users", users);
-    const faceMatcher = await createMatcher(users);
-    this.setState({ faceMatcher: faceMatcher, users: users });
+    const reports = await this.state.reportsService.get();
+    const faces = await this.getFaces(users, reports)
+    const faceMatcher = await createMatcher(faces);
+    this.setState({ faceMatcher: faceMatcher, users: users, reports: reports });
   };
 
   componentDidMount() {
@@ -194,6 +237,35 @@ export default class FaceScannerComponent extends React.Component<
         this.container?.offsetHeight || 0
       );
     }, 500);
+  }
+
+  async getFaces(users: User[], reports: ReportedPerson[]) {
+    const faces: Face[] = [];
+    
+
+    faces.push(
+      ...users
+        .filter((user) => user.uid && user.descriptors?.length)
+        .map<Face>((user) => {
+          return {
+            type: FaceTypeEnum.USER,
+            descriptors: user.descriptors || [],
+            id: user.uid || "",
+          };
+        })
+    );
+    
+    faces.push(
+      ...reports.map<Face>((report) => {
+        return {
+          type: FaceTypeEnum.REPORTED,
+          descriptors: report.descriptors || [],
+          id: report.uuid || "",
+        };
+      })
+    );
+    console.log("faces",faces)
+    return faces;
   }
   public render() {
     return (
@@ -221,11 +293,12 @@ export default class FaceScannerComponent extends React.Component<
               matchedUser={this.state.detectedUser}
               user={this.props.user}
               closeAction={this.closeAction}
+              goHome={this.props.closeAction}
             ></DetectedUserComponent>
           ) : (
             ""
           )}
-          {this.state.scanning === true && this.state.detections  ? (
+          {this.state.scanning === true && this.state.detections ? (
             <div
               className="box"
               style={{
@@ -244,7 +317,9 @@ export default class FaceScannerComponent extends React.Component<
             isOpen={this.state.noneFaceDetectedError === true}
             duration={3000}
             animated={true}
-            onDidDismiss={() => {this.setState({noneFaceDetectedError: false})}}
+            onDidDismiss={() => {
+              this.setState({ noneFaceDetectedError: false });
+            }}
             message="No se ha podido detectar ningún rostro. Por favor, acerquesé a la cámara y revise la iluminación del lugar antes de volver a intentar."
           />
           <div className="buttons">

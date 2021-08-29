@@ -6,8 +6,9 @@ import {
   IonLabel,
   IonInput,
   IonTextarea,
+  useIonToast,
 } from "@ionic/react";
-import  moment from 'moment'
+import moment from "moment";
 import SelfieComponent from "../selfie/SelfieComponent";
 import { IonButton, IonLoading, IonGrid } from "@ionic/react";
 import FormInputWrapper from "../formInputWrapper/formInputWrapper";
@@ -26,12 +27,15 @@ import { ReportedPerson } from "../../model/reported.person";
 import { User } from "../../model/user";
 import { ReportService } from "../../service/report/report.service";
 import { injector, ReportServiceToken } from "../../injector/injector";
-import { Geolocation } from '@capacitor/geolocation';
-import { v4 as uuid } from 'uuid';
-
+import { Geolocation } from "@capacitor/geolocation";
+import { v4 as uuid } from "uuid";
+import { presentErrorToast, presentSuccessToast } from "../../utils/toast";
+import { useHistory } from "react-router";
 
 interface IProps {
   user: User;
+  goHome: Function;
+  closeAction: Function;
 }
 
 const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
@@ -44,31 +48,47 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
     mode: "all",
     resolver: yupResolver(getValidations()),
   });
+  const [present] = useIonToast();
   const [blob, setBlob] = useState<Blob>();
   const [descriptorsError, setDescriptorsError] = useState(false);
+  const history = useHistory();
   const { isValid, errors } = useFormState({ control });
   const onSubmit = async (data: SuspiciousPersonForm) => {
-    
-    const coordinates = await Geolocation.getCurrentPosition();
+    setShowLoading(true);
+    try {
+      const coordinates = await Geolocation.getCurrentPosition();
 
-    console.log('Current position:', coordinates);
-    const reportedPerson: ReportedPerson = {
-      uuid: uuid(),
-      firstname: data.firstname,
-      lastname: data.lastname,
-      dni: data.dni,
-      lat: coordinates.coords.latitude,
-      long: coordinates.coords.longitude,
-      date: moment().toISOString(),
-      time: moment().toISOString(),
-      description: data.reason,
-      reporterUid: props.user.uid || "",
-      reporterDni: props.user.dni,
-      reporterFirstname: props.user.firstname,
-      reporterLastname: props.user.lastname,
-      reporterSelfieUrl: props.user.selfie_url || "",
-    };
-    reportService.add(reportedPerson, blob);
+      console.log("Current position:", coordinates);
+      const reportedPerson: ReportedPerson = {
+        uuid: uuid(),
+        firstname: data.firstname,
+        lastname: data.lastname,
+        dni: data.dni,
+        lat: coordinates.coords.latitude,
+        long: coordinates.coords.longitude,
+        date: moment().toISOString(),
+        time: moment().toISOString(),
+        description: data.reason,
+        reporterUid: props.user.uid || "",
+        reporterDni: props.user.dni,
+        reporterFirstname: props.user.firstname,
+        reporterLastname: props.user.lastname,
+        reporterSelfieUrl: props.user.selfie_url || "",
+        descriptors: data.descriptors
+      };
+      await reportService.add(reportedPerson, blob);
+      presentSuccessToast(
+        present,
+        "Se envió el reporte de forma satisfactoria"
+      );
+      props.closeAction();
+      props.goHome();
+      //history.push("/home",{props:{user: props.user}});
+    } catch (error) {
+      // error, no se pudo enviar el reporte
+      presentErrorToast(present, "No se enviar el reporte, intente nuevamente");
+    }
+    setShowLoading(false);
   };
   const handler = async (webPath: string) => {
     // const res = await fetch(webPath);
@@ -76,19 +96,23 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
     const fileName = "";
     console.log(TAG, "selfie handler", webPath, fileName);
     setValue("webPath", webPath, { shouldValidate: true });
-    const res = await fetch(webPath);
-    const _blob = await res.blob();
-    setBlob(_blob);
-    setShowLoading(true);
-    await loadModels();
-    const fullDesc = await getFullFaceDescription(webPath);
-    if (!!fullDesc) {
-      const descriptors: number[] = Array.from(fullDesc[0].descriptor); //.map((fd) => Array.from(fd.descriptor));
+    try {
+      const res = await fetch(webPath);
+      const _blob = await res.blob();
+      setBlob(_blob);
+      setShowLoading(true);
+      await loadModels();
+      const fullDesc = await getFullFaceDescription(webPath);
+      const descriptors: number[] = Array.from(fullDesc[0].descriptor);
       console.log("descriptors", descriptors);
-      if (descriptors.length <= 0) {
-        setDescriptorsError(true);
-      }
+      if (descriptors?.length < 1) throw new Error();
       setValue("descriptors", descriptors, { shouldValidate: true });
+    } catch (error) {
+      setDescriptorsError(true);
+      presentErrorToast(
+        present,
+        "No se pudo detectar el rostro correctamente, vuelva a tomar la foto"
+      );
     }
     setShowLoading(false);
   };

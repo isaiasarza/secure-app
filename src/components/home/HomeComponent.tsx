@@ -14,6 +14,9 @@ import "./HomeComponent.css";
 import FaceScannerComponent from "../face-scanner/FaceScannerComponent";
 import { User } from "../../model/user";
 import PositionLoggerComponent from "../position-logger/PositionLoggerComponent";
+import { AuthorizationService } from "../../service/autz/autz.service";
+import { AuthorizationServiceToken, injector } from "../../injector/injector";
+import { ActionTypeEnum } from "../../model/profiles-type.enum";
 interface IProps {
   user: User;
 }
@@ -21,14 +24,16 @@ interface IProps {
 const HomeComponent: FC<IProps> = (props) => {
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
-
+  const [autzService] = useState<AuthorizationService>(
+    injector.get(AuthorizationServiceToken)
+  );
   const closeModal = () => {
     setShowModal(false);
   };
 
   const getPeriod = (minutes: number) => {
-    return minutes * 60000
-  }
+    return minutes * 60000;
+  };
 
   const onFaceScan = async () => {
     //console.log("on go to photo");
@@ -42,7 +47,10 @@ const HomeComponent: FC<IProps> = (props) => {
   return (
     <div className="container">
       <div hidden={true}>
-        <PositionLoggerComponent period={getPeriod(3)} user={props.user}></PositionLoggerComponent>
+        <PositionLoggerComponent
+          period={getPeriod(3)}
+          user={props.user}
+        ></PositionLoggerComponent>
       </div>
       <IonModal
         isOpen={showModal}
@@ -56,14 +64,18 @@ const HomeComponent: FC<IProps> = (props) => {
       </IonModal>
       <IonGrid>
         <IonRow>
-          <IonCol>
-            <IonCard onClick={onFaceScan}>
-              <IonImg src="/assets/images/face-recognition.png"></IonImg>
-              <IonCardHeader color="primary">
-                <IonCardSubtitle>Face Scan</IonCardSubtitle>
-              </IonCardHeader>
-            </IonCard>
-          </IonCol>
+          {autzService.isAuthorized(props.user.role, ActionTypeEnum.SCANNER) ? (
+            <IonCol>
+              <IonCard onClick={onFaceScan}>
+                <IonImg src="/assets/images/face-recognition.png"></IonImg>
+                <IonCardHeader color="primary">
+                  <IonCardSubtitle>Face Scan</IonCardSubtitle>
+                </IonCardHeader>
+              </IonCard>
+            </IonCol>
+          ) : (
+            ""
+          )}
           <IonCol>
             <IonCard>
               <IonImg src="/assets/images/formulario.png"></IonImg>

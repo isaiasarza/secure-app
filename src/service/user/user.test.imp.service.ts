@@ -1,5 +1,6 @@
 import { User } from "../../model/user";
 import { UserService } from "./user.service";
+import { ProfilesTypeEnum } from '../../model/profiles-type.enum';
 
 export class UserTestImpService extends UserService {
   private readonly user = {
@@ -8,7 +9,7 @@ export class UserTestImpService extends UserService {
     email: "imacoria@gmail.com",
     firstname: "Imanol",
     lastname: "Coria",
-    role: "vigilant",
+    role: ProfilesTypeEnum.VIGILANT,
     uid: "AAAZZZAAA",
   };
   public add(uid: string, user: User): Promise<User> {

@@ -24,7 +24,7 @@ import "./theme/variables.css";
 import LoginPage from "./pages/login/LoginPage";
 import RegisterPage from "./pages/register/RegisterPage";
 
-import { injector, UserContextServiceToken } from "./injector/injector";
+import { AuthorizationServiceToken, injector, UserContextServiceToken } from "./injector/injector";
 import { useState } from "react";
 import { UserContextService } from "./service/user-context/user-context.service";
 
@@ -32,19 +32,16 @@ import HomePage from "./pages/home/HomePage";
 import { loadModels } from "./service/face-api/face-api.service";
 import FaceScannerComponent from './components/face-scanner/FaceScannerComponent';
 import ReportsPage from "./pages/reports/ReportsPage";
+import { AuthorizationService } from './service/autz/autz.service';
 
 const App: React.FC = () => {
   const [userContextService] = useState<UserContextService>(
     injector.get(UserContextServiceToken)
   );
 
-  /* React.useEffect(() => {
-    async function run(){
-      console.log("loading models")
-      await loadModels()
-    }
-    run()
-  }); */
+  const [autzService] = useState<AuthorizationService>(
+    injector.get(AuthorizationServiceToken)
+  );
 
   return (
     <IonApp>

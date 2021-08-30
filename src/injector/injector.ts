@@ -21,6 +21,8 @@ import { PositionLoggerService } from "../service/position-logger/position-logge
 import { PositionLoggerTestImpService } from "../service/position-logger/position-logger.test.imp";
 import { PositionLoggerFirebaseImpService } from '../service/position-logger/position-logger.firebase.imp';
 import { ReportFirebaseImpService } from '../service/report/report.firebase.imp';
+import { AuthorizationService } from "../service/autz/autz.service";
+import { AuthorizationImpService } from "../service/autz/autz.imp.service";
 export const AuthServiceToken = new InjectionToken<AuthService>(
   "AUTH_SERVICE_TOKEN"
 );
@@ -38,6 +40,9 @@ export const ReportServiceToken = new InjectionToken<ReportService>(
   "REPORT_SERVICE_TOKEN"
 );
 
+export const AuthorizationServiceToken = new InjectionToken<AuthorizationService>(
+  "AUTHORIZATION_SERVICE_TOKEN"
+);
 export const PositionLoggerServiceToken =
   new InjectionToken<PositionLoggerService>("POSITION_LOGGER_SERVICE_TOKEN");
 export const FIREBASE_STRATEGY = [
@@ -50,6 +55,7 @@ export const FIREBASE_STRATEGY = [
     provide: PositionLoggerServiceToken,
     useClass: PositionLoggerFirebaseImpService,
   },
+  {provide: AuthorizationServiceToken, useClass: AuthorizationImpService},
 ];
 
 export const TEST_STRATEGY = [
@@ -62,6 +68,7 @@ export const TEST_STRATEGY = [
     provide: PositionLoggerServiceToken,
     useClass: PositionLoggerTestImpService,
   },
+  {provide: AuthorizationServiceToken, useClass: AuthorizationImpService},
 ];
 export const injector: DependencyInjector = makeInjector(
   STRATEGY_TYPE === "TEST" ? TEST_STRATEGY : FIREBASE_STRATEGY

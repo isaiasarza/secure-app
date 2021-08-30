@@ -15,6 +15,7 @@ import { AuthService } from "../../service/auth/auth.service";
 import { injector, AuthServiceToken } from "../../injector/injector";
 import SelfieComponent from "../selfie/SelfieComponent";
 import { UserRegisterForm } from "./validations/RegisterValidations";
+import { ProfilesTypeEnum } from '../../model/profiles-type.enum';
 import {
   getFullFaceDescription,
   loadModels,
@@ -31,7 +32,7 @@ const RegisterComponent: FC<IProps> = (props) => {
     firstname: "",
     lastname: "",
     email: "",
-    role: "",
+    role: ProfilesTypeEnum.VIGILANT,
     cuil_cuit: "",
     dni: "",
   });
@@ -67,7 +68,7 @@ const RegisterComponent: FC<IProps> = (props) => {
       firstname: data.firstname,
       lastname: data.lastname,
       email: data.email,
-      role: "vigilant",
+      role: ProfilesTypeEnum.VIGILANT,
       cuil_cuit: data.cuil_cuit,
       dni: data.dni,
       descriptors: data.descriptors,

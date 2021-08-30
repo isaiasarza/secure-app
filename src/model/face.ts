@@ -1,10 +1,11 @@
 export interface Face{
     type: FaceTypeEnum;
-    descriptors: number[];
+    descriptors: number[][];
     id: string;
 }
 
 export enum FaceTypeEnum{
     USER = "USER",
-    REPORTED = "REPORTED"
+    REPORTED = "REPORTED",
+    UNKNOWN = "UNKNOWN"
 }

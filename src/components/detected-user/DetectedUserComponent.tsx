@@ -21,10 +21,14 @@ import React, { FC } from "react";
 import { User } from "../../model/user";
 import SelfieComponent from "../selfie/SelfieComponent";
 import "./DetectedUserComponent.css";
-import ReportSuspiciousPersonComponent from '../report-suspicious-person/ReportSuspiciousPersonComponent';
+import ReportSuspiciousPersonComponent from "../report-suspicious-person/ReportSuspiciousPersonComponent";
+import ReliablePerson from "../reliable-person/ReliablePerson";
+import { ReportedPerson } from "../../model/reported.person";
+import SuspiciousPerson from "../suspicious-person/SuspiciousPerson";
 interface IProps {
   user: User;
   matchedUser?: User;
+  matchedReportedPerson?: ReportedPerson;
   closeAction: Function;
   detectionType: DetectionTypeEnum;
   goHome: Function;
@@ -35,51 +39,49 @@ export enum DetectionTypeEnum {
   UNKNOWN = "UNKNOWN",
 }
 const DetectedUserComponent: FC<IProps> = (props) => {
-  const TAG = "DetectedUserComponent"
-  const handler = async (webPath: string, fileName: string) => {
-    console.log(TAG,"selfie handler", webPath, fileName)
-  };
+  const TAG = "DetectedUserComponent";
+  const handler = async (webPath: string, fileName: string) => {};
   const getIcon = () => {
-    switch(props.detectionType){
+    switch (props.detectionType) {
       case DetectionTypeEnum.RELIABLE:
         return checkmarkCircleOutline;
       case DetectionTypeEnum.SUSPICIOUS:
         return warningOutline;
       case DetectionTypeEnum.UNKNOWN:
-        return alertCircleOutline
+        return alertCircleOutline;
     }
   };
 
   const getIconColor = () => {
-    switch(props.detectionType){
+    switch (props.detectionType) {
       case DetectionTypeEnum.RELIABLE:
         return "success";
       case DetectionTypeEnum.SUSPICIOUS:
         return "danger";
       case DetectionTypeEnum.UNKNOWN:
-        return "warning"
+        return "warning";
     }
   };
 
   const getResultLabel = () => {
-    switch(props.detectionType){
+    switch (props.detectionType) {
       case DetectionTypeEnum.RELIABLE:
         return "¡Relax! La persona detectada es confiable";
       case DetectionTypeEnum.SUSPICIOUS:
         return "¡Cuidado! Está persona fue reportada en otra ocasión";
       case DetectionTypeEnum.UNKNOWN:
-        return "No podemos reconocer esté rostro"
+        return "No podemos reconocer esté rostro";
     }
   };
 
   const getClassName = () => {
-    switch(props.detectionType){
+    switch (props.detectionType) {
       case DetectionTypeEnum.RELIABLE:
         return "frame-success";
       case DetectionTypeEnum.SUSPICIOUS:
         return "frame-danger";
       case DetectionTypeEnum.UNKNOWN:
-        return "frame-unknown"
+        return "frame-unknown";
     }
   };
   return (
@@ -104,7 +106,9 @@ const DetectedUserComponent: FC<IProps> = (props) => {
             </IonCol>
           </IonRow>
         </IonCardHeader>
-        <IonCardContent>
+        <IonCardContent style={{
+          paddingTop:"20px",
+        }}>
           <div className={getClassName()}>
             <div className="frame-icon ion-justify-content-center">
               <IonIcon
@@ -113,85 +117,39 @@ const DetectedUserComponent: FC<IProps> = (props) => {
                 color={getIconColor()}
               ></IonIcon>
             </div>
-            {props.detectionType === DetectionTypeEnum.RELIABLE && props.matchedUser?.uid? (
-              <div>
-                <IonRow className="ion-padding-top">
-                  <IonCol size="1"></IonCol>
-                  <IonCol size="10">
-                    <SelfieComponent
-                      selfieUrl={
-                        props.matchedUser.local_selfie_url?.length
-                          ? props.matchedUser.local_selfie_url
-                          : props.matchedUser?.selfie_url?.length
-                          ? props.matchedUser.selfie_url
-                          : ""
-                      }
-                      readonly={true}
-                      handler={handler}
-                    ></SelfieComponent>
-                  </IonCol>
-                  <IonCol size="1"></IonCol>
-                </IonRow>
-                <IonRow>
-                  <IonCol>
-                    <IonItem>
-                      <IonLabel position="stacked">Nombre</IonLabel>
-                      <IonInput
-                        value={props.matchedUser.firstname}
-                        disabled={true}
-                      ></IonInput>
-                    </IonItem>
-                  </IonCol>
-                  <IonCol>
-                    <IonItem>
-                      <IonLabel position="stacked">Apellido</IonLabel>
-                      <IonInput
-                        value={props.matchedUser.lastname}
-                        disabled={true}
-                      ></IonInput>
-                    </IonItem>
-                  </IonCol>
-                </IonRow>
-                <IonRow>
-                  <IonCol>
-                    <IonItem>
-                      <IonLabel position="stacked">DNI</IonLabel>
-                      <IonInput
-                        value={props.matchedUser.dni}
-                        disabled={true}
-                      ></IonInput>
-                    </IonItem>
-                  </IonCol>
-                  <IonCol>
-                    <IonItem>
-                      <IonLabel position="stacked">CUIL/CUIT</IonLabel>
-                      <IonInput
-                        value={props.matchedUser.cuil_cuit}
-                        disabled={true}
-                      ></IonInput>
-                    </IonItem>
-                  </IonCol>
-                </IonRow>
-                <IonRow>
-                  <IonCol>
-                    <IonItem>
-                      <IonLabel position="stacked">Email</IonLabel>
-                      <IonInput
-                        value={props.matchedUser.email}
-                        disabled={true}
-                      ></IonInput>
-                    </IonItem>
-                  </IonCol>
-                </IonRow>
+            {props.detectionType === DetectionTypeEnum.RELIABLE &&
+            props.matchedUser?.uid ? (
+              <div className="suspicious-person">
+                <ReliablePerson
+                  user={props.matchedUser}
+                ></ReliablePerson>
               </div>
             ) : (
               ""
             )}
-          
-          {props.detectionType === DetectionTypeEnum.UNKNOWN ? 
-          <div className="suspicious-person">
-            <ReportSuspiciousPersonComponent user={props.user} goHome={props.goHome} closeAction={props.closeAction}></ReportSuspiciousPersonComponent>
-          </div> : '' }
+
+            {props.detectionType === DetectionTypeEnum.SUSPICIOUS &&
+            props.matchedReportedPerson?.uuid ? (
+              <div className="suspicious-person">
+                <SuspiciousPerson
+                  reportedPerson={props.matchedReportedPerson}
+                ></SuspiciousPerson>
+              </div>
+            ) : (
+              ""
+            )}
+
+            {props.detectionType === DetectionTypeEnum.UNKNOWN ? (
+              <div className="suspicious-person">
+                <ReportSuspiciousPersonComponent
+                  user={props.user}
+                  goHome={props.goHome}
+                  closeAction={props.closeAction}
+                ></ReportSuspiciousPersonComponent>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </IonCardContent>
       </IonCard>

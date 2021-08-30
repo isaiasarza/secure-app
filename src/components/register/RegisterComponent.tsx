@@ -103,7 +103,7 @@ const RegisterComponent: FC<IProps> = (props) => {
     <IonCard>
       <form id="registration-form" onSubmit={handleSubmit(onSubmit)}>
         <IonCardContent>
-          <IonLoading isOpen={showLoading} message={"Please wait..."} />
+          <IonLoading isOpen={showLoading} message={"Por favor, espere"} />
           <div>
             <SelfieComponent
               readonly={false}

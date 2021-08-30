@@ -16,6 +16,7 @@ import { scan } from "ionicons/icons";
 import * as faceapi from "face-api.js";
 import {
   createMatcher,
+  CUSTOM_SEPARATOR,
   getFullFaceDescription,
   getFullFaceDescription2,
   loadModels,
@@ -35,7 +36,9 @@ import { number } from "yup";
 import { presentErrorToast } from "../../utils/toast";
 import { ReportService } from "../../service/report/report.service";
 import { Face, FaceTypeEnum } from "../../model/face";
-import { ReportedPerson } from '../../model/reported.person';
+import { ReportedPerson } from "../../model/reported.person";
+import { getFaces } from "../../service/face-api/face.service";
+import { type } from "os";
 export interface IAppProps {
   closeAction: Function;
   user: User;
@@ -94,9 +97,13 @@ export default class FaceScannerComponent extends React.Component<
   };
   setPreview = async (width: number, height: number) => {
     console.log("setCameraPreview", width, height);
-    if (width > 0) {
-      const preview = await CameraPreview.start(this.cameraPreviewOpts);
-      this.setState({ preview: preview });
+    if (width > 0 && height > 0) {
+      try {
+        const preview = await CameraPreview.start(this.cameraPreviewOpts);
+        this.setState({ preview: preview });
+      } catch (error) {
+        console.log("set preview error");
+      }
     }
   };
 
@@ -107,17 +114,95 @@ export default class FaceScannerComponent extends React.Component<
       detections: null,
       detectionType: undefined,
       scanningProgress: 0,
-      users: [],
-      reports: [],
+      /* users: [],
+      reports: [], */
     });
   };
+  private setUnrecognizedFace = async () => {
+    this.setState({
+      noneFaceDetectedError: true,
+      scanning: false,
+      scanningProgress: 1,
+      detectionType: undefined,
+      detections: null,
+    });
+  };
+  private setUnknownFace = async () => {
+    this.setState({
+      detectionType: DetectionTypeEnum.UNKNOWN,
+      scanning: false,
+      scanningProgress: 1,
+    });
+  };
+  private setReportedPerson = async (id: string) => {
+    console.log("setReportedPerson", id)
+    const reportedPerson = this.state.reports.find(
+      (r: ReportedPerson) => r.uuid === id
+    );
+    console.log("setReportedPerson", reportedPerson)
+    if (reportedPerson?.uuid) {
+      console.log("reportedPerson finded", reportedPerson);
+      await this.setState({
+        detectedReportedPerson: reportedPerson,
+        detectionType: DetectionTypeEnum.SUSPICIOUS,
+        scanning: false,
+        scanningProgress: 1,
+      });
+    }
+  };
+  private setReliablePerson = async (id: string) => {
+    const user = this.state.users.find((u: any) => u.uid === id);
+    if (user?.uid) {
+      console.log("user finded", user);
+      this.setState({
+        detectedUser: user,
+        detectionType: DetectionTypeEnum.RELIABLE,
+        scanning: false,
+        scanningProgress: 1,
+      });
+    }
+  };
 
+  getMatch = async (detectionsWithLandmarks: any) => {
+    try {
+      let match = await detectionsWithLandmarks.map((a: any) => {
+        return this.state.faceMatcher.findBestMatch(a.descriptor);
+      });
+      if (match.length > 0 && match[0]._label !== "unknown") {
+        const type = match[0]._label.split(CUSTOM_SEPARATOR)[0];
+        const id = match[0]._label.split(CUSTOM_SEPARATOR)[1];
+        console.log("match type id", type, id);
+        return {
+          type: type,
+          id: id,
+        };
+      }else{
+        return {
+          type: FaceTypeEnum.UNKNOWN
+        }
+      }
+    } catch (error) {
+      return {
+        type: FaceTypeEnum.UNKNOWN
+      };
+    }
+  };
   matchFace = async (
     video: HTMLVideoElement,
     displaySize: any
   ): Promise<void> => {
     let x: number = 0;
     const refreshIntervalId = setInterval(async () => {
+      if (x > 5) {
+        /* this.setState({
+          detectionType: undefined,
+          scanning: false,
+          scanningProgress: 1,
+        }); */
+        this.setUnrecognizedFace();
+        clearInterval(refreshIntervalId);
+        return Promise.resolve();
+      }
       x++;
       this.setState({ scanningProgress: x / 5 });
       console.log("tick", x);
@@ -134,65 +219,29 @@ export default class FaceScannerComponent extends React.Component<
         });
       }
       if (x === 5 && (!resizedDetections || resizedDetections.length === 0)) {
-        /* clearInterval(refreshIntervalId);
-        this.setState({ detectionType: DetectionTypeEnum.UNKNOWN }); */
-        this.setState({
-          noneFaceDetectedError: true,
-          scanning: false,
-          scanningProgress: 1,
-          detectionType: undefined,
-          detections: null,
-        });
+        this.setUnrecognizedFace();
         clearInterval(refreshIntervalId);
         return Promise.reject();
       }
       if (x === 5 && resizedDetections.length > 0) {
-        let match = await detectionsWithLandmarks.map((a: any) => {
-          console.log("descriptor length", a.descriptor.length);
-          return this.state.faceMatcher.findBestMatch(a.descriptor);
-        });
-        
-        if (match.length > 0 && match[0]._label !== "unknown") {
-          console.log("match", match[0]);
-          const type = match[0]._label.split("_")[0]
-          const id = match[0]._label.split("_")[1]
-          if(type == FaceTypeEnum.USER){
-            const user = this.state.users.find(
-              (u: any) => u.uid === id
-            );
-            if (user?.uid) {
-              console.log("user finded", user);
-              this.setState({
-                detectedUser: user,
-                detectionType: DetectionTypeEnum.RELIABLE,
-                scanning: false,
-                scanningProgress: 1,
-              });
-            }
+        const match: any = await this.getMatch(detectionsWithLandmarks);
+
+        if (match) {
+          switch (match.type) {
+            case FaceTypeEnum.USER:
+              this.setReliablePerson(match.id);
+              break;
+            case FaceTypeEnum.REPORTED:
+              this.setReportedPerson(match.id);
+              break;
+            case FaceTypeEnum.UNKNOWN:
+              this.setUnknownFace();
+              break;
           }
-          if(type == FaceTypeEnum.REPORTED){
-            const reportedPerson = this.state.reports.find(
-              (r: ReportedPerson) => r.uuid === id
-            );
-            if (reportedPerson?.uuid) {
-              console.log("reportedPerson finded", reportedPerson);
-              this.setState({
-                detectedReportedPerson: reportedPerson,
-                detectionType: DetectionTypeEnum.SUSPICIOUS,
-                scanning: false,
-                scanningProgress: 1,
-              });
-            }
-          }
-          
-        } else {
+        } /* else {
           console.log("unknown face");
-          this.setState({
-            detectionType: DetectionTypeEnum.UNKNOWN,
-            scanning: false,
-            scanningProgress: 1,
-          });
-        }
+          this.setUnknownFace();
+        } */
         clearInterval(refreshIntervalId);
         return Promise.resolve();
       }
@@ -200,7 +249,7 @@ export default class FaceScannerComponent extends React.Component<
   };
 
   onScanFace = async () => {
-    this.setState({ scanning: true });
+    await this.setState({ scanning: true, detectedReportedPerson: undefined, detectedUser: undefined });
     const video = this.container?.childNodes[0] as HTMLVideoElement;
     console.log(
       video.offsetHeight,
@@ -224,7 +273,7 @@ export default class FaceScannerComponent extends React.Component<
     //console.log("users", users);
     const users = await this.state.userService.getAllUsers();
     const reports = await this.state.reportsService.get();
-    const faces = await this.getFaces(users, reports)
+    const faces = await getFaces(users, reports);
     const faceMatcher = await createMatcher(faces);
     this.setState({ faceMatcher: faceMatcher, users: users, reports: reports });
   };
@@ -239,34 +288,6 @@ export default class FaceScannerComponent extends React.Component<
     }, 500);
   }
 
-  async getFaces(users: User[], reports: ReportedPerson[]) {
-    const faces: Face[] = [];
-    
-
-    faces.push(
-      ...users
-        .filter((user) => user.uid && user.descriptors?.length)
-        .map<Face>((user) => {
-          return {
-            type: FaceTypeEnum.USER,
-            descriptors: user.descriptors || [],
-            id: user.uid || "",
-          };
-        })
-    );
-    
-    faces.push(
-      ...reports.map<Face>((report) => {
-        return {
-          type: FaceTypeEnum.REPORTED,
-          descriptors: report.descriptors || [],
-          id: report.uuid || "",
-        };
-      })
-    );
-    console.log("faces",faces)
-    return faces;
-  }
   public render() {
     return (
       <IonContent>
@@ -291,6 +312,7 @@ export default class FaceScannerComponent extends React.Component<
             <DetectedUserComponent
               detectionType={this.state.detectionType}
               matchedUser={this.state.detectedUser}
+              matchedReportedPerson={this.state.detectedReportedPerson}
               user={this.props.user}
               closeAction={this.closeAction}
               goHome={this.props.closeAction}

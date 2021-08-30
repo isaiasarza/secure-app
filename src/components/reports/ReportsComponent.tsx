@@ -11,7 +11,7 @@ const ReportsComponent: FC<IProps> = (props) => {
     <div>
       {props.reports.map((r: ReportedPerson) => {
         return (
-          <div>
+          <div key={r.uuid}>
             <ReportItem report={r}></ReportItem>
             <br></br>
           </div>

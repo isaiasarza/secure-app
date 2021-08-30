@@ -1,6 +1,6 @@
 import * as faceapi from "face-api.js";
 import { Face } from "../../model/face";
-import { User } from "../../model/user";
+export const CUSTOM_SEPARATOR = "-_-"
 
 export async function loadModels() {
   const MODEL_URL = process.env.PUBLIC_URL + "/models";
@@ -58,14 +58,14 @@ export async function createMatcher(faces: Face[]) {
   // Create labeled descriptors of member from profile
   // let members = Object.keys(faceProfile);
   const filtered: Face[] = faces.filter(
-    (face) => face?.descriptors && face?.descriptors?.length > 0
+    (face) => face?.descriptors?.length > 0
   );
 
   let labeledDescriptors = filtered.map(
     (member) =>
       /* */
       new faceapi.LabeledFaceDescriptors(
-        member.type + "_" + member.id,
+        member.type + CUSTOM_SEPARATOR + member.id,
         member.descriptors.map(
           (descriptor: any) => new Float32Array(descriptor)
         )

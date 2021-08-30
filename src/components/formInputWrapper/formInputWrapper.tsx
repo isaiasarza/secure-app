@@ -13,10 +13,17 @@ interface IProps {
 }
 
 const FormInputWrapper: FC<IProps> = (props) => {
+  const onFocus = (el: HTMLElement)=>{
+    el.removeAttribute('readonly');
+    return el
+  }
   return (
     <IonItem>
-      <IonLabel className="ion-text-wrap" position={props.position}>{props.label}</IonLabel>
+      <IonLabel className="ion-text-wrap" position={props.position}>
+        {props.label}
+      </IonLabel>
       <Controller
+        
         control={props.control}
         name={props.name}
         render={({
@@ -33,6 +40,8 @@ const FormInputWrapper: FC<IProps> = (props) => {
             ></IonTextarea>
           ) : (
             <IonInput
+              autofocus={false}
+              autocomplete="off"
               className="ion-text-wrap"
               type={props.type}
               data-testid={props.name}

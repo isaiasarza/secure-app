@@ -48,6 +48,7 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
     mode: "all",
     resolver: yupResolver(getValidations()),
   });
+  const [showLoading, setShowLoading] = useState(false);
   const [present] = useIonToast();
   const [blob, setBlob] = useState<Blob>();
   const [descriptorsError, setDescriptorsError] = useState(false);
@@ -81,14 +82,16 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
         present,
         "Se envió el reporte de forma satisfactoria"
       );
+      setShowLoading(false);
       props.closeAction();
       props.goHome();
       //history.push("/home",{props:{user: props.user}});
     } catch (error) {
       // error, no se pudo enviar el reporte
+      setShowLoading(false);
       presentErrorToast(present, "No se enviar el reporte, intente nuevamente");
     }
-    setShowLoading(false);
+    
   };
   const handler = async (webPath: string) => {
     // const res = await fetch(webPath);
@@ -116,14 +119,14 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
     }
     setShowLoading(false);
   };
-  const [showLoading, setShowLoading] = useState(false);
+ 
   return (
     <IonGrid style={{ width: "100%" }}>
       <form
         id="report-suspicious-person-form"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <IonLoading isOpen={showLoading} message={"Please wait..."} />
+        <IonLoading isOpen={showLoading} message={"Por favor, espere"} />
         <div>
           <SelfieComponent
             readonly={false}

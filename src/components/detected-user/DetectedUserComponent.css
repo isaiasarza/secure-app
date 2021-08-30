@@ -1,4 +1,6 @@
 .frame-success {
+  position: relative;
+  padding-top: 10px;
   border: 2px solid var(--ion-color-success);
   border-radius: 5px;
   display: inline-flex;
@@ -6,6 +8,8 @@
 }
 
 .frame-danger {
+  position: relative;
+  padding-top: 10px;
   border: 2px solid var(--ion-color-danger);
   border-radius: 5px;
   display: inline-flex;
@@ -13,6 +17,8 @@
 }
 
 .frame-unknown {
+  position: relative;
+  padding-top: 10px;
   border: 2px solid var(--ion-color-warning);
   border-radius: 5px;
   display: inline-flex;
@@ -44,6 +50,7 @@
 }
 
 .suspicious-person{
+
   display: inline-flex;
   justify-content: center;
   max-width: 100%;

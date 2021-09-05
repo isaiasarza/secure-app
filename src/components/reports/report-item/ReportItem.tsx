@@ -11,7 +11,7 @@ import {
 } from "@ionic/react";
 import moment from "moment";
 import { navigateCircleOutline } from "ionicons/icons";
-import MapComponent from "../../map/MapComponent";
+import MapComponent from "../map/MapComponent";
 interface IProps {
   report: ReportedPerson;
 }

@@ -1,10 +1,10 @@
 import { Geolocation } from "@capacitor/geolocation";
 import moment from "moment";
 import React, { FC, useEffect, useState } from "react";
-import { injector, PositionLoggerServiceToken } from "../../injector/injector";
-import { User } from "../../model/user";
-import { PositionLoggerService } from '../../service/position-logger/position-logger.service';
-import { PositionLog } from '../../model/position-log';
+import { injector, PositionLoggerServiceToken } from "../../../injector/injector";
+import { User } from "../../../model/user";
+import { PositionLoggerService } from '../../../service/position-logger/position-logger.service';
+import { PositionLog } from '../../../model/position-log';
 
 interface IProps {
   period: number;

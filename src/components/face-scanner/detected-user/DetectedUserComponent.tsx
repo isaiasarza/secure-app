@@ -18,13 +18,13 @@ import {
   warningOutline,
 } from "ionicons/icons";
 import React, { FC } from "react";
-import { User } from "../../model/user";
-import SelfieComponent from "../selfie/SelfieComponent";
+import { User } from "../../../model/user";
+import SelfieComponent from "../../selfie/SelfieComponent";
 import "./DetectedUserComponent.css";
-import ReportSuspiciousPersonComponent from "../report-suspicious-person/ReportSuspiciousPersonComponent";
-import ReliablePerson from "../reliable-person/ReliablePerson";
-import { ReportedPerson } from "../../model/reported.person";
-import SuspiciousPerson from "../suspicious-person/SuspiciousPerson";
+import ReportSuspiciousPersonComponent from "../../report-suspicious-person/ReportSuspiciousPersonComponent";
+import ReliablePerson from "./reliable-person/ReliablePerson";
+import { ReportedPerson } from "../../../model/reported.person";
+import SuspiciousPerson from "./suspicious-person/SuspiciousPerson";
 interface IProps {
   user: User;
   matchedUser?: User;

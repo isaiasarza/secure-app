@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { User } from "../../model/user";
+import { User } from "../../../../model/user";
 import {
   IonGrid,
   IonRow,
@@ -8,7 +8,7 @@ import {
   IonLabel,
   IonInput,
 } from "@ionic/react";
-import SelfieComponent from "../selfie/SelfieComponent";
+import SelfieComponent from "../../../selfie/SelfieComponent";
 interface IProps {
   user: User;
 }

@@ -3,6 +3,7 @@ import { User } from "../../model/user";
 import { db } from "../../firebaseConfig";
 import { CloudFilesService } from "../cloud-files/cloud-files.service";
 import { CloudFilesServiceToken, injector } from "../../injector/injector";
+import { ProfilesTypeEnum } from "../../model/profiles-type.enum";
 
 export class UserFirebaseImpService extends UserService {
   private readonly COLLECTION_NAME = "users";
@@ -77,5 +78,14 @@ export class UserFirebaseImpService extends UserService {
         const users = snap.docs.map((doc) => doc.data() as User);
         return Promise.resolve(users);
       });
+  }
+
+  public getGuards(): Promise<User[]> {
+    return fetch("assets/data/users.json").then(async (data) => {
+      const users = await data.json();
+      console.log("getAllUsers", users);
+      if (!users) return Promise.reject("error ajksdf");
+      return Promise.resolve(users.filter((u: any) => u.role === ProfilesTypeEnum.VIGILANT));
+    });
   }
 }

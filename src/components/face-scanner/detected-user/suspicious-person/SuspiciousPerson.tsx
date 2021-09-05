@@ -7,8 +7,8 @@ import {
   IonInput,
 } from "@ionic/react";
 import React, { FC } from "react";
-import { ReportedPerson } from "../../model/reported.person";
-import SelfieComponent from "../selfie/SelfieComponent";
+import { ReportedPerson } from "../../../../model/reported.person";
+import SelfieComponent from "../../../selfie/SelfieComponent";
 
 interface IProps {
   reportedPerson: ReportedPerson;

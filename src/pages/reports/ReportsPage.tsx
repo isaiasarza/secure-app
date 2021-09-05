@@ -51,7 +51,6 @@ export default class ReportsPage extends React.Component<IAppProps, IAppState> {
 
   async componentDidMount(){
       const reports: ReportedPerson[] = (await this.state.reportService.get())
-
       this.setState({reports: reports})
   }
 

@@ -15,9 +15,7 @@ const GuardHomeComponent: FC<IProps> = (props) => {
     setShowModal(false);
   };
   const onFaceScan = async () => {
-    //console.log("on go to photo");
     setShowModal(true);
-    // history.push("/photo");
   };
   const onViewReports = async () => {
     history.push("/reports");
@@ -36,7 +34,7 @@ const GuardHomeComponent: FC<IProps> = (props) => {
       </IonModal>
       <IonGrid>
         <IonRow className="row ion-justify-content-center">
-          <IonCol>
+          <IonCol >
             <div className="home-option" onClick={onFaceScan}>
               <p className="label">Scanner</p>
             </div>
@@ -49,7 +47,7 @@ const GuardHomeComponent: FC<IProps> = (props) => {
         </IonRow>
         <IonRow className="row ion-justify-content-center">
           <IonCol>
-            <div className="home-option">
+            <div className="home-option" onClick={onViewReports}>
               <p className="label">Reportes</p>
             </div>
           </IonCol>

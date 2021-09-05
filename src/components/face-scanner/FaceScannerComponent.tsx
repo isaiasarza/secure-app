@@ -31,7 +31,7 @@ import { IonIcon, IonContent } from "@ionic/react";
 import { User } from "../../model/user";
 import DetectedUserComponent, {
   DetectionTypeEnum,
-} from "../detected-user/DetectedUserComponent";
+} from "./detected-user/DetectedUserComponent";
 import { number } from "yup";
 import { presentErrorToast } from "../../utils/toast";
 import { ReportService } from "../../service/report/report.service";

@@ -16,34 +16,19 @@ import { User } from "../../model/user";
 import PositionLoggerComponent from "../position-logger/PositionLoggerComponent";
 import { AuthorizationService } from "../../service/autz/autz.service";
 import { AuthorizationServiceToken, injector } from "../../injector/injector";
-import { ActionTypeEnum } from "../../model/profiles-type.enum";
+import { ActionTypeEnum, ProfilesTypeEnum } from "../../model/profiles-type.enum";
+import SecurityManagerHomeComponent from './SecurityManagerHome/SecurityManagerHome';
+import GuardHomeComponent from './GuardHome/GuardHome';
 interface IProps {
   user: User;
 }
 
 const HomeComponent: FC<IProps> = (props) => {
-  const history = useHistory();
-  const [showModal, setShowModal] = useState(false);
-  const [autzService] = useState<AuthorizationService>(
-    injector.get(AuthorizationServiceToken)
-  );
-  const closeModal = () => {
-    setShowModal(false);
-  };
 
   const getPeriod = (minutes: number) => {
     return minutes * 60000;
   };
 
-  const onFaceScan = async () => {
-    //console.log("on go to photo");
-    setShowModal(true);
-    // history.push("/photo");
-  };
-
-  const onViewReports = async () => {
-    history.push("/reports");
-  };
   return (
     <div className="container">
       <div hidden={true}>
@@ -52,17 +37,10 @@ const HomeComponent: FC<IProps> = (props) => {
           user={props.user}
         ></PositionLoggerComponent>
       </div>
-      <IonModal
-        isOpen={showModal}
-        cssClass="my-custom-class"
-        showBackdrop={true}
-      >
-        <FaceScannerComponent
-          closeAction={closeModal}
-          user={props.user}
-        ></FaceScannerComponent>
-      </IonModal>
-      <IonGrid>
+      
+      {props.user.role === ProfilesTypeEnum.SECURITY_MANAGER ? <SecurityManagerHomeComponent></SecurityManagerHomeComponent> : ''}
+      {props.user.role === ProfilesTypeEnum.VIGILANT ? <GuardHomeComponent user={props.user}></GuardHomeComponent> : ''}
+      {/* <IonGrid>
         <IonRow>
           {autzService.isAuthorized(props.user.role, ActionTypeEnum.SCANNER) ? (
             <IonCol>
@@ -103,7 +81,7 @@ const HomeComponent: FC<IProps> = (props) => {
             </IonCard>
           </IonCol>
         </IonRow>
-      </IonGrid>
+      </IonGrid> */}
     </div>
   );
 };

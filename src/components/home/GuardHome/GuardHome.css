@@ -1,0 +1,28 @@
+.home-option{
+    position: absolute;
+    background-color: var(--ion-color-primary);
+    width: 150px;
+    height: 150px;
+    border: 2px solid  var(--ion-color-secondary);
+    border-radius: 5px;
+    
+    justify-content: center;
+    align-items: center;
+}
+
+.home-option .label{
+    position: absolute;
+    top: 60px;
+    left: 10%;
+    width: 80%;
+    height: 30px;
+   /*  background-color: var(--ion-color-secondary); */
+    border-radius: 5px;
+    align-self: center;
+}
+.row{
+    height: 170px;
+}
+
+
+

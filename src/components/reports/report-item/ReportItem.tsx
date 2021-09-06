@@ -11,7 +11,7 @@ import {
 } from "@ionic/react";
 import moment from "moment";
 import { navigateCircleOutline } from "ionicons/icons";
-import MapComponent from "../map/MapComponent";
+import MapComponent from "./map/MapComponent";
 interface IProps {
   report: ReportedPerson;
 }
@@ -35,6 +35,7 @@ const ReportItem: FC<IProps> = (props) => {
           loadingElement={<div style={{ height: `100%` }} />}
           containerElement={<div style={{ height: `400px` }} />}
           mapElement={<div style={{ height: `100%` }} />}
+          yesIWantToUseGoogleMapApiInternals
           lat={props.report.lat}
           lng={props.report.long}
         />

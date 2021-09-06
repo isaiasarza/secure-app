@@ -23,6 +23,7 @@ const GuardItem: FC<IProps> = (props) => {
   const onViewGuardActivity = async () => {
       if(props.guard.uid){
         const activity = await positionLoggerService.getByGuardId(props.guard.uid);
+        console.log("activity", activity)
         setActivity(activity)
         setShowActivity(true)
       }

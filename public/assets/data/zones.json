@@ -1,0 +1,30 @@
+[
+  {
+    "geofence": {
+      "id": "69ca1b88-6fbe-4e80-a4d4-ff4d3748acdb",
+      "latitude": -42.767538,
+      "longitude": -65.036554,
+      "radius": 100,
+      "transitionType": 3
+    },
+    "assignedGuards": ["UQ4UH1RXQwWXdFh1zTwY8slsqY32","NfCh8ZViukZ54TO5HaQI4HoodAr1"],
+    "createdBy": "Y52PVCF7geZ0YedIO0jpp8J2Q923",
+    "createdDate": "",
+    "name": "Plaza San Martín",
+    "description": ""
+  },
+  {
+    "geofence": {
+      "id": "69ca1b88-6fbe-4e80-a4d4-ff4d3748addb",
+      "latitude": -42.767555,
+      "longitude": -65.036999,
+      "radius": 100,
+      "transitionType": 3
+    },
+    "assignedGuards": ["UQ4UH1RXQwWXdFh1zTwY8slsqY32","32JERwNkwYau8gLd9sOJFS5L7KU2"],
+    "createdBy": "Y52PVCF7geZ0YedIO0jpp8J2Q923",
+    "createdDate": "",
+    "name": "Otro lugar",
+    "description": ""
+  }
+]

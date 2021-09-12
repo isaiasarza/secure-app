@@ -1,6 +1,11 @@
 import * as React from "react";
 import { UserContextService } from "../../service/user-context/user-context.service";
-import { injector, UserContextServiceToken } from "../../injector/injector";
+import {
+  injector,
+  UserContextServiceToken,
+  ZoneServiceToken,
+  GeofenceServiceToken,
+} from "../../injector/injector";
 import { User } from "../../model/user";
 import { HeaderOption } from "../../model/header.option";
 import { logOut, personOutline } from "ionicons/icons";
@@ -21,6 +26,9 @@ import ProfileComponent from "../../components/profile/ProfileComponent";
 import { RouteComponentProps } from "react-router";
 import HomeComponent from "../../components/home/HomeComponent";
 import { Subscription } from "rxjs";
+import { ZoneService } from "../../service/zone/zone.service";
+import { GeofenceService } from "../../service/geofence/geofence.service";
+import { Zone } from "../../model/zone/zone";
 
 export interface IAppProps {
   history: RouteComponentProps["history"];
@@ -28,12 +36,15 @@ export interface IAppProps {
 
 export interface IAppState {
   userContextService: UserContextService;
+  zoneService: ZoneService;
+  geofenceService: GeofenceService;
+  zones: Zone[];
   user: User | null;
   showModal: boolean;
 }
 
 export default class HomePage extends React.Component<IAppProps, IAppState> {
-  public _isMounted: boolean = false
+  public _isMounted: boolean = false;
   public subscription: Subscription | null = null;
   private options: HeaderOption[] = [
     {
@@ -58,38 +69,50 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
   constructor(props: IAppProps) {
     super(props);
     this.state = {
-      userContextService: injector.get(
-        UserContextServiceToken
-      ) as UserContextService,
+      userContextService: injector.get(UserContextServiceToken),
+      zoneService: injector.get(ZoneServiceToken),
+      geofenceService: injector.get(GeofenceServiceToken),
+      zones: [],
       user: null,
       showModal: false,
     };
   }
 
-  componentDidMount() {
-    this._isMounted = true
+  getZones = async () => {
+    try {
+      const zones = await this.state.zoneService.get();
+      this.state.geofenceService.addGeofences(zones);
+      return zones;
+    } catch (error) {
+      return [];
+    }
+  };
+
+  async componentDidMount() {
+    this._isMounted = true;
     console.log("componentDidMount");
+    this.setState({ zones: await this.getZones() });
     const userContextService = this.state.userContextService;
     if (!userContextService.currentUser.observed)
       this.subscription = userContextService.currentUser.subscribe((user) => {
         console.log("current user", user);
-          if (user) {
-            let state = { ...this.state };
-            state.user = user;
-            this.setState(state);
-          }
+        if (user) {
+          let state = { ...this.state };
+          state.user = user;
+          this.setState(state);
+        }
       });
   }
-  
+
   componentDidUpdate() {
-    console.log("componentDidUpdate")
+    console.log("componentDidUpdate");
   }
 
   componentWillUnmount() {
     console.log("componentWillUnmount");
-    this._isMounted = false
-    if (this.subscription){
-      this.subscription.unsubscribe()
+    this._isMounted = false;
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 
@@ -118,7 +141,10 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
                 </IonButtons>
               </IonToolbar>
             </IonHeader>
-            <HomeComponent user={this.state.user}></HomeComponent>
+            <HomeComponent
+              user={this.state.user}
+              zones={this.state.zones}
+            ></HomeComponent>
             <IonModal
               isOpen={showModal}
               cssClass="my-custom-class"

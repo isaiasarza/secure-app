@@ -23,6 +23,10 @@ import { PositionLoggerFirebaseImpService } from '../service/position-logger/pos
 import { ReportFirebaseImpService } from '../service/report/report.firebase.imp';
 import { AuthorizationService } from "../service/autz/autz.service";
 import { AuthorizationImpService } from "../service/autz/autz.imp.service";
+import { ZoneService } from '../service/zone/zone.service';
+import { ZoneImpService } from '../service/zone/zone.imp';
+import { GeofenceService } from '../service/geofence/geofence.service';
+import { GeofenceImpService } from "../service/geofence/geofence.imp";
 export const AuthServiceToken = new InjectionToken<AuthService>(
   "AUTH_SERVICE_TOKEN"
 );
@@ -42,6 +46,14 @@ export const ReportServiceToken = new InjectionToken<ReportService>(
 
 export const AuthorizationServiceToken = new InjectionToken<AuthorizationService>(
   "AUTHORIZATION_SERVICE_TOKEN"
+);
+
+export const ZoneServiceToken = new InjectionToken<ZoneService>(
+  "ZONE_SERVICE_TOKEN"
+);
+
+export const GeofenceServiceToken = new InjectionToken<GeofenceService>(
+  "GEOFENCE_SERVICE_TOKEN"
 );
 export const PositionLoggerServiceToken =
   new InjectionToken<PositionLoggerService>("POSITION_LOGGER_SERVICE_TOKEN");
@@ -69,6 +81,8 @@ export const TEST_STRATEGY = [
     useClass: PositionLoggerTestImpService,
   },
   {provide: AuthorizationServiceToken, useClass: AuthorizationImpService},
+  {provide: ZoneServiceToken, useClass: ZoneImpService},
+  {provide: GeofenceServiceToken, useClass: GeofenceImpService},
 ];
 export const injector: DependencyInjector = makeInjector(
   STRATEGY_TYPE === "TEST" ? TEST_STRATEGY : FIREBASE_STRATEGY

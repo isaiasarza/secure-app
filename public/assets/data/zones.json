@@ -10,21 +10,23 @@
     "assignedGuards": ["UQ4UH1RXQwWXdFh1zTwY8slsqY32","NfCh8ZViukZ54TO5HaQI4HoodAr1"],
     "createdBy": "Y52PVCF7geZ0YedIO0jpp8J2Q923",
     "createdDate": "",
-    "name": "Plaza San Martín",
-    "description": ""
+    "name": "Plaza 'San Martín'",
+    "description": "Se encuentra en el centro de la ciudad",
+    "uuid":"ABCD0000"
   },
   {
     "geofence": {
       "id": "69ca1b88-6fbe-4e80-a4d4-ff4d3748addb",
-      "latitude": -42.767555,
-      "longitude": -65.036999,
+      "latitude": -42.774938,
+      "longitude": -65.049759,
       "radius": 100,
       "transitionType": 3
     },
     "assignedGuards": ["UQ4UH1RXQwWXdFh1zTwY8slsqY32","32JERwNkwYau8gLd9sOJFS5L7KU2"],
     "createdBy": "Y52PVCF7geZ0YedIO0jpp8J2Q923",
     "createdDate": "",
-    "name": "Otro lugar",
-    "description": ""
+    "name": "Carrefour II",
+    "description": "Se encuentra cerca del barrio oeste",
+    "uuid":"ABCD0001"
   }
 ]

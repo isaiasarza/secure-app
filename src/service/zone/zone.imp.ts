@@ -1,3 +1,4 @@
+import { User } from "../../model/user";
 import { Zone } from "../../model/zone/zone";
 import { ZoneService } from "./zone.service";
 export class ZoneImpService extends ZoneService {
@@ -19,8 +20,14 @@ export class ZoneImpService extends ZoneService {
     });
   }
 
-
   public add(zone: Zone): Promise<void> {
+    return Promise.resolve();
+  }
+
+  /**
+     * Add another guard to a zone, it fails if the zone already exists
+     */
+   public addGuard(zoneId: string, guard: User): Promise<void>{
     return Promise.resolve();
   }
 }

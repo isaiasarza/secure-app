@@ -2,9 +2,11 @@ import { IonCol, IonGrid, IonRow } from "@ionic/react";
 import React, { FC } from "react";
 import { useHistory } from "react-router";
 import { User } from "../../../model/user";
+import { Zone } from "../../../model/zone/zone";
 import "../HomeComponent.css";
 interface IProps {
   user: User;
+  zones: Zone[];
 }
 
 const SecurityManagerHomeComponent: FC<IProps> = (props) => {
@@ -14,9 +16,14 @@ const SecurityManagerHomeComponent: FC<IProps> = (props) => {
   };
 
   const onViewGuards = async () => {
-    history.push("/guards")
+    history.push("/guards");
   };
-  
+
+  const onViewZones = async () => {
+    console.log("onViewZones",props.zones)
+    history.push("/zones", { zones: props.zones });
+  };
+
   return (
     <div>
       <IonGrid>
@@ -27,7 +34,7 @@ const SecurityManagerHomeComponent: FC<IProps> = (props) => {
             </div>
           </IonCol>
           <IonCol>
-            <div className="home-option">
+            <div className="home-option" onClick={onViewZones}>
               <p className="label">Zonas</p>
             </div>
           </IonCol>

@@ -22,8 +22,10 @@ import {
 } from "../../model/profiles-type.enum";
 import SecurityManagerHomeComponent from "./security-manager-home/SecurityManagerHome";
 import GuardHomeComponent from "./guard-home/GuardHome";
+import { Zone } from "../../model/zone/zone";
 interface IProps {
   user: User;
+  zones: Zone[];
 }
 
 const HomeComponent: FC<IProps> = (props) => {
@@ -53,6 +55,7 @@ const HomeComponent: FC<IProps> = (props) => {
          */
         <SecurityManagerHomeComponent
           user={props.user}
+          zones={props.zones}
         ></SecurityManagerHomeComponent>
       ) : (
         ""
@@ -61,7 +64,7 @@ const HomeComponent: FC<IProps> = (props) => {
         /**
          * Home del guardia
          */
-        <GuardHomeComponent user={props.user}></GuardHomeComponent>
+        <GuardHomeComponent user={props.user} zones={props.zones}></GuardHomeComponent>
       ) : (
         ""
       )}

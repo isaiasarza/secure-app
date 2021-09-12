@@ -1,3 +1,4 @@
+import { User } from "../../model/user";
 import { Zone } from "../../model/zone/zone";
 
 export abstract class ZoneService{
@@ -13,4 +14,9 @@ export abstract class ZoneService{
      * Add a new zone, it fails if the zone already exists
      */
     public abstract add(zone: Zone): Promise<void>;
+
+     /**
+     * Add another guard to a zone, it fails if the zone already exists
+     */
+      public abstract addGuard(zoneId: string, guard: User): Promise<void>;
 }

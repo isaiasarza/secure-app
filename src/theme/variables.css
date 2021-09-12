@@ -8,6 +8,41 @@ http://ionicframework.com/docs/theming/ */
   width: 90%!important;
 }
 
+.custom-item {
+  border-radius: 5px;
+  background-color: var(--ion-color-secondary);
+}
+
+.custom-item-content {
+  margin: 5px 5px;
+}
+
+.sub-item {
+  border: 1px solid var(--ion-color-primary);
+  border-radius: 5px;
+  background-color: var(--ion-color-secondary);
+  margin: 15px 5px;
+}
+
+.custom-item-content ion-row {
+  margin: 0 5px;
+  padding: 0 0;
+}
+
+.custom-item-content ion-col {
+  margin: 0 0;
+
+  padding: 0 0;
+}
+
+.custom-item-content ion-col p {
+  margin: 0 0;
+}
+
+.custom-item-content ion-col h4 {
+  margin: 0 5px;
+}
+
 @font-face {
   font-family: 'OpenSans-Regular';
   src: local('OpenSans-Regular'), url(../fonts/open-sans/OpenSans-Regular.ttf) format('truetype');

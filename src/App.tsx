@@ -34,6 +34,7 @@ import FaceScannerComponent from './components/face-scanner/FaceScannerComponent
 import ReportsPage from "./pages/reports/ReportsPage";
 import { AuthorizationService } from './service/autz/autz.service';
 import GuardsPage from "./pages/guards/GuardsPage";
+import ZonesPage from './pages/zones/ZonesPage';
 
 const App: React.FC = () => {
   const [userContextService] = useState<UserContextService>(
@@ -71,6 +72,18 @@ const App: React.FC = () => {
             render={(routeProps) => {
               return userContextService.getCurrentUser() != null ? (
                 <ReportsPage {...routeProps} />
+              ) : (
+                <LoginPage />
+              );
+            }}
+          />
+          <Route
+            exact
+            path="/zones" 
+            
+            render={(routeProps) => {
+              return userContextService.getCurrentUser() != null ? (
+                <ZonesPage {...routeProps} />
               ) : (
                 <LoginPage />
               );

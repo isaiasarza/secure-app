@@ -4,8 +4,10 @@ import "./GuardHome.css";
 import FaceScannerComponent from "../../face-scanner/FaceScannerComponent";
 import { User } from "../../../model/user";
 import { useHistory } from "react-router";
+import { Zone } from "../../../model/zone/zone";
 interface IProps {
   user: User;
+  zones: Zone[];
 }
 
 const GuardHomeComponent: FC<IProps> = (props) => {

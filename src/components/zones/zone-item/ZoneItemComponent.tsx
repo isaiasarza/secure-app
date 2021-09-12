@@ -14,13 +14,17 @@ const ZoneItemComponent: FC<IProps> = (props) => {
     console.log("onOpenMap", "zone", props.zone);
     setShowMap(true);
   };
+
+  const closeModal = () => {
+    setShowMap(false);
+  };
   return (
     <div
       className="report-item"
       id={"report_" + props.zone.uuid}
       key={props.zone.uuid}
     >
-      <IonModal isOpen={showMap} cssClass="my-custom-class" showBackdrop={true}>
+      <IonModal isOpen={showMap} cssClass="my-custom-class"  onDidDismiss={closeModal} showBackdrop={true}>
         <ZoneMapComponent
           isMarkerShown
           googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places"

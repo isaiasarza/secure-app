@@ -21,13 +21,35 @@ export class ZoneImpService extends ZoneService {
   }
 
   public add(zone: Zone): Promise<void> {
-    return Promise.resolve();
+    let promise = new Promise<void>((resolve)=>{
+      setTimeout(()=>{
+         resolve()
+      },3000)
+    })
+   return promise
   }
 
   /**
      * Add another guard to a zone, it fails if the zone already exists
      */
    public addGuard(zoneId: string, guard: User): Promise<void>{
-    return Promise.resolve();
+    let promise = new Promise<void>((resolve)=>{
+      setTimeout(()=>{
+         resolve()
+      },3000)
+    })
+   return promise
+  }
+
+  /**
+     * Add a new zone, it fails if the zone already exists
+     */
+   public update(zone: Zone): Promise<void>{
+     let promise = new Promise<void>((resolve)=>{
+       setTimeout(()=>{
+          resolve()
+       },3000)
+     })
+    return promise
   }
 }

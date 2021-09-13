@@ -81,11 +81,14 @@ export class UserFirebaseImpService extends UserService {
   }
 
   public getGuards(): Promise<User[]> {
-    return fetch("assets/data/users.json").then(async (data) => {
-      const users = await data.json();
-      console.log("getAllUsers", users);
-      if (!users) return Promise.reject("error ajksdf");
-      return Promise.resolve(users.filter((u: any) => u.role === ProfilesTypeEnum.VIGILANT));
-    });
+    return db
+      .collection(this.COLLECTION_NAME)
+      .get()
+      .then((snap) => {
+        const users = snap.docs.map((doc) => doc.data() as User);
+        return Promise.resolve(
+          users.filter((u: any) => u.role === ProfilesTypeEnum.VIGILANT)
+        );
+      });
   }
 }

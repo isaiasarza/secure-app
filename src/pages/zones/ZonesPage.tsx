@@ -1,4 +1,4 @@
-import { IonContent, IonPage } from "@ionic/react";
+import { IonContent, IonPage, IonLoading } from '@ionic/react';
 import { logOut, personOutline } from "ionicons/icons";
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
@@ -17,6 +17,7 @@ export interface IAppProps {
 export interface IAppState {
     showModal: boolean;
     zones: Zone[];
+    showLoading: boolean;
 }
 
 export default class ZonesPage extends React.Component<IAppProps, IAppState> {
@@ -43,18 +44,20 @@ export default class ZonesPage extends React.Component<IAppProps, IAppState> {
   constructor(props: IAppProps) {
     super(props);
 
-    this.state = {showModal: false, zones:[]};
+    this.state = {showModal: false, zones:[],showLoading:true};
   }
 
   componentDidMount(){
       const data: any = this.props.location.state
       this.setState({zones: data.zones})
       console.log("zonesPage state", data.zones)
+      this.setState({showLoading:false})
   }
 
   public render() {
     return (
       <IonPage>
+        <IonLoading isOpen={this.state.showLoading} message={"Por favor, espere"}></IonLoading>
         <HeaderComponent options={this.options}></HeaderComponent>
         <IonContent class="ion-padding">
          <ZonesComponent zones={this.state.zones}></ZonesComponent>

@@ -1,5 +1,6 @@
-import { Zone } from "../../model/zone/zone";
+import { MyGeofence } from "../../model/zone/geofence";
 
 export abstract class GeofenceService{
-    public abstract addGeofences(zones: Zone[]): Promise<void>;
+    public abstract addGeofences(geofence: MyGeofence[]): Promise<void>;
+    public abstract addGeofence(geofence: MyGeofence): Promise<void>;
 }

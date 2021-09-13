@@ -81,7 +81,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
   getZones = async () => {
     try {
       const zones = await this.state.zoneService.get();
-      this.state.geofenceService.addGeofences(zones);
+      this.state.geofenceService.addGeofences(zones.map(z => z.geofence));
       return zones;
     } catch (error) {
       return [];
@@ -149,6 +149,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
               isOpen={showModal}
               cssClass="my-custom-class"
               showBackdrop={true}
+              onDidDismiss={this.closeModal}
             >
               <ProfileComponent
                 user={user}

@@ -18,6 +18,9 @@ interface IProps {
 
 const ReportItem: FC<IProps> = (props) => {
   const [showMap, setShowMap] = useState(false);
+  const closeModal = () => {
+    setShowMap(false);
+  };
   const onOpenMap = () => {
     console.log(
       "onOpenMap",
@@ -28,7 +31,7 @@ const ReportItem: FC<IProps> = (props) => {
   };
   return (
     <div className="report-item" id={"report_" + props.report.uuid} key={props.report.uuid}>
-      <IonModal isOpen={showMap} cssClass="my-custom-class"  showBackdrop={true}>
+      <IonModal isOpen={showMap} cssClass="my-custom-class" onDidDismiss={closeModal} showBackdrop={true}>
         <MapComponent
           isMarkerShown
           googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places"

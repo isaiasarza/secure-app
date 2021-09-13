@@ -15,6 +15,11 @@ export abstract class ZoneService{
      */
     public abstract add(zone: Zone): Promise<void>;
 
+    /**
+     * Add a new zone, it fails if the zone already exists
+     */
+     public abstract update(zone: Zone): Promise<void>;
+
      /**
      * Add another guard to a zone, it fails if the zone already exists
      */

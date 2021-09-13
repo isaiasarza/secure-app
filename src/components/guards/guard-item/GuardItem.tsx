@@ -20,6 +20,9 @@ const GuardItem: FC<IProps> = (props) => {
 
   const [showActivity, setShowActivity] = useState(false);
   const [activity, setActivity] = useState<PositionLog[]>([]);
+  const closeModal = () => {
+    setShowActivity(false);
+  };
   const onViewGuardActivity = async () => {
       if(props.guard.uid){
         const activity = await positionLoggerService.getByGuardId(props.guard.uid);
@@ -34,7 +37,7 @@ const GuardItem: FC<IProps> = (props) => {
       id={"report_" + props.guard.uid}
       key={props.guard.uid}
     >
-      <IonModal isOpen={showActivity} cssClass="my-custom-class" showBackdrop={true}>
+      <IonModal isOpen={showActivity} cssClass="my-custom-class" onDidDismiss={closeModal} showBackdrop={true}>
         <GuardActivity guard={props.guard} activity={activity}></GuardActivity>
       </IonModal>
       <div className="report-item-content">

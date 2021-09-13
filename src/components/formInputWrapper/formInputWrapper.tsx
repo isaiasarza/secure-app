@@ -10,6 +10,8 @@ interface IProps {
   label: string;
   component?: JSX.Element;
   inputType?: string;
+  hidden?:boolean;
+  value?:string;
 }
 
 const FormInputWrapper: FC<IProps> = (props) => {
@@ -18,7 +20,7 @@ const FormInputWrapper: FC<IProps> = (props) => {
     return el
   }
   return (
-    <IonItem>
+    <IonItem className={props.hidden === true ? 'ion-hide':''}>
       <IonLabel className="ion-text-wrap" position={props.position}>
         {props.label}
       </IonLabel>
@@ -37,6 +39,7 @@ const FormInputWrapper: FC<IProps> = (props) => {
               onIonChange={onChange}
               rows={6}
               cols={20}
+              value={value}
             ></IonTextarea>
           ) : (
             <IonInput
@@ -46,6 +49,7 @@ const FormInputWrapper: FC<IProps> = (props) => {
               type={props.type}
               data-testid={props.name}
               onIonChange={onChange}
+              value={value}
             ></IonInput>
           )
         }

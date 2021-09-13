@@ -51,11 +51,25 @@ export class UserTestImpService extends UserService {
   }
 
   public getGuards(): Promise<User[]> {
-    return fetch("assets/data/users.json").then(async (data) => {
+    let promiseA: Promise<User[]> = new Promise<User[]>((resolve, reject) => {
+      let wait = setTimeout(() => {
+        clearTimeout(wait);
+        //resolve('Promise A win!');
+        return fetch("assets/data/users.json").then(async (data) => {
+          const users = await data.json();
+          console.log("getGuards", users);
+          if (!users) return Promise.reject("error ajksdf");
+          return resolve(users.filter((u: any) => u.role === ProfilesTypeEnum.VIGILANT));
+        });
+      }, 200)
+      
+    })
+    return promiseA
+    /* return fetch("assets/data/users.json").then(async (data) => {
       const users = await data.json();
       console.log("getAllUsers", users);
       if (!users) return Promise.reject("error ajksdf");
       return Promise.resolve(users.filter((u: any) => u.role === ProfilesTypeEnum.VIGILANT));
-    });
+    }); */
   }
 }

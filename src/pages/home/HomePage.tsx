@@ -8,7 +8,7 @@ import {
 } from "../../injector/injector";
 import { User } from "../../model/user";
 import { HeaderOption } from "../../model/header.option";
-import { logOut, personOutline } from "ionicons/icons";
+import { constructOutline, logOut, personOutline } from "ionicons/icons";
 import {
   IonPage,
   IonContent,
@@ -80,8 +80,10 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
 
   getZones = async () => {
     try {
+     
       const zones = await this.state.zoneService.get();
-      this.state.geofenceService.addGeofences(zones.map(z => z.geofence));
+      await this.state.geofenceService.initialize();
+      this.state.geofenceService.addGeofences(zones.map((z) => z.geofence));
       return zones;
     } catch (error) {
       return [];
@@ -93,6 +95,10 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
     console.log("componentDidMount");
     this.setState({ zones: await this.getZones() });
     const userContextService = this.state.userContextService;
+    const geofenceListener = this.state.geofenceService.getListener();
+    geofenceListener.subscribe((data) => {
+      console.log("geofenceListener", data);
+    });
     if (!userContextService.currentUser.observed)
       this.subscription = userContextService.currentUser.subscribe((user) => {
         console.log("current user", user);

@@ -68,6 +68,8 @@ export const FIREBASE_STRATEGY = [
     useClass: PositionLoggerFirebaseImpService,
   },
   {provide: AuthorizationServiceToken, useClass: AuthorizationImpService},
+  {provide: ZoneServiceToken, useClass: ZoneImpService},
+  {provide: GeofenceServiceToken, useClass: GeofenceImpService},
 ];
 
 export const TEST_STRATEGY = [

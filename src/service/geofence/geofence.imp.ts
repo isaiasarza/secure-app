@@ -8,20 +8,16 @@ export class GeofenceImpService extends GeofenceService {
     return Geofence.initialize();
   }
 
-  public addGeofences(geofences: MyGeofence[]): Promise<void> {
-    geofences.forEach(async (g) => {
-      try {
-        await Geofence.addOrUpdate(g);
-        console.log("addGeofences ok",g);
-      } catch (error) {
-        console.log("addGeofences error", error);
-      }
-    });
-    return Promise.resolve();
+  public addGeofences(geofences: MyGeofence[]): Promise<void> {    
+    return Geofence.addOrUpdate(geofences);
   }
 
-  getListener(): Observable<any> {
+  public getListener(): Observable<any> {
     return Geofence.onTransitionReceived();
+  }
+
+  public getWatched():Promise<string>{
+    return Geofence.getWatched()
   }
 
   public addGeofence(geofence: MyGeofence): Promise<void> {

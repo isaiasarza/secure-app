@@ -34,14 +34,14 @@
       "id": "69ca1b88-6fbe-4e80-a4d4-ff4d3748afff",
       "latitude": -42.780131,
       "longitude": -65.055571,
-      "radius": 100,
+      "radius": 5,
       "transitionType": 3
     },
     "assignedGuards": ["UQ4UH1RXQwWXdFh1zTwY8slsqY32","32JERwNkwYau8gLd9sOJFS5L7KU2"],
     "createdBy": "Y52PVCF7geZ0YedIO0jpp8J2Q923",
     "createdDate": "",
-    "name": "Carrefour II",
-    "description": "Se encuentra cerca del barrio oeste",
+    "name": "Entre Ríos 749 (Casa)",
+    "description": "Se encuentra en el barrio oeste",
     "uuid":"ABCD0002"
   }
 ]

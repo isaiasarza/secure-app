@@ -20,6 +20,8 @@ import {
   IonIcon,
   IonModal,
   IonBackButton,
+  useIonToast,
+  IonToast,
 } from "@ionic/react";
 import HeaderComponent from "../../components/header/HeaderComponent";
 import ProfileComponent from "../../components/profile/ProfileComponent";
@@ -29,9 +31,11 @@ import { Subscription } from "rxjs";
 import { ZoneService } from "../../service/zone/zone.service";
 import { GeofenceService } from "../../service/geofence/geofence.service";
 import { Zone } from "../../model/zone/zone";
+import { presentSuccessToast } from '../../utils/toast';
 
 export interface IAppProps {
   history: RouteComponentProps["history"];
+
 }
 
 export interface IAppState {
@@ -41,10 +45,12 @@ export interface IAppState {
   zones: Zone[];
   user: User | null;
   showModal: boolean;
+  isToastOpen: boolean;
 }
 
 export default class HomePage extends React.Component<IAppProps, IAppState> {
   public _isMounted: boolean = false;
+  //public isToastOpen: boolean = false;
   public subscription: Subscription | null = null;
   private options: HeaderOption[] = [
     {
@@ -75,6 +81,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
       zones: [],
       user: null,
       showModal: false,
+      isToastOpen: false,
     };
   }
 
@@ -83,7 +90,9 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
      
       const zones = await this.state.zoneService.get();
       await this.state.geofenceService.initialize();
-      this.state.geofenceService.addGeofences(zones.map((z) => z.geofence));
+      await this.state.geofenceService.addGeofences(zones.map((z) => z.geofence));
+      const watched = await this.state.geofenceService.getWatched()
+      console.log("watched",watched)
       return zones;
     } catch (error) {
       return [];
@@ -98,6 +107,10 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
     const geofenceListener = this.state.geofenceService.getListener();
     geofenceListener.subscribe((data) => {
       console.log("geofenceListener", data);
+      this.setState({isToastOpen: true})
+      setTimeout(()=>{
+        this.setState({isToastOpen: false})
+      },1000)
     });
     if (!userContextService.currentUser.observed)
       this.subscription = userContextService.currentUser.subscribe((user) => {
@@ -162,6 +175,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
                 closeAction={this.closeModal}
               ></ProfileComponent>
             </IonModal>
+            <IonToast color="secondary" isOpen={this.state.isToastOpen} message="Geofence notification entry" duration={1000}></IonToast>
           </IonContent>
         </IonPage>
       );

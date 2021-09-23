@@ -7,12 +7,15 @@
       "radius": 100,
       "transitionType": 3
     },
-    "assignedGuards": ["UQ4UH1RXQwWXdFh1zTwY8slsqY32","NfCh8ZViukZ54TO5HaQI4HoodAr1"],
+    "assignedGuards": [
+      "UQ4UH1RXQwWXdFh1zTwY8slsqY32",
+      "NfCh8ZViukZ54TO5HaQI4HoodAr1"
+    ],
     "createdBy": "Y52PVCF7geZ0YedIO0jpp8J2Q923",
     "createdDate": "",
     "name": "Plaza 'San Martín'",
     "description": "Se encuentra en el centro de la ciudad",
-    "uuid":"ABCD0000"
+    "uuid": "ABCD0000"
   },
   {
     "geofence": {
@@ -22,26 +25,38 @@
       "radius": 100,
       "transitionType": 3
     },
-    "assignedGuards": ["UQ4UH1RXQwWXdFh1zTwY8slsqY32","32JERwNkwYau8gLd9sOJFS5L7KU2"],
+    "assignedGuards": [
+      "UQ4UH1RXQwWXdFh1zTwY8slsqY32",
+      "32JERwNkwYau8gLd9sOJFS5L7KU2"
+    ],
     "createdBy": "Y52PVCF7geZ0YedIO0jpp8J2Q923",
     "createdDate": "",
     "name": "Carrefour II",
     "description": "Se encuentra cerca del barrio oeste",
-    "uuid":"ABCD0001"
+    "uuid": "ABCD0001"
   },
   {
     "geofence": {
       "id": "69ca1b88-6fbe-4e80-a4d4-ff4d3748afff",
-      "latitude": -42.780131,
-      "longitude": -65.055571,
-      "radius": 5,
-      "transitionType": 3
+      "latitude": -42.780104,
+      "longitude": -65.055429,
+      "radius": 2,
+      "transitionType": 3,
+      "notification": {
+        "id": 1,
+        "title": "You crossed a fence",
+        "text": "You just arrived to Gliwice city center.",
+        "openAppOnClick": true
+      }
     },
-    "assignedGuards": ["UQ4UH1RXQwWXdFh1zTwY8slsqY32","32JERwNkwYau8gLd9sOJFS5L7KU2"],
+    "assignedGuards": [
+      "UQ4UH1RXQwWXdFh1zTwY8slsqY32",
+      "32JERwNkwYau8gLd9sOJFS5L7KU2"
+    ],
     "createdBy": "Y52PVCF7geZ0YedIO0jpp8J2Q923",
     "createdDate": "",
     "name": "Entre Ríos 749 (Casa)",
     "description": "Se encuentra en el barrio oeste",
-    "uuid":"ABCD0002"
+    "uuid": "ABCD0002"
   }
 ]

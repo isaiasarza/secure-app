@@ -22,6 +22,11 @@ const GuardHomeComponent: FC<IProps> = (props) => {
   const onViewReports = async () => {
     history.push("/reports");
   };
+
+  const onViewZones = async () => {
+    console.log("onViewZones", props.zones);
+    history.push("/zones", { zones: props.zones, user: props.user });
+  };
   return (
     <div>
       <IonModal
@@ -37,13 +42,13 @@ const GuardHomeComponent: FC<IProps> = (props) => {
       </IonModal>
       <IonGrid>
         <IonRow className="row ion-justify-content-center">
-          <IonCol >
+          <IonCol>
             <div className="home-option" onClick={onFaceScan}>
               <p className="label">Scanner</p>
             </div>
           </IonCol>
           <IonCol>
-            <div className="home-option">
+            <div className="home-option" onClick={onViewZones}>
               <p className="label">Zonas</p>
             </div>
           </IonCol>

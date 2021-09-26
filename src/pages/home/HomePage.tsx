@@ -31,11 +31,10 @@ import { Subscription } from "rxjs";
 import { ZoneService } from "../../service/zone/zone.service";
 import { GeofenceService } from "../../service/geofence/geofence.service";
 import { Zone } from "../../model/zone/zone";
-import { presentSuccessToast } from '../../utils/toast';
+import { presentSuccessToast } from "../../utils/toast";
 
 export interface IAppProps {
   history: RouteComponentProps["history"];
-
 }
 
 export interface IAppState {
@@ -87,12 +86,22 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
 
   getZones = async () => {
     try {
-     
       const zones = await this.state.zoneService.get();
       await this.state.geofenceService.initialize();
-      await this.state.geofenceService.addGeofences(zones.map((z) => z.geofence));
-      const watched = await this.state.geofenceService.getWatched()
-      console.log("watched",watched)
+      await this.state.geofenceService.addGeofences(
+        zones.map((z) => z.geofence)
+      );
+
+      const watched = await this.state.geofenceService.getWatched();
+      console.log("watched", watched);
+      const geofenceListener = this.state.geofenceService.getListener();
+      geofenceListener.subscribe((data) => {
+        console.log("geofenceListener", data);
+        this.setState({ isToastOpen: true });
+        setTimeout(() => {
+          this.setState({ isToastOpen: false });
+        }, 1000);
+      });
       return zones;
     } catch (error) {
       return [];
@@ -104,14 +113,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
     console.log("componentDidMount");
     this.setState({ zones: await this.getZones() });
     const userContextService = this.state.userContextService;
-    const geofenceListener = this.state.geofenceService.getListener();
-    geofenceListener.subscribe((data) => {
-      console.log("geofenceListener", data);
-      this.setState({isToastOpen: true})
-      setTimeout(()=>{
-        this.setState({isToastOpen: false})
-      },1000)
-    });
+
     if (!userContextService.currentUser.observed)
       this.subscription = userContextService.currentUser.subscribe((user) => {
         console.log("current user", user);
@@ -175,7 +177,12 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
                 closeAction={this.closeModal}
               ></ProfileComponent>
             </IonModal>
-            <IonToast color="secondary" isOpen={this.state.isToastOpen} message="Geofence notification entry" duration={1000}></IonToast>
+            <IonToast
+              color="secondary"
+              isOpen={this.state.isToastOpen}
+              message="Geofence notification entry"
+              duration={1000}
+            ></IonToast>
           </IonContent>
         </IonPage>
       );

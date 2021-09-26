@@ -65,11 +65,5 @@ export class UserTestImpService extends UserService {
       
     })
     return promiseA
-    /* return fetch("assets/data/users.json").then(async (data) => {
-      const users = await data.json();
-      console.log("getAllUsers", users);
-      if (!users) return Promise.reject("error ajksdf");
-      return Promise.resolve(users.filter((u: any) => u.role === ProfilesTypeEnum.VIGILANT));
-    }); */
   }
 }

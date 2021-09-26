@@ -11,6 +11,8 @@ export enum ActionTypeEnum {
   NOTIFICATIONS = "NOTIFICATIONS",
   GUARDS_ACTIVITY = "GUARDS_ACTIVITY",
   GUARDS_ZONES = "GUARDS_ZONES",
+  ADD_ZONE = "ADD_ZONE",
+  ASSIGN_GUARDS_TO_ZONE = "ASSIGN_GUARDS_TO_ZONE",
   PROFILE = "PROFILE",
 }
 
@@ -31,6 +33,8 @@ export const profileList: Profile[] = [
       ActionTypeEnum.REPORTS,
       ActionTypeEnum.NOTIFICATIONS,
       ActionTypeEnum.PROFILE,
+      ActionTypeEnum.ASSIGN_GUARDS_TO_ZONE,
+      ActionTypeEnum.ADD_ZONE,
     ],
     profile: ProfilesTypeEnum.SECURITY_MANAGER,
   },

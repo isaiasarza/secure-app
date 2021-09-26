@@ -20,8 +20,8 @@ const SecurityManagerHomeComponent: FC<IProps> = (props) => {
   };
 
   const onViewZones = async () => {
-    console.log("onViewZones",props.zones)
-    history.push("/zones", { zones: props.zones });
+    console.log("onViewZones", props.zones);
+    history.push("/zones", { zones: props.zones, user: props.user });
   };
 
   return (

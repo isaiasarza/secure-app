@@ -40,7 +40,7 @@
       "id": "69ca1b88-6fbe-4e80-a4d4-ff4d3748afff",
       "latitude": -42.780104,
       "longitude": -65.055429,
-      "radius": 2,
+      "radius": 100,
       "transitionType": 3,
       "notification": {
         "id": 1,

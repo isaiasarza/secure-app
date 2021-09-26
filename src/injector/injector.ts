@@ -24,9 +24,11 @@ import { ReportFirebaseImpService } from '../service/report/report.firebase.imp'
 import { AuthorizationService } from "../service/autz/autz.service";
 import { AuthorizationImpService } from "../service/autz/autz.imp.service";
 import { ZoneService } from '../service/zone/zone.service';
-import { ZoneImpService } from '../service/zone/zone.imp';
+import { ZoneImpService } from '../service/zone/zone.test.imp';
 import { GeofenceService } from '../service/geofence/geofence.service';
 import { GeofenceImpService } from "../service/geofence/geofence.imp";
+import { GeofenceTestImpService } from '../service/geofence/geofence.test.imp';
+import { ZoneFirebaseImpService } from '../service/zone/zone.firebase.imp.service';
 export const AuthServiceToken = new InjectionToken<AuthService>(
   "AUTH_SERVICE_TOKEN"
 );
@@ -68,8 +70,8 @@ export const FIREBASE_STRATEGY = [
     useClass: PositionLoggerFirebaseImpService,
   },
   {provide: AuthorizationServiceToken, useClass: AuthorizationImpService},
-  {provide: ZoneServiceToken, useClass: ZoneImpService},
-  {provide: GeofenceServiceToken, useClass: GeofenceImpService},
+  {provide: ZoneServiceToken, useClass: ZoneFirebaseImpService},
+  {provide: GeofenceServiceToken, useClass: GeofenceTestImpService},
 ];
 
 export const TEST_STRATEGY = [
@@ -84,7 +86,7 @@ export const TEST_STRATEGY = [
   },
   {provide: AuthorizationServiceToken, useClass: AuthorizationImpService},
   {provide: ZoneServiceToken, useClass: ZoneImpService},
-  {provide: GeofenceServiceToken, useClass: GeofenceImpService},
+  {provide: GeofenceServiceToken, useClass: GeofenceTestImpService},
 ];
 export const injector: DependencyInjector = makeInjector(
   STRATEGY_TYPE === "TEST" ? TEST_STRATEGY : FIREBASE_STRATEGY

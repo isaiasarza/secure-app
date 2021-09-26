@@ -83,7 +83,7 @@ const App: React.FC = () => {
             
             render={(routeProps) => {
               return userContextService.getCurrentUser() != null ? (
-                <ZonesPage {...routeProps} />
+                <ZonesPage  {...routeProps} />
               ) : (
                 <LoginPage />
               );

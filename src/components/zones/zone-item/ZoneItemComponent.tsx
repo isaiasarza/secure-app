@@ -14,6 +14,7 @@ import ZoneMapComponent from "./zone-map/MapComponent";
 import { User } from "../../../model/user";
 import GuardsComponent from "../guards/GuardsComponent";
 import {
+  AuthorizationServiceToken,
   injector,
   UserServiceToken,
   ZoneServiceToken,
@@ -21,12 +22,18 @@ import {
 import { UserService } from "../../../service/user/user.service";
 import { presentSuccessToast, presentErrorToast } from "../../../utils/toast";
 import { ZoneService } from "../../../service/zone/zone.service";
+import { AuthorizationService } from '../../../service/autz/autz.service';
+import { ActionTypeEnum } from "../../../model/profiles-type.enum";
 
 interface IProps {
+  user: User;
   zone: Zone;
 }
 
 const ZoneItemComponent: FC<IProps> = (props) => {
+  const [autzService] = useState<AuthorizationService>(
+    injector.get(AuthorizationServiceToken)
+  );
   const [showMap, setShowMap] = useState(false);
   const [showGuards, setShowGuards] = useState(false);
   const [guards, setGuards] = useState<User[]>([]);
@@ -130,7 +137,7 @@ const ZoneItemComponent: FC<IProps> = (props) => {
               <b>Guardias Asignados:</b> {props.zone.assignedGuards.length}
             </IonCol>
             <IonCol size="2" offset="4">
-              <IonFabButton size="small" color="primary" onClick={onViewGuards}>
+              <IonFabButton hidden={!autzService.isAuthorized(props.user.role,ActionTypeEnum.ASSIGN_GUARDS_TO_ZONE)} size="small" color="primary" onClick={onViewGuards}>
                 <IonIcon icon={manOutline}></IonIcon>
               </IonFabButton>
             </IonCol>

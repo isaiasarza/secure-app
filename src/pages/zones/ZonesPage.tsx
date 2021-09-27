@@ -67,21 +67,8 @@ export default class ZonesPage extends React.Component<IAppProps, IAppState> {
   componentDidMount() {
     const data: any = this.props.location.state;
     this.setState({ zones: data.zones });
-    console.log("zonesPage state", data.zones);
     this.setState({ showLoading: false });
-   // const _state: any = this.props.location.state as any
     this.setState({user: data.user})
-    /* const userContextService = this.state.userContextService; */
-/* 
-    if (!userContextService.currentUser.observed)
-      this.subscription = userContextService.currentUser.subscribe((user) => {
-        console.log(this.TAG, "current user", user);
-        if (user) {
-          let state = { ...this.state };
-          state.user = user;
-          this.setState(state);
-        }
-      }); */
   }
 
   public render() {

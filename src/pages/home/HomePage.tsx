@@ -32,6 +32,17 @@ import { ZoneService } from "../../service/zone/zone.service";
 import { GeofenceService } from "../../service/geofence/geofence.service";
 import { Zone } from "../../model/zone/zone";
 import { presentSuccessToast } from "../../utils/toast";
+import {
+  FCMServiceToken,
+  UserServiceToken,
+  NotificationServiceToken,
+} from "../../injector/injector";
+import { FCMService } from "../../service/fcm/fcm.service";
+import { Token, PushNotificationSchema } from "@capacitor/push-notifications";
+import { UserService } from "../../service/user/user.service";
+import { NotificationService } from "../../service/notification/notification.service";
+import { Notification } from "../../model/notification";
+import moment from "moment";
 
 export interface IAppProps {
   history: RouteComponentProps["history"];
@@ -39,12 +50,15 @@ export interface IAppProps {
 
 export interface IAppState {
   userContextService: UserContextService;
+  fcmService: FCMService;
   zoneService: ZoneService;
   geofenceService: GeofenceService;
   zones: Zone[];
   user: User | null;
   showModal: boolean;
   isToastOpen: boolean;
+  userService: UserService;
+  notificationService: NotificationService;
 }
 
 export default class HomePage extends React.Component<IAppProps, IAppState> {
@@ -75,8 +89,11 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
     super(props);
     this.state = {
       userContextService: injector.get(UserContextServiceToken),
+      userService: injector.get(UserServiceToken),
       zoneService: injector.get(ZoneServiceToken),
       geofenceService: injector.get(GeofenceServiceToken),
+      fcmService: injector.get(FCMServiceToken),
+      notificationService: injector.get(NotificationServiceToken),
       zones: [],
       user: null,
       showModal: false,
@@ -108,12 +125,33 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
     }
   };
 
+  async registrationHandler(token: Token) {
+    const user = this.state.user;
+    if (user && !user.push_notification_token) {
+      user.push_notification_token = token.value;
+      this.state.userService.update(user);
+    }
+  }
+
+  async pushNotificationReceivedHandler(
+    pushNotification: PushNotificationSchema
+  ) {
+    const notification: Notification = {
+      receivedDate: moment().toISOString(),
+      pushNotification: pushNotification,
+    };
+    this.state.notificationService.add(notification);
+  }
+
   async componentDidMount() {
     this._isMounted = true;
     console.log("componentDidMount");
     this.setState({ zones: await this.getZones() });
     const userContextService = this.state.userContextService;
-
+    this.state.fcmService.init(
+      this.registrationHandler,
+      this.pushNotificationReceivedHandler
+    );
     if (!userContextService.currentUser.observed)
       this.subscription = userContextService.currentUser.subscribe((user) => {
         console.log("current user", user);

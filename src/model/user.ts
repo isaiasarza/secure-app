@@ -10,4 +10,5 @@ export interface User{
     selfie_url?: string;
     descriptors?: number[];
     local_selfie_url?: string;
+    push_notification_token?: string;
 }

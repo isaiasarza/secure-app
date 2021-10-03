@@ -41,8 +41,9 @@ import { FCMService } from "../../service/fcm/fcm.service";
 import { Token, PushNotificationSchema } from "@capacitor/push-notifications";
 import { UserService } from "../../service/user/user.service";
 import { NotificationService } from "../../service/notification/notification.service";
-import { Notification } from "../../model/notification";
+import { Notification } from "../../model/notification/notification";
 import moment from "moment";
+import { NotificationType } from "../../model/notification/notification-type.enum";
 
 export interface IAppProps {
   history: RouteComponentProps["history"];
@@ -59,6 +60,7 @@ export interface IAppState {
   isToastOpen: boolean;
   userService: UserService;
   notificationService: NotificationService;
+  toastData: any;
 }
 
 export default class HomePage extends React.Component<IAppProps, IAppState> {
@@ -98,6 +100,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
       user: null,
       showModal: false,
       isToastOpen: false,
+      toastData: null,
     };
   }
 
@@ -112,12 +115,31 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
       const watched = await this.state.geofenceService.getWatched();
       console.log("watched", watched);
       const geofenceListener = this.state.geofenceService.getListener();
-      geofenceListener.subscribe((data) => {
+      geofenceListener.subscribe(async (data) => {
         console.log("geofenceListener", data);
-        this.setState({ isToastOpen: true });
+
+        this.setState({ isToastOpen: true, toastData: data });
         setTimeout(() => {
-          this.setState({ isToastOpen: false });
-        }, 1000);
+          this.setState({ isToastOpen: false, toastData: null });
+        }, 5000);
+        const notification: Notification = {
+          receivedDate: moment().toISOString(),
+          type: NotificationType.GUARD_ZONE_ENTERED,
+          pushNotification: {
+            id: "1",
+            title: "Hola Mundo",
+            body: "Esta es una prueba hecha desde Secure-App",
+            data: {},
+            
+          },
+        };
+        this.state.notificationService.add(notification);
+        const tokens = await this.state.userService.getUserTokens();
+        if (tokens.length > 0)
+          this.state.fcmService.sendNotification(
+            notification.pushNotification,
+            tokens
+          );
       });
       return zones;
     } catch (error) {
@@ -125,22 +147,18 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
     }
   };
 
-  async registrationHandler(token: Token) {
-    const user = this.state.user;
-    if (user && !user.push_notification_token) {
-      user.push_notification_token = token.value;
-      this.state.userService.update(user);
-    }
+  async registrationHandler(token: Token, state: any) {
+    console.log("registrationHandler", token, state);
+    const user = state.user;
+    user.push_notification_token = token.value;
+    console.log("updating user token:", user.push_notification_token);
+    state.userService.update(user);
   }
 
   async pushNotificationReceivedHandler(
     pushNotification: PushNotificationSchema
   ) {
-    const notification: Notification = {
-      receivedDate: moment().toISOString(),
-      pushNotification: pushNotification,
-    };
-    this.state.notificationService.add(notification);
+    console.log("pushNotificationReceivedHandler", pushNotification);
   }
 
   async componentDidMount() {
@@ -148,10 +166,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
     console.log("componentDidMount");
     this.setState({ zones: await this.getZones() });
     const userContextService = this.state.userContextService;
-    this.state.fcmService.init(
-      this.registrationHandler,
-      this.pushNotificationReceivedHandler
-    );
+
     if (!userContextService.currentUser.observed)
       this.subscription = userContextService.currentUser.subscribe((user) => {
         console.log("current user", user);
@@ -159,6 +174,12 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
           let state = { ...this.state };
           state.user = user;
           this.setState(state);
+
+          this.state.fcmService.register(
+            this.registrationHandler,
+            this.pushNotificationReceivedHandler,
+            this.state,
+          );
         }
       });
   }
@@ -218,8 +239,8 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
             <IonToast
               color="secondary"
               isOpen={this.state.isToastOpen}
-              message="Geofence notification entry"
-              duration={1000}
+              message={JSON.stringify(this.state.toastData)}
+              duration={5000}
             ></IonToast>
           </IonContent>
         </IonPage>

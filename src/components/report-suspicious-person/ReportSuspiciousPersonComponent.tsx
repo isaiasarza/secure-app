@@ -26,11 +26,14 @@ import {
 import { ReportedPerson } from "../../model/reported.person";
 import { User } from "../../model/user";
 import { ReportService } from "../../service/report/report.service";
-import { injector, ReportServiceToken } from "../../injector/injector";
+import { injector, ReportServiceToken, NotificationServiceToken } from '../../injector/injector';
 import { Geolocation } from "@capacitor/geolocation";
 import { v4 as uuid } from "uuid";
 import { presentErrorToast, presentSuccessToast } from "../../utils/toast";
 import { useHistory } from "react-router";
+import { NotificationService } from "../../service/notification/notification.service";
+import { getNotificationTitle, NotificationType, getNotificationDescription } from '../../model/notification/notification-type.enum';
+import { Notification } from "../../model/notification/notification";
 
 interface IProps {
   user: User;
@@ -43,6 +46,7 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
   const [reportService] = useState<ReportService>(
     injector.get(ReportServiceToken)
   );
+  const [notificationService] = useState<NotificationService>(injector.get(NotificationServiceToken))
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: getInitialValues(),
     mode: "all",
@@ -54,6 +58,25 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
   const [descriptorsError, setDescriptorsError] = useState(false);
   const history = useHistory();
   const { isValid, errors } = useFormState({ control });
+
+
+  const sendNotification = async (guard: User, reportedPerson: ReportedPerson) => {
+    const data = {guard: guard, reportedPerson: reportedPerson }
+    const title = getNotificationTitle(NotificationType.GUARD_REPORT_ADDED)
+    const description = getNotificationDescription(NotificationType.GUARD_REPORT_ADDED,data)
+    const notification: Notification = {
+      receivedDate: moment().toISOString(),
+      type: NotificationType.GUARD_REPORT_ADDED,
+      pushNotification:{
+        data: data,
+        id: NotificationType.GUARD_REPORT_ADDED,
+        title: title,
+        body: description
+      }
+    }
+
+    notificationService.add(notification)
+  }
   const onSubmit = async (data: SuspiciousPersonForm) => {
     setShowLoading(true);
     try {
@@ -78,6 +101,7 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
         descriptors: data.descriptors
       };
       await reportService.add(reportedPerson, blob);
+      sendNotification(props.user, reportedPerson)
       presentSuccessToast(
         present,
         "Se envió el reporte de forma satisfactoria"

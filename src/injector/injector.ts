@@ -32,6 +32,7 @@ import { ZoneFirebaseImpService } from "../service/zone/zone.firebase.imp.servic
 import { FCMService } from "../service/fcm/fcm.service";
 import { NotificationService } from "../service/notification/notification.service";
 import { NotificationTestImpService } from "../service/notification/notification.test.imp.service";
+import { NotificationFirebaseService } from '../service/notification/notification.firebase.imp.service';
 export const AuthServiceToken = new InjectionToken<AuthService>(
   "AUTH_SERVICE_TOKEN"
 );
@@ -83,6 +84,7 @@ export const FIREBASE_STRATEGY = [
   { provide: ZoneServiceToken, useClass: ZoneFirebaseImpService },
   { provide: GeofenceServiceToken, useClass: GeofenceTestImpService },
   { provide: FCMServiceToken, useClass: FCMService },
+  { provide: NotificationServiceToken, useClass: NotificationFirebaseService },
 ];
 
 export const TEST_STRATEGY = [

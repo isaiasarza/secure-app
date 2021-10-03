@@ -12,4 +12,7 @@ export abstract class UserService {
   ): Promise<User>;
   public abstract getAllUsers(): Promise<User[]>;
   public abstract getGuards(): Promise<User[]>;
+  public abstract getSecurityManagerTokens(): Promise<string[]>;
+  public abstract getGuardsTokens(): Promise<string[]>;
+  public abstract getUserTokens(): Promise<string[]>;
 }

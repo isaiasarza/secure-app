@@ -41,6 +41,21 @@ export class UserFirebaseImpService extends UserService {
     return Promise.reject("Funcionalidad no implementada");
   }
 
+  public async getUserTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
+  }
+
+  public async getGuardsTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.role === ProfilesTypeEnum.VIGILANT && user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
+  }
+
+  public async getSecurityManagerTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.role === ProfilesTypeEnum.SECURITY_MANAGER && user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
+  }
+
   public async setSelfie(
     user: User,
     selfieName: string,

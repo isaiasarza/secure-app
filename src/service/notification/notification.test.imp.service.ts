@@ -1,4 +1,4 @@
-import { Notification } from "../../model/notification";
+import { Notification } from "../../model/notification/notification";
 import { NotificationService } from "./notification.service";
 
 export class NotificationTestImpService extends NotificationService{

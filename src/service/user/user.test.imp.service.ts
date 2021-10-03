@@ -16,8 +16,7 @@ export class UserTestImpService extends UserService {
     return Promise.resolve(user);
   }
   public update(user: User): Promise<any> {
-    // TODO
-    return Promise.reject("Funcionalidad no implementada");
+    return Promise.resolve("user updated");
   }
   public getByEmail(email: string): Promise<any> {
     //TODO
@@ -65,5 +64,20 @@ export class UserTestImpService extends UserService {
       
     })
     return promiseA
+  }
+
+  public async getUserTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
+  }
+
+  public async getGuardsTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.role === ProfilesTypeEnum.VIGILANT && user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
+  }
+
+  public async getSecurityManagerTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.role === ProfilesTypeEnum.SECURITY_MANAGER && user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
   }
 }

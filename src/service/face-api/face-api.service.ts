@@ -2,11 +2,21 @@ import * as faceapi from "face-api.js";
 import { Face } from "../../model/face";
 export const CUSTOM_SEPARATOR = "-_-"
 
+function convertBlock(buffer: ArrayBuffer) { // incoming data is an ArrayBuffer
+  var incomingData = new Uint8Array(buffer); // create a uint8 view on the ArrayBuffer
+  var i, l = incomingData.length; // length, we need this for the loop
+  var outputData = new Float32Array(incomingData.length); // create the Float32Array for output
+  for (i = 0; i < l; i++) {
+      outputData[i] = parseFloat((incomingData[i] - 128) + "")  // convert audio to float
+  }
+  return outputData; // return the Float32Array
+}
+
 export async function loadModels() {
-  const MODEL_URL = process.env.PUBLIC_URL + "/models";
-  await faceapi.loadTinyFaceDetectorModel(MODEL_URL);
-  await faceapi.loadFaceLandmarkTinyModel(MODEL_URL);
-  await faceapi.loadFaceRecognitionModel(MODEL_URL);
+  const res = await fetch("models/")  
+  await faceapi.loadTinyFaceDetectorModel(res.url);  
+  await faceapi.loadFaceLandmarkTinyModel(res.url);  
+  await faceapi.loadFaceRecognitionModel(res.url);
 }
 
 export async function getFullFaceDescription(blob: any, inputSize = 512) {

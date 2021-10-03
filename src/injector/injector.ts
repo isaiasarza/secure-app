@@ -26,13 +26,14 @@ import { AuthorizationImpService } from "../service/autz/autz.imp.service";
 import { ZoneService } from "../service/zone/zone.service";
 import { ZoneImpService } from "../service/zone/zone.test.imp";
 import { GeofenceService } from "../service/geofence/geofence.service";
-import { GeofenceImpService } from "../service/geofence/geofence.imp";
+import { GeofenceImpService } from '../service/geofence/geofence.imp';
 import { GeofenceTestImpService } from "../service/geofence/geofence.test.imp";
 import { ZoneFirebaseImpService } from "../service/zone/zone.firebase.imp.service";
 import { FCMService } from "../service/fcm/fcm.service";
 import { NotificationService } from "../service/notification/notification.service";
 import { NotificationTestImpService } from "../service/notification/notification.test.imp.service";
 import { NotificationFirebaseService } from '../service/notification/notification.firebase.imp.service';
+import { AppLogger } from "../service/app-logger/app-logger";
 export const AuthServiceToken = new InjectionToken<AuthService>(
   "AUTH_SERVICE_TOKEN"
 );
@@ -70,6 +71,10 @@ export const PositionLoggerServiceToken =
 export const NotificationServiceToken = new InjectionToken<FCMService>(
   "NOTIFICATION_SERVICE_TOKEN"
 );
+
+export const AppLoggerServiceToken = new InjectionToken<AppLogger>(
+  "APP_LOGGER_SERVICE_TOKEN"
+);
 export const FIREBASE_STRATEGY = [
   { provide: AuthServiceToken, useClass: AuthFirebaseImp },
   { provide: UserServiceToken, useClass: UserFirebaseImpService },
@@ -82,9 +87,10 @@ export const FIREBASE_STRATEGY = [
   },
   { provide: AuthorizationServiceToken, useClass: AuthorizationImpService },
   { provide: ZoneServiceToken, useClass: ZoneFirebaseImpService },
-  { provide: GeofenceServiceToken, useClass: GeofenceTestImpService },
+  { provide: GeofenceServiceToken, useClass: GeofenceImpService },
   { provide: FCMServiceToken, useClass: FCMService },
   { provide: NotificationServiceToken, useClass: NotificationFirebaseService },
+  { provide: AppLoggerServiceToken, useClass: AppLogger },
 ];
 
 export const TEST_STRATEGY = [
@@ -99,9 +105,10 @@ export const TEST_STRATEGY = [
   },
   { provide: AuthorizationServiceToken, useClass: AuthorizationImpService },
   { provide: ZoneServiceToken, useClass: ZoneImpService },
-  { provide: GeofenceServiceToken, useClass: GeofenceTestImpService },
+  { provide: GeofenceServiceToken, useClass: GeofenceImpService },
   { provide: FCMServiceToken, useClass: FCMService },
   { provide: NotificationServiceToken, useClass: NotificationTestImpService },
+  { provide: AppLoggerServiceToken, useClass: AppLogger },
 ];
 export const injector: DependencyInjector = makeInjector(
   STRATEGY_TYPE === "TEST" ? TEST_STRATEGY : FIREBASE_STRATEGY

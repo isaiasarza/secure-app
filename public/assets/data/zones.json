@@ -40,14 +40,8 @@
       "id": "69ca1b88-6fbe-4e80-a4d4-ff4d3748afff",
       "latitude": -42.780104,
       "longitude": -65.055429,
-      "radius": 100,
-      "transitionType": 3,
-      "notification": {
-        "id": 1,
-        "title": "You crossed a fence",
-        "text": "You just arrived to Gliwice city center.",
-        "openAppOnClick": true
-      }
+      "radius": 50,
+      "transitionType": 3
     },
     "assignedGuards": [
       "UQ4UH1RXQwWXdFh1zTwY8slsqY32",

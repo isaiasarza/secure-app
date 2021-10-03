@@ -102,7 +102,7 @@ export default class FaceScannerComponent extends React.Component<
         const preview = await CameraPreview.start(this.cameraPreviewOpts);
         this.setState({ preview: preview });
       } catch (error) {
-        console.log("set preview error");
+        console.log("set preview error", error);
       }
     }
   };
@@ -192,38 +192,37 @@ export default class FaceScannerComponent extends React.Component<
     displaySize: any
   ): Promise<void> => {
     let x: number = 0;
+    let faces = [] 
     const refreshIntervalId = setInterval(async () => {
-      if (x > 5) {
-        /* this.setState({
-          detectionType: undefined,
-          scanning: false,
-          scanningProgress: 1,
-        }); */
+      if (x > 1) {
         this.setUnrecognizedFace();
         clearInterval(refreshIntervalId);
         return Promise.resolve();
       }
       x++;
-      this.setState({ scanningProgress: x / 5 });
+      //this.setState({ scanningProgress: x / 1 });
       console.log("tick", x);
-      await loadModels();
+      //await loadModels();
+      //console.log("gettingFullFaceDescription")
       const detectionsWithLandmarks = await getFullFaceDescription2(video);
+      //console.log("resizingResults")
       const resizedDetections = faceapi.resizeResults(
         detectionsWithLandmarks,
         displaySize
       );
+      faces.push(resizedDetections)
       console.log("resizedDetections", resizedDetections);
       if (resizedDetections.length > 0) {
         this.setState({
           detections: resizedDetections[0].detection,
         });
       }
-      if (x === 5 && (!resizedDetections || resizedDetections.length === 0)) {
+      if (x === 1 && (!resizedDetections || resizedDetections.length === 0)) {
         this.setUnrecognizedFace();
         clearInterval(refreshIntervalId);
         return Promise.reject();
       }
-      if (x === 5 && resizedDetections.length > 0) {
+      if (x === 1 && resizedDetections.length > 0) {
         const match: any = await this.getMatch(detectionsWithLandmarks);
 
         if (match) {
@@ -238,14 +237,11 @@ export default class FaceScannerComponent extends React.Component<
               this.setUnknownFace();
               break;
           }
-        } /* else {
-          console.log("unknown face");
-          this.setUnknownFace();
-        } */
+        }
         clearInterval(refreshIntervalId);
         return Promise.resolve();
       }
-    }, 2000);
+    }, 30000);
   };
 
   onScanFace = async () => {

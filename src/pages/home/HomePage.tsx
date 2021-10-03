@@ -44,6 +44,7 @@ import { NotificationService } from "../../service/notification/notification.ser
 import { Notification } from "../../model/notification/notification";
 import moment from "moment";
 import { NotificationType } from "../../model/notification/notification-type.enum";
+import { loadModels } from "../../service/face-api/face-api.service";
 
 export interface IAppProps {
   history: RouteComponentProps["history"];
@@ -118,17 +119,17 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
       geofenceListener.subscribe(async (data) => {
         console.log("geofenceListener", data);
 
-        this.setState({ isToastOpen: true, toastData: data });
+        /* this.setState({ isToastOpen: true, toastData: data });
         setTimeout(() => {
           this.setState({ isToastOpen: false, toastData: null });
-        }, 5000);
+        }, 5000); */
         const notification: Notification = {
           receivedDate: moment().toISOString(),
           type: NotificationType.GUARD_ZONE_ENTERED,
           pushNotification: {
             id: "1",
             title: "Hola Mundo",
-            body: "Esta es una prueba hecha desde Secure-App",
+            body: JSON.stringify(data),
             data: {},
             
           },
@@ -163,6 +164,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
 
   async componentDidMount() {
     this._isMounted = true;
+    await loadModels();
     console.log("componentDidMount");
     this.setState({ zones: await this.getZones() });
     const userContextService = this.state.userContextService;

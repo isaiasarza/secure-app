@@ -7,16 +7,21 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import React, { FC } from "react";
-import { HeaderOption } from "../../model/headerOption";
+import { useHistory } from "react-router";
+import { HeaderOption } from "../../model/header.option";
 interface IProps {
   options: HeaderOption[];
 }
 
 const HeaderComponent: FC<IProps> = (props) => {
+  const history = useHistory()
+  const goHome = () => {
+    history.push("/home")
+  };
   return (
     <IonHeader>
       <IonToolbar color="primary">
-        <IonTitle>Secure App</IonTitle>
+        <IonTitle onClick={goHome}>Secure App</IonTitle>
         <IonButtons slot="primary">
           {props.options.map((opt: HeaderOption) => {
             return (

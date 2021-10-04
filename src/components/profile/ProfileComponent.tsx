@@ -10,10 +10,7 @@ import {
 import React, { FC, useState } from "react";
 import { User } from "../../model/user";
 import "./ProfileComponent.css";
-import {
-  injector,
-  UserServiceToken,
-} from "../../injector/injector";
+import { injector, UserServiceToken } from "../../injector/injector";
 import {
   IonInput,
   IonCard,
@@ -21,9 +18,9 @@ import {
   IonCardSubtitle,
 } from "@ionic/react";
 
-import {  close } from "ionicons/icons";
+import { close } from "ionicons/icons";
 import { UserService } from "../../service/user/user.service";
-import SelfieComponent from '../selfie/SelfieComponent';
+import SelfieComponent from "../selfie/SelfieComponent";
 
 interface IProps {
   user: User;
@@ -32,12 +29,11 @@ interface IProps {
 
 const ProfileComponent: FC<IProps> = (props) => {
   const [userService] = useState<UserService>(injector.get(UserServiceToken));
-  const handler = async (webPath: string, fileName: string) => {
+  const handler = async (webPath: string) => {
     const res = await fetch(webPath);
     const blob = await res.blob();
-    userService.setSelfie(props.user, fileName, blob);
+    userService.setSelfie(props.user, props.user.uid + "_selfie", blob);
   };
-  
 
   return (
     <IonGrid>
@@ -59,7 +55,17 @@ const ProfileComponent: FC<IProps> = (props) => {
           <IonRow>
             <IonCol size="1"></IonCol>
             <IonCol size="10">
-              <SelfieComponent readonly={false} user={props.user} handler={handler}></SelfieComponent>
+              <SelfieComponent
+                readonly={false}
+                selfieUrl={
+                  props.user.local_selfie_url?.length
+                    ? props.user.local_selfie_url
+                    : props.user?.selfie_url?.length
+                    ? props.user.selfie_url
+                    : ""
+                }
+                handler={handler}
+              ></SelfieComponent>
             </IonCol>
             <IonCol size="1"></IonCol>
           </IonRow>

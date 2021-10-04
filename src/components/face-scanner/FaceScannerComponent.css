@@ -18,7 +18,7 @@
     position: absolute;
     width: 90%;
     height: 20%;
-    top: 80%;
+    top: 70%;
     left: 5%;
 }
 
@@ -34,5 +34,9 @@
 
 .box{
     position: absolute;
+    width: 90%;
+    height: 40%;
+    top: 20%;
+    left: 5%;
 }
 

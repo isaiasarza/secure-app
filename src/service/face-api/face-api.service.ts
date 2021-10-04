@@ -1,11 +1,22 @@
 import * as faceapi from "face-api.js";
-import { User } from "../../model/user";
+import { Face } from "../../model/face";
+export const CUSTOM_SEPARATOR = "-_-"
+
+function convertBlock(buffer: ArrayBuffer) { // incoming data is an ArrayBuffer
+  var incomingData = new Uint8Array(buffer); // create a uint8 view on the ArrayBuffer
+  var i, l = incomingData.length; // length, we need this for the loop
+  var outputData = new Float32Array(incomingData.length); // create the Float32Array for output
+  for (i = 0; i < l; i++) {
+      outputData[i] = parseFloat((incomingData[i] - 128) + "")  // convert audio to float
+  }
+  return outputData; // return the Float32Array
+}
 
 export async function loadModels() {
-  const MODEL_URL = process.env.PUBLIC_URL + "/models";
-  await faceapi.loadTinyFaceDetectorModel(MODEL_URL);
-  await faceapi.loadFaceLandmarkTinyModel(MODEL_URL);
-  await faceapi.loadFaceRecognitionModel(MODEL_URL);
+  const res = await fetch("models/")  
+  await faceapi.loadTinyFaceDetectorModel(res.url);  
+  await faceapi.loadFaceLandmarkTinyModel(res.url);  
+  await faceapi.loadFaceRecognitionModel(res.url);
 }
 
 export async function getFullFaceDescription(blob: any, inputSize = 512) {
@@ -53,25 +64,21 @@ export async function getFullFaceDescription2(input: any, inputSize = 512) {
 }
 
 const maxDescriptorDistance = 0.5;
-export async function createMatcher(faceProfile: User[]) {
+export async function createMatcher(faces: Face[]) {
   // Create labeled descriptors of member from profile
   // let members = Object.keys(faceProfile);
-  const filtered: any[] = faceProfile.filter((user) => user?.descriptors && user?.descriptors?.length > 0).map(user => {
-    return {
-      firstname: user.firstname,
-      lastname: user.lastname,
-      uid: user.uid,
-      descriptors: [user.descriptors]
-    }
-  });
+  const filtered: Face[] = faces.filter(
+    (face) => face?.descriptors?.length > 0
+  );
 
   let labeledDescriptors = filtered.map(
     (member) =>
+      /* */
       new faceapi.LabeledFaceDescriptors(
-        member.uid,
+        member.type + CUSTOM_SEPARATOR + member.id,
         member.descriptors.map(
           (descriptor: any) => new Float32Array(descriptor)
-        ) 
+        )
       )
   );
 

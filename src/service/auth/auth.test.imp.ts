@@ -14,7 +14,7 @@ export class AuthTestImpService extends AuthService {
   );
 
   public async auth(email: string, password: string): Promise<User> {
-    const user = {
+   /*  const user = {
       cuil_cuit: "2032111110",
       dni: "32111111",
       email: "imacoria@gmail.com",
@@ -22,8 +22,11 @@ export class AuthTestImpService extends AuthService {
       lastname: "Coria",
       role: "vigilant",
       uid: "aaazzzaaa"
-    };
-
+    }; */
+    const users = await this.userService.getAllUsers()
+    const user = users.find(u => u.email === email)
+    if(!user)
+      return Promise.reject("Error de autenticación")
     await this.userContextService.setCurrentUser(user);
     return Promise.resolve(user);
   }

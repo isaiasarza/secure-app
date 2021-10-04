@@ -1,5 +1,6 @@
 import { User } from "../../model/user";
 import { UserService } from "./user.service";
+import { ProfilesTypeEnum } from '../../model/profiles-type.enum';
 
 export class UserTestImpService extends UserService {
   private readonly user = {
@@ -8,15 +9,14 @@ export class UserTestImpService extends UserService {
     email: "imacoria@gmail.com",
     firstname: "Imanol",
     lastname: "Coria",
-    role: "vigilant",
+    role: ProfilesTypeEnum.VIGILANT,
     uid: "AAAZZZAAA",
   };
   public add(uid: string, user: User): Promise<User> {
     return Promise.resolve(user);
   }
   public update(user: User): Promise<any> {
-    // TODO
-    return Promise.reject("Funcionalidad no implementada");
+    return Promise.resolve("user updated");
   }
   public getByEmail(email: string): Promise<any> {
     //TODO
@@ -40,12 +40,44 @@ export class UserTestImpService extends UserService {
     return Promise.resolve();
   }
 
-  public getAllUsers(): Promise<any[]> {
-    return fetch("assets/data/users.json").then(data => {
-     const users = data.json();
+  public getAllUsers(): Promise<User[]> {
+    return fetch("assets/data/users.json").then(async (data) => {
+      const users = await data.json();
       console.log("getAllUsers", users);
       if (!users) return Promise.reject("error ajksdf");
       return Promise.resolve(users);
     });
+  }
+
+  public getGuards(): Promise<User[]> {
+    let promiseA: Promise<User[]> = new Promise<User[]>((resolve, reject) => {
+      let wait = setTimeout(() => {
+        clearTimeout(wait);
+        //resolve('Promise A win!');
+        return fetch("assets/data/users.json").then(async (data) => {
+          const users = await data.json();
+          console.log("getGuards", users);
+          if (!users) return Promise.reject("error ajksdf");
+          return resolve(users.filter((u: any) => u.role === ProfilesTypeEnum.VIGILANT));
+        });
+      }, 200)
+      
+    })
+    return promiseA
+  }
+
+  public async getUserTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
+  }
+
+  public async getGuardsTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.role === ProfilesTypeEnum.VIGILANT && user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
+  }
+
+  public async getSecurityManagerTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.role === ProfilesTypeEnum.SECURITY_MANAGER && user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
   }
 }

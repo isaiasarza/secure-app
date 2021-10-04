@@ -1,0 +1,16 @@
+ion-card{
+    height:100%;
+}
+
+ion-card-content .add-zone-card ion-button{
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right:20px;
+}
+
+.map-wrapper{
+    height:300px;
+    overflow: hidden;
+    border-radius: 2px;
+}

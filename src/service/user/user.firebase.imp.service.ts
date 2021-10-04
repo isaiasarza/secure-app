@@ -3,6 +3,7 @@ import { User } from "../../model/user";
 import { db } from "../../firebaseConfig";
 import { CloudFilesService } from "../cloud-files/cloud-files.service";
 import { CloudFilesServiceToken, injector } from "../../injector/injector";
+import { ProfilesTypeEnum } from "../../model/profiles-type.enum";
 
 export class UserFirebaseImpService extends UserService {
   private readonly COLLECTION_NAME = "users";
@@ -40,6 +41,21 @@ export class UserFirebaseImpService extends UserService {
     return Promise.reject("Funcionalidad no implementada");
   }
 
+  public async getUserTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
+  }
+
+  public async getGuardsTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.role === ProfilesTypeEnum.VIGILANT && user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
+  }
+
+  public async getSecurityManagerTokens(){
+    const users = await this.getAllUsers()
+    return users.filter(user => user.role === ProfilesTypeEnum.SECURITY_MANAGER && user.push_notification_token && user.push_notification_token.length > 0).map(user => user.push_notification_token || '')
+  }
+
   public async setSelfie(
     user: User,
     selfieName: string,
@@ -69,13 +85,25 @@ export class UserFirebaseImpService extends UserService {
   }
 
   public getAllUsers(): Promise<User[]> {
-    //debugger;
+    ;
     return db
       .collection(this.COLLECTION_NAME)
       .get()
       .then((snap) => {
         const users = snap.docs.map((doc) => doc.data() as User);
         return Promise.resolve(users);
+      });
+  }
+
+  public getGuards(): Promise<User[]> {
+    return db
+      .collection(this.COLLECTION_NAME)
+      .get()
+      .then((snap) => {
+        const users = snap.docs.map((doc) => doc.data() as User);
+        return Promise.resolve(
+          users.filter((u: any) => u.role === ProfilesTypeEnum.VIGILANT)
+        );
       });
   }
 }

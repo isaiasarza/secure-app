@@ -3,25 +3,45 @@ import {
   CameraPreview,
   CameraPreviewOptions,
 } from "@capacitor-community/camera-preview";
-import { IonButton, IonRow, IonCol, IonProgressBar } from "@ionic/react";
+import {
+  IonButton,
+  IonRow,
+  IonCol,
+  IonProgressBar,
+  useIonToast,
+  IonToast,
+} from "@ionic/react";
 import "./FaceScannerComponent.css";
 import { scan } from "ionicons/icons";
 import * as faceapi from "face-api.js";
 import {
   createMatcher,
+  CUSTOM_SEPARATOR,
+  getFullFaceDescription,
   getFullFaceDescription2,
   loadModels,
 } from "../../service/face-api/face-api.service";
 import { UserService } from "../../service/user/user.service";
-import { injector, UserServiceToken } from "../../injector/injector";
+import {
+  injector,
+  ReportServiceToken,
+  UserServiceToken,
+} from "../../injector/injector";
 import { IonIcon, IonContent } from "@ionic/react";
 import { User } from "../../model/user";
 import DetectedUserComponent, {
   DetectionTypeEnum,
-} from "../detected-user/DetectedUserComponent";
+} from "./detected-user/DetectedUserComponent";
 import { number } from "yup";
+import { presentErrorToast } from "../../utils/toast";
+import { ReportService } from "../../service/report/report.service";
+import { Face, FaceTypeEnum } from "../../model/face";
+import { ReportedPerson } from "../../model/reported.person";
+import { getFaces } from "../../service/face-api/face.service";
+import { type } from "os";
 export interface IAppProps {
   closeAction: Function;
+  user: User;
 }
 
 export interface IAppState {
@@ -29,12 +49,16 @@ export interface IAppState {
   preview: any;
   detections: any;
   userService: UserService;
+  reportsService: ReportService;
   faceMatcher: any;
-  users: any;
+  users: User[];
+  reports: ReportedPerson[];
   detectedUser?: User;
+  detectedReportedPerson?: ReportedPerson;
   scanning: boolean;
   scanningProgress: number;
   detectionType?: DetectionTypeEnum;
+  noneFaceDetectedError: boolean | undefined;
 }
 
 export default class FaceScannerComponent extends React.Component<
@@ -45,7 +69,7 @@ export default class FaceScannerComponent extends React.Component<
     className: "preview-container",
     parent: "camera-preview",
 
-    position: "front",
+    position: "rear",
   };
   private readonly TAG = "FaceScannerComponent";
   private container: HTMLDivElement | null = null;
@@ -53,7 +77,8 @@ export default class FaceScannerComponent extends React.Component<
     super(props);
     this.state = {
       detectedUser: undefined,
-      users: null,
+      users: [],
+      reports: [],
       faceMatcher: null,
       ref: null,
       preview: null,
@@ -61,17 +86,24 @@ export default class FaceScannerComponent extends React.Component<
       scanning: false,
       scanningProgress: 0,
       userService: injector.get(UserServiceToken) as UserService,
+      reportsService: injector.get(ReportServiceToken) as ReportService,
+      noneFaceDetectedError: false,
     };
   }
+  onSetToast = () => {};
   onRefChange = (node: any) => {
     // same as Hooks example, re-render on changes
     this.setState({ ref: node });
   };
   setPreview = async (width: number, height: number) => {
     console.log("setCameraPreview", width, height);
-    if (width > 0) {
-      const preview = await CameraPreview.start(this.cameraPreviewOpts);
-      this.setState({ preview: preview });
+    if (width > 0 && height > 0) {
+      try {
+        const preview = await CameraPreview.start(this.cameraPreviewOpts);
+        this.setState({ preview: preview });
+      } catch (error) {
+        console.log("set preview error", error);
+      }
     }
   };
 
@@ -82,59 +114,142 @@ export default class FaceScannerComponent extends React.Component<
       detections: null,
       detectionType: undefined,
       scanningProgress: 0,
+      /* users: [],
+      reports: [], */
     });
   };
 
+  onChangeOrientation = async ()=>{
+
+  }
+  private setUnrecognizedFace = async () => {
+    this.setState({
+      noneFaceDetectedError: true,
+      scanning: false,
+      scanningProgress: 1,
+      detectionType: undefined,
+      detections: null,
+    });
+  };
+  private setUnknownFace = async () => {
+    this.setState({
+      detectionType: DetectionTypeEnum.UNKNOWN,
+      scanning: false,
+      scanningProgress: 1,
+    });
+  };
+  private setReportedPerson = async (id: string) => {
+    console.log("setReportedPerson", id)
+    const reportedPerson = this.state.reports.find(
+      (r: ReportedPerson) => r.uuid === id
+    );
+    console.log("setReportedPerson", reportedPerson)
+    if (reportedPerson?.uuid) {
+      console.log("reportedPerson finded", reportedPerson);
+      await this.setState({
+        detectedReportedPerson: reportedPerson,
+        detectionType: DetectionTypeEnum.SUSPICIOUS,
+        scanning: false,
+        scanningProgress: 1,
+      });
+    }
+  };
+  private setReliablePerson = async (id: string) => {
+    const user = this.state.users.find((u: any) => u.uid === id);
+    if (user?.uid) {
+      console.log("user finded", user);
+      this.setState({
+        detectedUser: user,
+        detectionType: DetectionTypeEnum.RELIABLE,
+        scanning: false,
+        scanningProgress: 1,
+      });
+    }
+  };
+
+  getMatch = async (detectionsWithLandmarks: any) => {
+    try {
+      let match = await detectionsWithLandmarks.map((a: any) => {
+        return this.state.faceMatcher.findBestMatch(a.descriptor);
+      });
+      if (match.length > 0 && match[0]._label !== "unknown") {
+        const type = match[0]._label.split(CUSTOM_SEPARATOR)[0];
+        const id = match[0]._label.split(CUSTOM_SEPARATOR)[1];
+        console.log("match type id", type, id);
+        return {
+          type: type,
+          id: id,
+        };
+      }else{
+        return {
+          type: FaceTypeEnum.UNKNOWN
+        }
+      }
+    } catch (error) {
+      return {
+        type: FaceTypeEnum.UNKNOWN
+      };
+    }
+  };
   matchFace = async (
     video: HTMLVideoElement,
     displaySize: any
   ): Promise<void> => {
     let x: number = 0;
+    let faces = [] 
     const refreshIntervalId = setInterval(async () => {
+      if (x > 1) {
+        this.setUnrecognizedFace();
+        clearInterval(refreshIntervalId);
+        return Promise.resolve();
+      }
       x++;
-      this.setState({scanningProgress: x/10})
+      //this.setState({ scanningProgress: x / 1 });
       console.log("tick", x);
-      await loadModels();
+      //await loadModels();
+      //console.log("gettingFullFaceDescription")
       const detectionsWithLandmarks = await getFullFaceDescription2(video);
+      //console.log("resizingResults")
       const resizedDetections = faceapi.resizeResults(
         detectionsWithLandmarks,
         displaySize
       );
+      faces.push(resizedDetections)
       console.log("resizedDetections", resizedDetections);
-      if (x === 10 && (!resizedDetections || resizedDetections.length === 0)) {
+      if (resizedDetections.length > 0) {
+        this.setState({
+          detections: resizedDetections[0].detection,
+        });
+      }
+      if (x === 1 && (!resizedDetections || resizedDetections.length === 0)) {
+        this.setUnrecognizedFace();
         clearInterval(refreshIntervalId);
-        this.setState({ detectionType: DetectionTypeEnum.UNKNOWN });
         return Promise.reject();
       }
-      if (resizedDetections.length > 0) {
-        this.setState({ detections: resizedDetections[0].detection, scanningProgress: 0.9 });
-        let match = await detectionsWithLandmarks.map((a: any) => {
-          console.log("descriptor length", a.descriptor.length);
-          return this.state.faceMatcher.findBestMatch(a.descriptor);
-        });
-        if (match.length > 0) {
-          console.log("match label", match[0]._label);
-          const user = this.state.users.find(
-            (u: any) => u.uid === match[0]._label
-          );
-          if (user?.uid) {
-            console.log("user finded", user);
-            this.setState({
-              detectedUser: user,
-              detectionType: DetectionTypeEnum.RELIABLE,
-              scanning: false,
-              scanningProgress: 1,
-            });
+      if (x === 1 && resizedDetections.length > 0) {
+        const match: any = await this.getMatch(detectionsWithLandmarks);
+
+        if (match) {
+          switch (match.type) {
+            case FaceTypeEnum.USER:
+              this.setReliablePerson(match.id);
+              break;
+            case FaceTypeEnum.REPORTED:
+              this.setReportedPerson(match.id);
+              break;
+            case FaceTypeEnum.UNKNOWN:
+              this.setUnknownFace();
+              break;
           }
         }
         clearInterval(refreshIntervalId);
         return Promise.resolve();
       }
-    }, 2000);
+    }, 30000);
   };
 
   onScanFace = async () => {
-    this.setState({ scanning: true });
+    await this.setState({ scanning: true, detectedReportedPerson: undefined, detectedUser: undefined });
     const video = this.container?.childNodes[0] as HTMLVideoElement;
     console.log(
       video.offsetHeight,
@@ -154,10 +269,13 @@ export default class FaceScannerComponent extends React.Component<
 
   componentWillMount = async () => {
     await loadModels();
+
+    //console.log("users", users);
     const users = await this.state.userService.getAllUsers();
-    console.log("users", users);
-    const faceMatcher = await createMatcher(users);
-    this.setState({ faceMatcher: faceMatcher, users: users });
+    const reports = await this.state.reportsService.get();
+    const faces = await getFaces(users, reports);
+    const faceMatcher = await createMatcher(faces);
+    this.setState({ faceMatcher: faceMatcher, users: users, reports: reports });
   };
 
   componentDidMount() {
@@ -169,15 +287,21 @@ export default class FaceScannerComponent extends React.Component<
       );
     }, 500);
   }
+
   public render() {
     return (
       <IonContent>
         <div>
-          {this.state.scanning === true ? 
-          <div className="progress-bar">
-            <IonProgressBar value={this.state.scanningProgress} buffer={this.state.scanningProgress}></IonProgressBar>
-          </div>
-          : ''}
+          {this.state.scanning === true ? (
+            <div className="progress-bar">
+              <IonProgressBar
+                value={this.state.scanningProgress}
+                buffer={this.state.scanningProgress}
+              ></IonProgressBar>
+            </div>
+          ) : (
+            ""
+          )}
           <div
             id="camera-preview"
             className="camera-preview"
@@ -187,13 +311,16 @@ export default class FaceScannerComponent extends React.Component<
           {this.state.detectionType != null ? (
             <DetectedUserComponent
               detectionType={this.state.detectionType}
-              user={this.state.detectedUser}
+              matchedUser={this.state.detectedUser}
+              matchedReportedPerson={this.state.detectedReportedPerson}
+              user={this.props.user}
               closeAction={this.closeAction}
+              goHome={this.props.closeAction}
             ></DetectedUserComponent>
           ) : (
             ""
           )}
-          {this.state.detections && this.state.detectedUser == null ? (
+          {this.state.scanning === true && this.state.detections ? (
             <div
               className="box"
               style={{
@@ -208,8 +335,27 @@ export default class FaceScannerComponent extends React.Component<
           ) : (
             ""
           )}
+          <IonToast
+            isOpen={this.state.noneFaceDetectedError === true}
+            duration={3000}
+            animated={true}
+            onDidDismiss={() => {
+              this.setState({ noneFaceDetectedError: false });
+            }}
+            message="No se ha podido detectar ningún rostro. Por favor, acerquesé a la cámara y revise la iluminación del lugar antes de volver a intentar."
+          />
           <div className="buttons">
             <IonRow className="ion-justify-content-center">
+            {/* <IonCol size="auto" className="ion-justify-content-center">
+                <IonButton
+                  disabled={this.state.scanning}
+                  hidden={this.state.detectionType !== undefined}
+                  color="primary"
+                  onClick={this.onChangeOrientation}
+                >
+                  <IonIcon icon={scan}></IonIcon>
+                </IonButton>
+              </IonCol> */}
               <IonCol size="auto" className="ion-justify-content-center">
                 <IonButton
                   disabled={this.state.scanning}

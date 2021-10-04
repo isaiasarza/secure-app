@@ -35,6 +35,7 @@ import ReportsPage from "./pages/reports/ReportsPage";
 import { AuthorizationService } from './service/autz/autz.service';
 import GuardsPage from "./pages/guards/GuardsPage";
 import ZonesPage from './pages/zones/ZonesPage';
+import NotificationPage from "./pages/notifications/NotificationPage";
 
 const App: React.FC = () => {
   const [userContextService] = useState<UserContextService>(
@@ -95,6 +96,18 @@ const App: React.FC = () => {
             render={(routeProps) => {
               return userContextService.getCurrentUser() != null ? (
                 <GuardsPage {...routeProps} />
+              ) : (
+                <LoginPage />
+              );
+            }}
+          />
+          <Route
+            exact
+            path="/notifications" 
+            
+            render={(routeProps) => {
+              return userContextService.getCurrentUser() != null ? (
+                <NotificationPage  {...routeProps} />
               ) : (
                 <LoginPage />
               );

@@ -5,6 +5,7 @@ import FaceScannerComponent from "../../face-scanner/FaceScannerComponent";
 import { User } from "../../../model/user";
 import { useHistory } from "react-router";
 import { Zone } from "../../../model/zone/zone";
+import { Notification } from "../../../model/notification/notification";
 interface IProps {
   user: User;
   zones: Zone[];
@@ -26,6 +27,11 @@ const GuardHomeComponent: FC<IProps> = (props) => {
   const onViewZones = async () => {
     console.log("onViewZones", props.zones);
     history.push("/zones", { zones: props.zones, user: props.user });
+  };
+
+  const onViewNotifications = async () => {
+    console.log("onViewNotifications", props.zones);
+    history.push("/notifications", { user: props.user });
   };
   return (
     <div>
@@ -60,7 +66,7 @@ const GuardHomeComponent: FC<IProps> = (props) => {
             </div>
           </IonCol>
           <IonCol>
-            <div className="home-option">
+            <div className="home-option" onClick={onViewNotifications}>
               <p className="label">Notificaciones</p>
             </div>
           </IonCol>

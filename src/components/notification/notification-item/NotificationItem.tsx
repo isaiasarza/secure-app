@@ -21,27 +21,78 @@ const NotificationItem: FC<IProps> = (props) => {
         <div className="sub-item">
           <IonRow>
             <IonCol>
-              <b>Descripción:</b> {props.notification.pushNotification.body}
+              <b>Descripción: </b> {props.notification.pushNotification.body}
             </IonCol>
           </IonRow>
           <IonRow>
             <IonCol>
-              <b>Fecha:</b> {moment(props.notification.receivedDate).format('dd/MM/YYYY')}
+              <b>Fecha: </b>
+              {moment(props.notification.receivedDate).format("DD/MM/YYYY")}
             </IonCol>
           </IonRow>
         </div>
         {props.notification.type === NotificationType.GUARD_REPORT_ADDED ? (
           <div className="sub-item">
-            <IonRow>
-              <IonCol size="6">
-                <b>Guardia Reportador:</b> {props.notification.pushNotification.data.guard.firstname + ' ' + props.notification.pushNotification.data.guard.lastname }
-              </IonCol>
-            </IonRow>
-            <IonRow>
-              <IonCol size="6">
-                <b>Persona Reportada:</b> {props.notification.pushNotification.data.reportedPerson.firstname + ' ' + props.notification.pushNotification.data.reportedPerson.lastname }
-              </IonCol>
-            </IonRow>
+            {props.notification.pushNotification.data?.guard ? (
+              <IonRow>
+                <IonCol size="6">
+                  <b>Guardia Reportador: </b>
+                  {props.notification.pushNotification.data.guard.firstname +
+                    " " +
+                    props.notification.pushNotification.data.guard.lastname}
+                </IonCol>
+              </IonRow>
+            ) : (
+              ""
+            )}
+
+            {props.notification.pushNotification.data?.reportedPerson ? (
+              <IonRow>
+                <IonCol size="6">
+                  <b>Persona Reportada: </b>
+                  {props.notification.pushNotification.data.reportedPerson
+                    .firstname +
+                    " " +
+                    props.notification.pushNotification.data.reportedPerson
+                      .lastname}
+                </IonCol>
+              </IonRow>
+            ) : (
+              ""
+            )}
+          </div>
+        ) : (
+          ""
+        )}
+
+        {[
+          NotificationType.GUARD_ZONE_ENTERED,
+          NotificationType.GUARD_ZONE_LEAVING,
+        ].includes(props.notification.type) ? (
+          <div className="sub-item">
+            {props.notification.pushNotification.data?.guard ? (
+              <IonRow>
+                <IonCol size="6">
+                  <b>Guardia: </b>
+                  {props.notification.pushNotification.data.guard.firstname +
+                    " " +
+                    props.notification.pushNotification.data.guard.lastname}
+                </IonCol>
+              </IonRow>
+            ) : (
+              ""
+            )}
+
+            {props.notification.pushNotification.data?.zone ? (
+              <IonRow>
+                <IonCol size="6">
+                  <b>Zona: </b>
+                  {props.notification.pushNotification.data.zone.name}
+                </IonCol>
+              </IonRow>
+            ) : (
+              ""
+            )}
           </div>
         ) : (
           ""

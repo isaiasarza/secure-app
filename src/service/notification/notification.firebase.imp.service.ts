@@ -19,7 +19,7 @@ export class NotificationFirebaseService extends NotificationService{
         .then((snap) => {
           const logs: Notification[] = snap.docs
             .map((doc) => doc.data() as Notification)
-            .sort((a, b) => moment(b.receivedDate).valueOf() - moment(a.receivedDate).valueOf());
+     //       .sort((a, b) => moment(b.receivedDate).valueOf() - moment(a.receivedDate).valueOf());
           return Promise.resolve(logs);
         });
     }

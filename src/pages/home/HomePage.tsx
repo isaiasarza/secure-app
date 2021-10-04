@@ -105,6 +105,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
     };
   }
 
+
   getZones = async () => {
     try {
       const zones = await this.state.zoneService.get();
@@ -164,7 +165,6 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
 
   async componentDidMount() {
     this._isMounted = true;
-    await loadModels();
     console.log("componentDidMount");
     this.setState({ zones: await this.getZones() });
     const userContextService = this.state.userContextService;

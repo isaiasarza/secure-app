@@ -43,7 +43,11 @@ import { UserService } from "../../service/user/user.service";
 import { NotificationService } from "../../service/notification/notification.service";
 import { Notification } from "../../model/notification/notification";
 import moment from "moment";
-import { getNotificationTitle, NotificationType, getNotificationDescription } from '../../model/notification/notification-type.enum';
+import {
+  getNotificationTitle,
+  NotificationType,
+  getNotificationDescription,
+} from "../../model/notification/notification-type.enum";
 import { loadModels } from "../../service/face-api/face-api.service";
 import { getByTitle } from "@testing-library/dom";
 
@@ -106,47 +110,73 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
     };
   }
 
+  async sendNotification(geofences: any) {
+    const geofence = geofences[0];
+    const transitionType = geofence.transitionType;
+    const notType =
+      transitionType === 1
+        ? NotificationType.GUARD_ZONE_ENTERED
+        : NotificationType.GUARD_ZONE_LEAVING;
+
+    this.setState({
+      isToastOpen: true,
+      toastData:
+        "onTransitionReceived " +
+        notType +
+        " " +
+        geofence.id +
+        " " +
+        geofences.length,
+    });
+
+    if (this.state.user) {
+      const zone = this.state.zones.find((z) => z.geofence.id === geofence.id);
+      const guard = this.state.user;
+      const data = { guard: guard, zone: zone };
+      console.log("sending notification", zone, guard);
+      guard["descriptors"] = [];
+      const notification: Notification = {
+        receivedDate: moment().toISOString(),
+        type: notType,
+        pushNotification: {
+          id: notType,
+          title: getNotificationTitle(notType),
+          body: getNotificationDescription(notType, data),
+          data: data,
+        },
+      };
+      this.state.notificationService.add(notification);
+      const tokens = await this.state.userService.getUserTokens();
+      if (tokens.length > 0)
+        this.state.fcmService.sendNotification(
+          notification.pushNotification,
+          tokens
+        ); 
+    }
+  }
 
   getZones = async () => {
+    const zones = await this.state.zoneService.get();
+    this.setState({zones:zones})
     try {
-      const zones = await this.state.zoneService.get();
+      console.log("zones", zones);
       await this.state.geofenceService.initialize();
+      console.log("initialize ok");
       await this.state.geofenceService.addGeofences(
         zones.map((z) => z.geofence)
       );
-
+      console.log("add geofences ok");
       const watched = await this.state.geofenceService.getWatched();
       console.log("watched", watched);
       const geofenceListener = this.state.geofenceService.getListener();
       geofenceListener.subscribe(async (data) => {
         console.log("geofenceListener", data);
-        if(this.state.user){
-          const guard = this.state.user
-          guard['descriptors'] = []
-          const notification: Notification = {
-            receivedDate: moment().toISOString(),
-            type: NotificationType.GUARD_ZONE_ENTERED,
-            pushNotification: {
-              id: NotificationType.GUARD_ZONE_ENTERED,
-              title: getNotificationTitle(NotificationType.GUARD_ZONE_ENTERED),
-              body: getNotificationDescription(NotificationType.GUARD_ZONE_ENTERED,data),
-              data: {guard:{},geofenceData: data},            
-            },
-          };
-          this.state.notificationService.add(notification);
-          const tokens = await this.state.userService.getUserTokens();
-          if (tokens.length > 0)
-            this.state.fcmService.sendNotification(
-              notification.pushNotification,
-              tokens
-            );
-        }
-        
-      });
-      return zones;
+        this.sendNotification(data);
+      });     
     } catch (error) {
-      return [];
+      console.log("getZones error", error);
     }
+    return zones;
   };
 
   async registrationHandler(token: Token, state: any) {
@@ -180,7 +210,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
           this.state.fcmService.register(
             this.registrationHandler,
             this.pushNotificationReceivedHandler,
-            this.state,
+            this.state
           );
         }
       });
@@ -242,7 +272,20 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
               color="secondary"
               isOpen={this.state.isToastOpen}
               message={JSON.stringify(this.state.toastData)}
-              duration={5000}
+              onDidDismiss={() => {
+                this.setState({ isToastOpen: false, toastData: "" });
+              }}
+              /*  buttons={[
+                {
+                  text: 'cerrar',
+                  icon:'closeOutline',
+                  role: 'cancel',
+                  handler: () => {
+                    console.log('Cancel clicked');
+                  }
+                }
+              ]} */
+              duration={10000}
             ></IonToast>
           </IonContent>
         </IonPage>

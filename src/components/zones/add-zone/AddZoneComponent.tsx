@@ -82,8 +82,8 @@ const AddZoneComponent: FC<IProps> = (props) => {
   };
   const updateCircle = (circle: any) => {
     setValue("latitude", circle.lat, { shouldValidate: true });
-    setValue("longitude", circle.lat, { shouldValidate: true });
-    setValue("radius", "20", { shouldValidate: true });
+    setValue("longitude", circle.lng, { shouldValidate: true });
+    setValue("radius", 50, { shouldValidate: true });
   };
   return (
     <IonCard>
@@ -135,7 +135,7 @@ const AddZoneComponent: FC<IProps> = (props) => {
               yesIWantToUseGoogleMapApiInternals
               lat={-42.781548}
               lng={-64.998906}
-              radius={20}
+              radius={50}
               updateCircle={updateCircle}
             ></AddZoneMapComponent>
           </div>

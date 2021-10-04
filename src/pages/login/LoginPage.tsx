@@ -4,7 +4,7 @@ import HeaderComponent from "../../components/header/HeaderComponent";
 import LoginComponent from "../../components/login/Login";
 import { personAdd } from "ionicons/icons";
 import { useHistory } from "react-router-dom";
-import { HeaderOption } from "../../model/headerOption";
+import { HeaderOption } from "../../model/header.option";
 
 interface IProps {}
 

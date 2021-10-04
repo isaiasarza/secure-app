@@ -3,6 +3,7 @@ import {
   IonCard,
   IonCardContent,
   IonImg,
+  IonLoading,
   useIonToast,
 } from "@ionic/react";
 import "./Login.css";
@@ -25,7 +26,7 @@ const LoginComponent: FC<IProps> = (props) => {
   const [present] = useIonToast();
   
   const [authService] = useState<AuthService>(injector.get(AuthServiceToken))
-
+  const [showLoading, setShowLoading] = useState(false);
   
   
 
@@ -39,6 +40,7 @@ const LoginComponent: FC<IProps> = (props) => {
     return isValid
   }
   const onSubmit = async (data: any) => {
+    setShowLoading(true)
     console.log("onSubmit", data);
     
     const res = await authService.auth(data.email, data.password)
@@ -49,12 +51,16 @@ const LoginComponent: FC<IProps> = (props) => {
     } else {
       presentErrorToast(present,"No se pudo iniciar sesión, intente nuevamente");
     }
+    setShowLoading(false)
   };
 
   return (
     <IonCard>
       <IonImg src="/assets/images/security-app-logo.png"></IonImg>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form id="login-form" onSubmit={handleSubmit(onSubmit)} autoComplete="off">
+      <IonLoading isOpen={showLoading} message={"Por favor, espere"} />
+      <input hidden value={"something"} type={"hidden"}/>
+
         <IonCardContent>
           <FormInputWrapper
             position={"stacked"}

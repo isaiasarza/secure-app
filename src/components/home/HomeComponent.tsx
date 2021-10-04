@@ -1,49 +1,73 @@
-import { IonCard, IonCardSubtitle, IonImg, IonCol, IonCardHeader, IonRow, IonGrid } from '@ionic/react';
-import { FC } from "react";
+import {
+  IonCard,
+  IonCardSubtitle,
+  IonImg,
+  IonCol,
+  IonCardHeader,
+  IonRow,
+  IonGrid,
+  IonModal,
+} from "@ionic/react";
+import { FC, useState } from "react";
+import { useHistory } from "react-router";
 import "./HomeComponent.css";
-interface IProps {}
+import FaceScannerComponent from "../face-scanner/FaceScannerComponent";
+import { User } from "../../model/user";
+import PositionLoggerComponent from "./position-logger/PositionLoggerComponent";
+import { AuthorizationService } from "../../service/autz/autz.service";
+import { AuthorizationServiceToken, injector } from "../../injector/injector";
+import {
+  ActionTypeEnum,
+  ProfilesTypeEnum,
+} from "../../model/profiles-type.enum";
+import SecurityManagerHomeComponent from "./security-manager-home/SecurityManagerHome";
+import GuardHomeComponent from "./guard-home/GuardHome";
+import { Zone } from "../../model/zone/zone";
+interface IProps {
+  user: User;
+  zones: Zone[];
+}
 
 const HomeComponent: FC<IProps> = (props) => {
+  const getPeriod = (minutes: number) => {
+    return minutes * 60000;
+  };
+
   return (
     <div className="container">
-      <IonGrid>
-        <IonRow>
-          <IonCol>
-            <IonCard>
-              <IonImg src="/assets/images/face-recognition.png"></IonImg>
-              <IonCardHeader color="primary">
-                <IonCardSubtitle>Face Scan</IonCardSubtitle>
-              </IonCardHeader>
-            </IonCard>
-          </IonCol>
-          <IonCol>
-            <IonCard>
-              <IonImg src="/assets/images/formulario.png"></IonImg>
-              <IonCardHeader color="primary">
-                <IonCardSubtitle>Nuevo Registro</IonCardSubtitle>
-              </IonCardHeader>
-            </IonCard>
-          </IonCol>
-        </IonRow>
-        <IonRow>
-          <IonCol>
-            <IonCard>
-              <IonImg src="/assets/images/documento.png"></IonImg>
-              <IonCardHeader color="primary">
-                <IonCardSubtitle>Reportes</IonCardSubtitle>
-              </IonCardHeader>
-            </IonCard>
-          </IonCol>
-          <IonCol>
-            <IonCard>
-              <IonImg src="/assets/images/notificaciones.png"></IonImg>
-              <IonCardHeader color="primary">
-                <IonCardSubtitle>Notificaciones</IonCardSubtitle>
-              </IonCardHeader>
-            </IonCard>
-          </IonCol>
-        </IonRow>
-      </IonGrid>
+      {props.user.role === ProfilesTypeEnum.VIGILANT ? (
+        /**
+         * Censa la posición del guardia cada k minutos.
+         */
+        <div hidden={true}>
+          <PositionLoggerComponent
+            period={getPeriod(3)}
+            user={props.user}
+          ></PositionLoggerComponent>
+        </div>
+      ) : (
+        ""
+      )}
+
+      {props.user.role === ProfilesTypeEnum.SECURITY_MANAGER ? (
+        /**
+         * Home del security manager
+         */
+        <SecurityManagerHomeComponent
+          user={props.user}
+          zones={props.zones}
+        ></SecurityManagerHomeComponent>
+      ) : (
+        ""
+      )}
+      {props.user.role === ProfilesTypeEnum.VIGILANT ? (
+        /**
+         * Home del guardia
+         */
+        <GuardHomeComponent user={props.user} zones={props.zones}></GuardHomeComponent>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

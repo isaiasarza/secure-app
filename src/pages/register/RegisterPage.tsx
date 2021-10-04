@@ -4,7 +4,7 @@ import RegisterComponent from "../../components/register/RegisterComponent";
 import HeaderComponent from "../../components/header/HeaderComponent";
 import { logIn } from "ionicons/icons";
 import { useHistory } from "react-router";
-import { HeaderOption } from '../../model/headerOption';
+import { HeaderOption } from '../../model/header.option';
 interface IProps {}
 
 const RegisterPage: FC<IProps> = (props) => {

@@ -1,6 +1,52 @@
 /* Ionic Variables and Theming. For more info, please see:
 http://ionicframework.com/docs/theming/ */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500&display=swap');
 
+.my-custom-class .modal-wrapper {
+
+  height: 80%!important;
+  width: 90%!important;
+}
+
+.custom-item {
+  border-radius: 5px;
+  background-color: var(--ion-color-secondary);
+}
+
+.custom-item-content {
+  margin: 5px 5px;
+}
+
+.sub-item {
+  border: 1px solid var(--ion-color-primary);
+  border-radius: 5px;
+  background-color: var(--ion-color-secondary);
+  margin: 15px 5px;
+}
+
+.custom-item-content ion-row {
+  margin: 0 5px;
+  padding: 0 0;
+}
+
+.custom-item-content ion-col {
+  margin: 0 0;
+
+  padding: 0 0;
+}
+
+.custom-item-content ion-col p {
+  margin: 0 0;
+}
+
+.custom-item-content ion-col h4 {
+  margin: 0 5px;
+}
+
+@font-face {
+  font-family: 'OpenSans-Regular';
+  src: local('OpenSans-Regular'), url(../fonts/open-sans/OpenSans-Regular.ttf) format('truetype');
+}
 /** Ionic CSS Variables **/
 :root {
   --ion-background-color: #515151;
@@ -19,19 +65,19 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-secondary-shade: #495c83;
   --ion-color-secondary-tint: #6477a0;
 
-  --ion-color-tertiary: #7e7b52;
+  --ion-color-tertiary: #79507D;
   --ion-color-tertiary-rgb: 126, 123, 82;
   --ion-color-tertiary-contrast: #ffffff;
   --ion-color-tertiary-contrast-rgb: 255, 255, 255;
-  --ion-color-tertiary-shade: #6f6c48;
-  --ion-color-tertiary-tint: #8b8863;
+  --ion-color-tertiary-shade: #6a466e;
+  --ion-color-tertiary-tint: #86628a;
 
-  --ion-color-success: #2dd36f;
+  --ion-color-success: #356429;
   --ion-color-success-rgb: 45, 211, 111;
   --ion-color-success-contrast: #000000;
   --ion-color-success-contrast-rgb: 0, 0, 0;
-  --ion-color-success-shade: #28ba62;
-  --ion-color-success-tint: #42d77d;
+  --ion-color-success-shade: #2f5824;
+  --ion-color-success-tint: #49743e;
 
   --ion-color-warning: #ffc409;
   --ion-color-warning-rgb: 255, 196, 9;
@@ -40,12 +86,12 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-warning-shade: #e0ac08;
   --ion-color-warning-tint: #ffca22;
 
-  --ion-color-danger: #eb445a;
+  --ion-color-danger: #F83D53;
   --ion-color-danger-rgb: 235, 68, 90;
   --ion-color-danger-contrast: #ffffff;
   --ion-color-danger-contrast-rgb: 255, 255, 255;
-  --ion-color-danger-shade: #cf3c4f;
-  --ion-color-danger-tint: #ed576b;
+  --ion-color-danger-shade: #da3649;
+  --ion-color-danger-tint: #f95064;
 
   --ion-color-dark: #222428;
   --ion-color-dark-rgb: 34, 36, 40;
@@ -231,4 +277,22 @@ http://ionicframework.com/docs/theming/ */
 
     --ion-card-background: #1e1e1e;
   }
+
+  
+
+  
 }
+
+* {
+  font-family: 'OpenSans-Regular' !important;
+}
+
+ion-item {
+  --color: var(--ion-color-background-contrast);
+}
+
+ion-card-subtitle{
+  --color: var(--ion-color-background-contrast);
+}
+
+

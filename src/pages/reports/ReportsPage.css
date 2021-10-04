@@ -1,0 +1,4 @@
+.report-item{
+    border: 2px solid var(--ion-color-secondary);
+    border-radius: 5px;
+}

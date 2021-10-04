@@ -43,8 +43,9 @@ import { UserService } from "../../service/user/user.service";
 import { NotificationService } from "../../service/notification/notification.service";
 import { Notification } from "../../model/notification/notification";
 import moment from "moment";
-import { NotificationType } from "../../model/notification/notification-type.enum";
+import { getNotificationTitle, NotificationType, getNotificationDescription } from '../../model/notification/notification-type.enum';
 import { loadModels } from "../../service/face-api/face-api.service";
+import { getByTitle } from "@testing-library/dom";
 
 export interface IAppProps {
   history: RouteComponentProps["history"];
@@ -119,29 +120,28 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
       const geofenceListener = this.state.geofenceService.getListener();
       geofenceListener.subscribe(async (data) => {
         console.log("geofenceListener", data);
-
-        /* this.setState({ isToastOpen: true, toastData: data });
-        setTimeout(() => {
-          this.setState({ isToastOpen: false, toastData: null });
-        }, 5000); */
-        const notification: Notification = {
-          receivedDate: moment().toISOString(),
-          type: NotificationType.GUARD_ZONE_ENTERED,
-          pushNotification: {
-            id: "1",
-            title: "Hola Mundo",
-            body: JSON.stringify(data),
-            data: {},
-            
-          },
-        };
-        this.state.notificationService.add(notification);
-        const tokens = await this.state.userService.getUserTokens();
-        if (tokens.length > 0)
-          this.state.fcmService.sendNotification(
-            notification.pushNotification,
-            tokens
-          );
+        if(this.state.user){
+          const guard = this.state.user
+          guard['descriptors'] = []
+          const notification: Notification = {
+            receivedDate: moment().toISOString(),
+            type: NotificationType.GUARD_ZONE_ENTERED,
+            pushNotification: {
+              id: NotificationType.GUARD_ZONE_ENTERED,
+              title: getNotificationTitle(NotificationType.GUARD_ZONE_ENTERED),
+              body: getNotificationDescription(NotificationType.GUARD_ZONE_ENTERED,data),
+              data: {guard:{},geofenceData: data},            
+            },
+          };
+          this.state.notificationService.add(notification);
+          const tokens = await this.state.userService.getUserTokens();
+          if (tokens.length > 0)
+            this.state.fcmService.sendNotification(
+              notification.pushNotification,
+              tokens
+            );
+        }
+        
       });
       return zones;
     } catch (error) {

@@ -26,14 +26,27 @@ import {
 import { ReportedPerson } from "../../model/reported.person";
 import { User } from "../../model/user";
 import { ReportService } from "../../service/report/report.service";
-import { injector, ReportServiceToken, NotificationServiceToken } from '../../injector/injector';
+import {
+  injector,
+  ReportServiceToken,
+  NotificationServiceToken,
+  FCMServiceToken,
+  UserServiceToken,
+} from "../../injector/injector";
 import { Geolocation } from "@capacitor/geolocation";
 import { v4 as uuid } from "uuid";
 import { presentErrorToast, presentSuccessToast } from "../../utils/toast";
 import { useHistory } from "react-router";
 import { NotificationService } from "../../service/notification/notification.service";
-import { getNotificationTitle, NotificationType, getNotificationDescription } from '../../model/notification/notification-type.enum';
+import {
+  getNotificationTitle,
+  NotificationType,
+  getNotificationDescription,
+} from "../../model/notification/notification-type.enum";
 import { Notification } from "../../model/notification/notification";
+import { FCMService } from "../../service/fcm/fcm.service";
+import { UserService } from "../../service/user/user.service";
+import { report } from "process";
 
 interface IProps {
   user: User;
@@ -46,7 +59,9 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
   const [reportService] = useState<ReportService>(
     injector.get(ReportServiceToken)
   );
-  const [notificationService] = useState<NotificationService>(injector.get(NotificationServiceToken))
+  const [notificationService] = useState<NotificationService>(
+    injector.get(NotificationServiceToken)
+  );
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: getInitialValues(),
     mode: "all",
@@ -56,27 +71,50 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
   const [present] = useIonToast();
   const [blob, setBlob] = useState<Blob>();
   const [descriptorsError, setDescriptorsError] = useState(false);
-  const history = useHistory();
+  const [fcmService] = useState<FCMService>(injector.get(FCMServiceToken));
+  const [userService] = useState<UserService>(injector.get(UserServiceToken));
   const { isValid, errors } = useFormState({ control });
 
+  const sendNotification = async (
+    guard: User,
+    reportedPerson: ReportedPerson
+  ) => {
+    
+    guard['descriptors'] = []
+    guard['local_selfie_url'] = ''
+    guard['selfie_url'] = ''
 
-  const sendNotification = async (guard: User, reportedPerson: ReportedPerson) => {
-    const data = {guard: guard, reportedPerson: reportedPerson }
-    const title = getNotificationTitle(NotificationType.GUARD_REPORT_ADDED)
-    const description = getNotificationDescription(NotificationType.GUARD_REPORT_ADDED,data)
+    reportedPerson['descriptors'] = []
+    reportedPerson['local_selfie_url'] = ''
+    reportedPerson['selfie_url'] = ''
+    reportedPerson['reporterSelfieUrl'] = ''
+    const data = { guard: guard, reportedPerson: reportedPerson};
+    const title = getNotificationTitle(NotificationType.GUARD_REPORT_ADDED);
+    const description = getNotificationDescription(
+      NotificationType.GUARD_REPORT_ADDED,
+      data
+    );
     const notification: Notification = {
       receivedDate: moment().toISOString(),
       type: NotificationType.GUARD_REPORT_ADDED,
-      pushNotification:{
-        data: data,
+      pushNotification: {
         id: NotificationType.GUARD_REPORT_ADDED,
         title: title,
-        body: description
+        body: description,
+        data: data
       }
-    }
-
-    notificationService.add(notification)
-  }
+    };
+    console.log(
+      NotificationType.GUARD_REPORT_ADDED,
+      " sending notification",
+      notification
+    );
+    notificationService.add(notification);
+    fcmService.sendNotification(
+      notification.pushNotification,
+      await userService.getUserTokens()
+    ); 
+  };
   const onSubmit = async (data: SuspiciousPersonForm) => {
     setShowLoading(true);
     try {
@@ -98,10 +136,10 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
         reporterFirstname: props.user.firstname,
         reporterLastname: props.user.lastname,
         reporterSelfieUrl: props.user.selfie_url || "",
-        descriptors: data.descriptors
+        descriptors: data.descriptors,
       };
       await reportService.add(reportedPerson, blob);
-      sendNotification(props.user, reportedPerson)
+      sendNotification(props.user, reportedPerson);
       presentSuccessToast(
         present,
         "Se envió el reporte de forma satisfactoria"
@@ -115,7 +153,6 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
       setShowLoading(false);
       presentErrorToast(present, "No se enviar el reporte, intente nuevamente");
     }
-    
   };
   const handler = async (webPath: string) => {
     // const res = await fetch(webPath);
@@ -143,7 +180,7 @@ const ReportSuspiciousPersonComponent: FC<IProps> = (props) => {
     }
     setShowLoading(false);
   };
- 
+
   return (
     <IonGrid style={{ width: "100%" }}>
       <form

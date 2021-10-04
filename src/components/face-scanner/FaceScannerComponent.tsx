@@ -69,7 +69,7 @@ export default class FaceScannerComponent extends React.Component<
     className: "preview-container",
     parent: "camera-preview",
 
-    position: "front",
+    position: "rear",
   };
   private readonly TAG = "FaceScannerComponent";
   private container: HTMLDivElement | null = null;
@@ -118,6 +118,10 @@ export default class FaceScannerComponent extends React.Component<
       reports: [], */
     });
   };
+
+  onChangeOrientation = async ()=>{
+
+  }
   private setUnrecognizedFace = async () => {
     this.setState({
       noneFaceDetectedError: true,
@@ -342,6 +346,16 @@ export default class FaceScannerComponent extends React.Component<
           />
           <div className="buttons">
             <IonRow className="ion-justify-content-center">
+            {/* <IonCol size="auto" className="ion-justify-content-center">
+                <IonButton
+                  disabled={this.state.scanning}
+                  hidden={this.state.detectionType !== undefined}
+                  color="primary"
+                  onClick={this.onChangeOrientation}
+                >
+                  <IonIcon icon={scan}></IonIcon>
+                </IonButton>
+              </IonCol> */}
               <IonCol size="auto" className="ion-justify-content-center">
                 <IonButton
                   disabled={this.state.scanning}

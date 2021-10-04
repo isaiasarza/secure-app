@@ -34,14 +34,14 @@ export class ZoneFirebaseImpService {
   }
 
   public async update(zone: Zone): Promise<void> {
-    debugger;
+    ;
     const id = (
       await db
         .collection(this.COLLECTION_NAME)
         .where("uuid", "==", zone.uuid)
         .get()
     ).docs[0].id;
-    debugger;
+    ;
     console.log("id", id);
     return db.collection(this.COLLECTION_NAME).doc(id).set(zone);
   }

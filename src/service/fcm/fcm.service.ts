@@ -4,7 +4,7 @@ import {
   PushNotificationSchema,
   Token,
 } from "@capacitor/push-notifications";
-import {LocalNotifications} from "@capacitor/local-notifications"
+import { LocalNotifications } from "@capacitor/local-notifications";
 import { Http, HttpResponse } from "@capacitor-community/http";
 import { isPlatform } from "@ionic/core";
 
@@ -17,13 +17,13 @@ export class FCMService {
   public register(
     registrationHandler: any,
     pushNotificationReceivedHandler: any,
-    state: any,
+    state: any
   ) {
     if (Capacitor.getPlatform() !== "web") {
       return this.registerPush(
         registrationHandler,
         pushNotificationReceivedHandler,
-        state,
+        state
       );
     }
     //return Promise.reject()
@@ -49,7 +49,7 @@ export class FCMService {
   private async registerPush(
     registrationHandler: any,
     pushNotificationReceivedHandler: any,
-    state: any,
+    state: any
   ) {
     const permission = await PushNotifications.requestPermissions();
     if (permission.receive === "granted") {
@@ -64,13 +64,10 @@ export class FCMService {
       registrationHandler(token, state);
     });
 
-    PushNotifications.addListener(
-      "pushNotificationReceived",
-      (n => {
-        this._doLocalNotif(n)
-        pushNotificationReceivedHandler(n)
-      })
-    );
+    PushNotifications.addListener("pushNotificationReceived", (n) => {
+      this._doLocalNotif(n);
+      pushNotificationReceivedHandler(n);
+    });
   }
 
   public sendNotification(
@@ -78,7 +75,7 @@ export class FCMService {
     tokens: string[]
   ) {
     console.log("fcm, sendNotification", tokens);
-    if (isPlatform("android") || isPlatform("ios")) {
+    if (Capacitor.getPlatform() !== "web") {
       this.capacitorImplementation(pushNotification, tokens);
     } else {
       this.webImplementation(pushNotification, tokens);
@@ -89,8 +86,8 @@ export class FCMService {
     LocalNotifications.schedule({
       notifications: [
         {
-          title: notification.title || '',
-          body: notification.body || '',
+          title: notification.title || "",
+          body: notification.body || "",
           id: Date.now(),
           actionTypeId: notification.id,
         },
@@ -102,6 +99,7 @@ export class FCMService {
     pushNotification: PushNotificationSchema,
     tokens: string[]
   ) {
+    
     //https://cors-anywhere.herokuapp.com/
     const options = {
       url: "https://cors-anywhere.herokuapp.com/https://fcm.googleapis.com/fcm/send",
@@ -113,8 +111,8 @@ export class FCMService {
       },
       body: JSON.stringify({
         notification: pushNotification,
-        registration_ids: tokens,
-      }),
+        registration_ids: tokens
+      })
     };
 
     console.log("webImplementation, request", options);
@@ -122,7 +120,7 @@ export class FCMService {
       mode: "no-cors",
       method: options.method,
       headers: options.headers,
-      body: options.body,
+      body: options.body
     });
     console.log("webImplementation, response", response);
   }
@@ -131,16 +129,15 @@ export class FCMService {
     pushNotification: PushNotificationSchema,
     tokens: string[]
   ) {
+    const data = {notification: pushNotification,registration_ids: tokens};
+    const data_parsed = JSON.stringify(data);  
     const options = {
       url: "https://fcm.googleapis.com/fcm/send",
       headers: {
         Authorization: "key=" + this.SERVER_KEY,
         "Content-Type": "application/json",
       },
-      data: JSON.stringify({
-        notification: pushNotification,
-        registration_ids: tokens,
-      }),
+      data: data_parsed
     };
     console.log("capacitorImplementation, request", options);
     const response: HttpResponse = await Http.post(options);

@@ -119,9 +119,7 @@ export default class FaceScannerComponent extends React.Component<
     });
   };
 
-  onChangeOrientation = async ()=>{
-
-  }
+  onChangeOrientation = async () => {};
   private setUnrecognizedFace = async () => {
     this.setState({
       noneFaceDetectedError: true,
@@ -139,11 +137,11 @@ export default class FaceScannerComponent extends React.Component<
     });
   };
   private setReportedPerson = async (id: string) => {
-    console.log("setReportedPerson", id)
+    console.log("setReportedPerson", id);
     const reportedPerson = this.state.reports.find(
       (r: ReportedPerson) => r.uuid === id
     );
-    console.log("setReportedPerson", reportedPerson)
+    console.log("setReportedPerson", reportedPerson);
     if (reportedPerson?.uuid) {
       console.log("reportedPerson finded", reportedPerson);
       await this.setState({
@@ -180,14 +178,14 @@ export default class FaceScannerComponent extends React.Component<
           type: type,
           id: id,
         };
-      }else{
+      } else {
         return {
-          type: FaceTypeEnum.UNKNOWN
-        }
+          type: FaceTypeEnum.UNKNOWN,
+        };
       }
     } catch (error) {
       return {
-        type: FaceTypeEnum.UNKNOWN
+        type: FaceTypeEnum.UNKNOWN,
       };
     }
   };
@@ -196,25 +194,57 @@ export default class FaceScannerComponent extends React.Component<
     displaySize: any
   ): Promise<void> => {
     let x: number = 0;
-    let faces = [] 
-    const refreshIntervalId = setInterval(async () => {
+    let faces = [];
+    const detectionsWithLandmarks = await getFullFaceDescription2(video);
+    //console.log("resizingResults")
+    const resizedDetections = faceapi.resizeResults(
+      detectionsWithLandmarks,
+      displaySize
+    );
+    faces.push(resizedDetections);
+    console.log("resizedDetections", resizedDetections);
+    if (resizedDetections.length > 0) {
+      this.setState({
+        detections: resizedDetections[0].detection,
+      });
+    }
+
+    if (!resizedDetections || resizedDetections.length === 0) {
+      this.setUnrecognizedFace();
+      return Promise.reject();
+    }
+    if (resizedDetections.length > 0) {
+      const match: any = await this.getMatch(detectionsWithLandmarks);
+
+      if (match) {
+        switch (match.type) {
+          case FaceTypeEnum.USER:
+            this.setReliablePerson(match.id);
+            break;
+          case FaceTypeEnum.REPORTED:
+            this.setReportedPerson(match.id);
+            break;
+          case FaceTypeEnum.UNKNOWN:
+            this.setUnknownFace();
+            break;
+        }
+      }
+      return Promise.resolve();
+    }
+    /* const refreshIntervalId = setInterval(async () => {
       if (x > 1) {
         this.setUnrecognizedFace();
         clearInterval(refreshIntervalId);
         return Promise.resolve();
       }
       x++;
-      //this.setState({ scanningProgress: x / 1 });
       console.log("tick", x);
-      //await loadModels();
-      //console.log("gettingFullFaceDescription")
       const detectionsWithLandmarks = await getFullFaceDescription2(video);
-      //console.log("resizingResults")
       const resizedDetections = faceapi.resizeResults(
         detectionsWithLandmarks,
         displaySize
       );
-      faces.push(resizedDetections)
+      faces.push(resizedDetections);
       console.log("resizedDetections", resizedDetections);
       if (resizedDetections.length > 0) {
         this.setState({
@@ -245,11 +275,15 @@ export default class FaceScannerComponent extends React.Component<
         clearInterval(refreshIntervalId);
         return Promise.resolve();
       }
-    }, 30000);
+    }, 30000); */
   };
 
   onScanFace = async () => {
-    await this.setState({ scanning: true, detectedReportedPerson: undefined, detectedUser: undefined });
+    await this.setState({
+      scanning: true,
+      detectedReportedPerson: undefined,
+      detectedUser: undefined,
+    });
     const video = this.container?.childNodes[0] as HTMLVideoElement;
     console.log(
       video.offsetHeight,
@@ -346,7 +380,7 @@ export default class FaceScannerComponent extends React.Component<
           />
           <div className="buttons">
             <IonRow className="ion-justify-content-center">
-            {/* <IonCol size="auto" className="ion-justify-content-center">
+              {/* <IonCol size="auto" className="ion-justify-content-center">
                 <IonButton
                   disabled={this.state.scanning}
                   hidden={this.state.detectionType !== undefined}

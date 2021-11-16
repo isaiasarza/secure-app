@@ -22,10 +22,10 @@ const ReliablePerson: FC<IProps> = (props) => {
         <IonCol size="10">
           <SelfieComponent
             selfieUrl={
-              props.user.local_selfie_url?.length
-                ? props.user.local_selfie_url
-                : props.user?.selfie_url?.length
+               props.user?.selfie_url?.length
                 ? props.user.selfie_url
+                : props.user.local_selfie_url?.length
+                ? props.user.local_selfie_url
                 : ""
             }
             readonly={true}

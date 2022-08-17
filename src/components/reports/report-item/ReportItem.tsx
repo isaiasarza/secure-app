@@ -47,7 +47,7 @@ const ReportItem: FC<IProps> = (props) => {
         {/*  */}
         <IonRow>
           <IonCol>
-            <h3>Reporte # {props.report.number}</h3>
+            <h3>Reporte</h3>
           </IonCol>
         </IonRow>
         <div className="sub-item">

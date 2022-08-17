@@ -37,7 +37,7 @@ const SelfieComponent: FC<IProps> = (props) => {
       height: 1000,
       width: 1000,
     });
-
+    console.log("webviewPath", image.webPath);
     if (!image?.webPath) {
       presentErrorToast(
         present,
@@ -50,8 +50,8 @@ const SelfieComponent: FC<IProps> = (props) => {
       filepath: "props.fileName",
       webviewPath: image.webPath,
     });
-    console.log("webviewPath", image.webPath);
-    //console.log("photo", photo);
+    
+    console.log("photo", photo);
 
     props.handler(image.webPath);
   };

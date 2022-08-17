@@ -58,10 +58,10 @@ const ProfileComponent: FC<IProps> = (props) => {
               <SelfieComponent
                 readonly={false}
                 selfieUrl={
-                  props.user.local_selfie_url?.length
-                    ? props.user.local_selfie_url
-                    : props.user?.selfie_url?.length
+                  props.user.selfie_url?.length
                     ? props.user.selfie_url
+                    : props.user?.local_selfie_url?.length
+                    ? props.user.local_selfie_url
                     : ""
                 }
                 handler={handler}

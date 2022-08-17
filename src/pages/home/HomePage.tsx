@@ -120,13 +120,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
 
     this.setState({
       isToastOpen: true,
-      toastData:
-        "onTransitionReceived " +
-        notType +
-        " " +
-        geofence.id +
-        " " +
-        geofences.length,
+      toastData: getNotificationTitle(notType),
     });
 
     if (this.state.user) {
@@ -151,13 +145,13 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
         this.state.fcmService.sendNotification(
           notification.pushNotification,
           tokens
-        ); 
+        );
     }
   }
 
   getZones = async () => {
     const zones = await this.state.zoneService.get();
-    this.setState({zones:zones})
+    this.setState({ zones: zones });
     try {
       console.log("zones", zones);
       await this.state.geofenceService.initialize();
@@ -172,7 +166,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
       geofenceListener.subscribe(async (data) => {
         console.log("geofenceListener", data);
         this.sendNotification(data);
-      });     
+      });
     } catch (error) {
       console.log("getZones error", error);
     }

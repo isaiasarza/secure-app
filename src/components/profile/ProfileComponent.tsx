@@ -1,22 +1,12 @@
 import {
-  IonCol,
-  IonGrid,
-  IonRow,
-  IonLabel,
-  IonIcon,
-  IonItem,
-  IonCardContent,
+  IonCard, IonCardContent, IonCardHeader,
+  IonCardSubtitle, IonCol,
+  IonGrid, IonIcon, IonInput, IonItem, IonLabel, IonRow
 } from "@ionic/react";
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
+import { injector, UserServiceToken } from "../../injector/injector";
 import { User } from "../../model/user";
 import "./ProfileComponent.css";
-import { injector, UserServiceToken } from "../../injector/injector";
-import {
-  IonInput,
-  IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-} from "@ionic/react";
 
 import { close } from "ionicons/icons";
 import { UserService } from "../../service/user/user.service";

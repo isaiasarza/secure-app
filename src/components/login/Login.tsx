@@ -1,24 +1,23 @@
-import React, { FC, useState } from "react";
 import {
-  IonCard,
+  IonButton, IonCard,
   IonCardContent,
   IonImg,
   IonLoading,
-  useIonToast,
+  useIonToast
 } from "@ionic/react";
-import "./Login.css";
-import { IonButton } from "@ionic/react";
-import { useHistory } from "react-router";
+import { FC, useState } from "react";
 import { useForm, useFormState } from "react-hook-form";
-import { presentSuccessToast, presentErrorToast } from "../../utils/toast";
+import { useHistory } from "react-router";
+import { presentErrorToast, presentSuccessToast } from "../../utils/toast";
 import FormInputWrapper from "../formInputWrapper/formInputWrapper";
+import "./Login.css";
 
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { getValidations, getInitialValues } from './validations/LoginValidations';
+import { getInitialValues, getValidations } from './validations/LoginValidations';
 
+import { AuthServiceToken, injector } from '../../injector/injector';
 import { AuthService } from '../../service/auth/auth.service';
-import { injector, AuthServiceToken } from '../../injector/injector';
 interface IProps {}
 
 const LoginComponent: FC<IProps> = (props) => {

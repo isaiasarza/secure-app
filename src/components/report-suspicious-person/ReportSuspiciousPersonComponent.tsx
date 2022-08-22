@@ -1,52 +1,36 @@
-import React, { FC, useState } from "react";
-import {
-  IonRow,
-  IonCol,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonTextarea,
-  useIonToast,
-} from "@ionic/react";
-import moment from "moment";
-import SelfieComponent from "../selfie/SelfieComponent";
-import { IonButton, IonLoading, IonGrid } from "@ionic/react";
-import FormInputWrapper from "../formInputWrapper/formInputWrapper";
-import { useForm, useFormState } from "react-hook-form";
+import { Geolocation } from "@capacitor/geolocation";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { IonButton, IonCol, IonGrid, IonLoading, IonRow, useIonToast } from "@ionic/react";
+import moment from "moment";
+import { FC, useState } from "react";
+import { useForm, useFormState } from "react-hook-form";
+import { v4 as uuid } from "uuid";
+import {
+  FCMServiceToken, injector, NotificationServiceToken, ReportServiceToken, UserServiceToken
+} from "../../injector/injector";
+import { Notification } from "../../model/notification/notification";
+import {
+  getNotificationDescription, getNotificationTitle,
+  NotificationType
+} from "../../model/notification/notification-type.enum";
+import { ReportedPerson } from "../../model/reported.person";
+import { User } from "../../model/user";
+import {
+  getFullFaceDescription,
+  loadModels
+} from "../../service/face-api/face-api.service";
+import { FCMService } from "../../service/fcm/fcm.service";
+import { NotificationService } from "../../service/notification/notification.service";
+import { ReportService } from "../../service/report/report.service";
+import { UserService } from "../../service/user/user.service";
+import { presentErrorToast, presentSuccessToast } from "../../utils/toast";
+import FormInputWrapper from "../formInputWrapper/formInputWrapper";
+import SelfieComponent from "../selfie/SelfieComponent";
 import {
   getInitialValues,
   getValidations,
-  SuspiciousPersonForm,
+  SuspiciousPersonForm
 } from "./validations/RegisterValidations";
-import {
-  getFullFaceDescription,
-  loadModels,
-} from "../../service/face-api/face-api.service";
-import { ReportedPerson } from "../../model/reported.person";
-import { User } from "../../model/user";
-import { ReportService } from "../../service/report/report.service";
-import {
-  injector,
-  ReportServiceToken,
-  NotificationServiceToken,
-  FCMServiceToken,
-  UserServiceToken,
-} from "../../injector/injector";
-import { Geolocation } from "@capacitor/geolocation";
-import { v4 as uuid } from "uuid";
-import { presentErrorToast, presentSuccessToast } from "../../utils/toast";
-import { useHistory } from "react-router";
-import { NotificationService } from "../../service/notification/notification.service";
-import {
-  getNotificationTitle,
-  NotificationType,
-  getNotificationDescription,
-} from "../../model/notification/notification-type.enum";
-import { Notification } from "../../model/notification/notification";
-import { FCMService } from "../../service/fcm/fcm.service";
-import { UserService } from "../../service/user/user.service";
-import { report } from "process";
 
 interface IProps {
   user: User;

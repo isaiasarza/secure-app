@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Notification } from "../../model/notification/notification";
 import { User } from "../../model/user";
 import NotificationItem from './notification-item/NotificationItem';

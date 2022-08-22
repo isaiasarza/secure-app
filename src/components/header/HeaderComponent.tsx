@@ -4,9 +4,9 @@ import {
   IonHeader,
   IonIcon,
   IonTitle,
-  IonToolbar,
+  IonToolbar
 } from "@ionic/react";
-import React, { FC } from "react";
+import { FC } from "react";
 import { useHistory } from "react-router";
 import { HeaderOption } from "../../model/header.option";
 interface IProps {

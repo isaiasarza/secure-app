@@ -1,44 +1,33 @@
-import * as React from "react";
 import {
   CameraPreview,
-  CameraPreviewOptions,
+  CameraPreviewOptions
 } from "@capacitor-community/camera-preview";
 import {
-  IonButton,
-  IonRow,
-  IonCol,
-  IonProgressBar,
-  useIonToast,
-  IonToast,
+  IonButton, IonCol, IonContent, IonIcon, IonProgressBar, IonRow, IonToast
 } from "@ionic/react";
-import "./FaceScannerComponent.css";
-import { scan } from "ionicons/icons";
 import * as faceapi from "face-api.js";
-import {
-  createMatcher,
-  CUSTOM_SEPARATOR,
-  getFullFaceDescription,
-  getFullFaceDescription2,
-  loadModels,
-} from "../../service/face-api/face-api.service";
-import { UserService } from "../../service/user/user.service";
+import { scan } from "ionicons/icons";
+import * as React from "react";
 import {
   injector,
   ReportServiceToken,
-  UserServiceToken,
+  UserServiceToken
 } from "../../injector/injector";
-import { IonIcon, IonContent } from "@ionic/react";
-import { User } from "../../model/user";
-import DetectedUserComponent, {
-  DetectionTypeEnum,
-} from "./detected-user/DetectedUserComponent";
-import { number } from "yup";
-import { presentErrorToast } from "../../utils/toast";
-import { ReportService } from "../../service/report/report.service";
-import { Face, FaceTypeEnum } from "../../model/face";
+import { FaceTypeEnum } from "../../model/face";
 import { ReportedPerson } from "../../model/reported.person";
+import { User } from "../../model/user";
+import {
+  createMatcher,
+  CUSTOM_SEPARATOR, getFullFaceDescription2,
+  loadModels
+} from "../../service/face-api/face-api.service";
 import { getFaces } from "../../service/face-api/face.service";
-import { type } from "os";
+import { ReportService } from "../../service/report/report.service";
+import { UserService } from "../../service/user/user.service";
+import DetectedUserComponent, {
+  DetectionTypeEnum
+} from "./detected-user/DetectedUserComponent";
+import "./FaceScannerComponent.css";
 export interface IAppProps {
   closeAction: Function;
   user: User;

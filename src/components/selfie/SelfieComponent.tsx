@@ -2,11 +2,11 @@ import {
   Camera,
   CameraResultType,
   CameraSource,
-  Photo,
+  Photo
 } from "@capacitor/camera";
 import { IonFabButton, IonIcon, useIonToast } from "@ionic/react";
 import { camera } from "ionicons/icons";
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
 import { UserPhoto } from "../../model/user.photo";
 import { presentErrorToast } from "../../utils/toast";
 

@@ -1,14 +1,14 @@
 import { IonFab, IonFabButton, IonIcon, IonModal } from "@ionic/react";
-import { add, addCircle, addCircleOutline } from "ionicons/icons";
-import React, { FC, useState } from "react";
+import { addCircleOutline } from "ionicons/icons";
+import { FC, useState } from "react";
+import { AuthorizationServiceToken, injector } from "../../injector/injector";
+import { ActionTypeEnum } from "../../model/profiles-type.enum";
+import { User } from "../../model/user";
 import { Zone } from "../../model/zone/zone";
+import { AuthorizationService } from "../../service/autz/autz.service";
+import AddZoneComponent from "./add-zone/AddZoneComponent";
 import ZoneItemComponent from "./zone-item/ZoneItemComponent";
 import "./ZoneComponent.css";
-import AddZoneComponent from "./add-zone/AddZoneComponent";
-import { AuthorizationService } from "../../service/autz/autz.service";
-import { injector, AuthorizationServiceToken } from "../../injector/injector";
-import { User } from "../../model/user";
-import { ActionTypeEnum } from "../../model/profiles-type.enum";
 interface IProps {
   user: User;
   zones: Zone[];

@@ -1,28 +1,13 @@
+import { FC } from "react";
 import {
-  IonCard,
-  IonCardSubtitle,
-  IonImg,
-  IonCol,
-  IonCardHeader,
-  IonRow,
-  IonGrid,
-  IonModal,
-} from "@ionic/react";
-import { FC, useState } from "react";
-import { useHistory } from "react-router";
-import "./HomeComponent.css";
-import FaceScannerComponent from "../face-scanner/FaceScannerComponent";
-import { User } from "../../model/user";
-import PositionLoggerComponent from "./position-logger/PositionLoggerComponent";
-import { AuthorizationService } from "../../service/autz/autz.service";
-import { AuthorizationServiceToken, injector } from "../../injector/injector";
-import {
-  ActionTypeEnum,
-  ProfilesTypeEnum,
+  ProfilesTypeEnum
 } from "../../model/profiles-type.enum";
-import SecurityManagerHomeComponent from "./security-manager-home/SecurityManagerHome";
-import GuardHomeComponent from "./guard-home/GuardHome";
+import { User } from "../../model/user";
 import { Zone } from "../../model/zone/zone";
+import GuardHomeComponent from "./guard-home/GuardHome";
+import "./HomeComponent.css";
+import PositionLoggerComponent from "./position-logger/PositionLoggerComponent";
+import SecurityManagerHomeComponent from "./security-manager-home/SecurityManagerHome";
 interface IProps {
   user: User;
   zones: Zone[];

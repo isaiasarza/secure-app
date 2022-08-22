@@ -1,5 +1,5 @@
 import { IonInput, IonItem, IonLabel, IonTextarea } from "@ionic/react";
-import React, { FC } from "react";
+import { FC } from "react";
 import { Control, Controller } from "react-hook-form";
 
 interface IProps {

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { User } from "../../model/user";
 import GuardItem from "./guard-item/GuardItem";
 

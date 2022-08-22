@@ -11,6 +11,7 @@
     "@capacitor/core": "3.1.2",
     "@capacitor/geolocation": "^1.0.2",
     "@capacitor/haptics": "1.0.2",
+    "@capacitor/ios": "3.1.2",
     "@capacitor/keyboard": "1.0.2",
     "@capacitor/local-notifications": "^1.0.6",
     "@capacitor/push-notifications": "^1.0.4",
@@ -99,7 +100,7 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "3.1.2",
+    "@capacitor/cli": "^4.1.0",
     "jest-mock-extended": "^1.0.18"
   },
   "description": "An Ionic project"

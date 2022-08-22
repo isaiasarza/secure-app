@@ -1,4 +1,4 @@
-import { Storage } from '@capacitor/storage';
+import { Preferences as Storage } from '@capacitor/preferences';
 
 export class AppLogger{
     async addLog(appLog: AppLog){

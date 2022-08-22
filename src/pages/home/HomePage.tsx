@@ -150,9 +150,10 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
   }
 
   getZones = async () => {
+    try {
     const zones = await this.state.zoneService.get();
     this.setState({ zones: zones });
-    try {
+    
       console.log("zones", zones);
       await this.state.geofenceService.initialize();
       console.log("initialize ok");
@@ -167,10 +168,12 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
         console.log("geofenceListener", data);
         this.sendNotification(data);
       });
+      return zones;
     } catch (error) {
       console.log("getZones error", error);
+      return []
     }
-    return zones;
+    
   };
 
   async registrationHandler(token: Token, state: any) {

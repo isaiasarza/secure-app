@@ -52,5 +52,9 @@
 	<string>Necesito tu GPS</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Esta app requiere acceso al GPS</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Esta app requiere usar la camara</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Esta app requiere microfono</string>
 </dict>
 </plist>

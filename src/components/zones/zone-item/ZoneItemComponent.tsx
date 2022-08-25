@@ -96,6 +96,7 @@ const ZoneItemComponent: FC<IProps> = (props) => {
         cssClass="my-custom-class"
         onDidDismiss={closeMapModal}
         showBackdrop={true}
+        backdropDismiss={true}
       >
         <ZoneMapComponent
           isMarkerShown
@@ -114,6 +115,7 @@ const ZoneItemComponent: FC<IProps> = (props) => {
         cssClass="my-custom-class"
         onDidDismiss={closeGuardsModal}
         showBackdrop={true}
+        backdropDismiss={true}
       >
         <GuardsComponent zone={props.zone} guards={guards}></GuardsComponent>
       </IonModal>

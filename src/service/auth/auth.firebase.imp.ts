@@ -17,36 +17,34 @@ export class AuthFirebaseImp extends AuthService {
   );
 
   public async auth(email: string, password: string): Promise<User> {
-    const data = await auth.signInWithEmailAndPassword(email, password);
 
-    if (!data?.user?.uid)
-      return Promise.reject("Error al authenticar el usuario");
+    const data = await auth.signInWithEmailAndPassword(email, password);
+    if (!data?.user?.uid) return Promise.reject("Error al authenticar el usuario");
 
     const user = await this.userService.getByUID(data.user.uid);
     if (!user) return Promise.reject("Error al authenticar el usuario");
 
     await this.userContextService.setCurrentUser(user);
-    if (user?.selfie_url) {
-      user.local_selfie_url = await this.getLocalSelfieUrl(user?.selfie_url);
-    }
+    if (user?.selfie_url) user.local_selfie_url = await this.getLocalSelfieUrl(user?.selfie_url);
+
     return Promise.resolve(user);
+
   }
 
-  public register(email: string, password: string, user: User, selfie?:Blob): Promise<User> {
+  public register(email: string, password: string, user: User, selfie?: Blob): Promise<User> {
     return auth.createUserWithEmailAndPassword(email, password).then((data) => {
-      
+
       if (!data?.user?.uid) return Promise.reject("Error al crear el usuario");
       return this.userService.add(data.user?.uid, user, selfie)
-      .catch((error) => {
-        // borrar cuenta
-        return Promise.reject(error)
-      });
+        .catch((error) => {
+          // borrar cuenta
+          return Promise.reject(error)
+        });
     });
   }
 
   public logout() {
     this.userContextService.clearCurrentUser();
-   // this.userContextService.clearUserSelfie();
     return auth.signOut();
   }
 
@@ -54,6 +52,5 @@ export class AuthFirebaseImp extends AuthService {
     const res = await fetch(selfieUrl);
     const selfie: Blob = await res.blob();
     return URL.createObjectURL(selfie);
-    // this.userContextService.setUserSelfie(selfie)
   }
 }

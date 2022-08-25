@@ -37,7 +37,7 @@ const GuardItem: FC<IProps> = (props) => {
       id={"report_" + props.guard.uid}
       key={props.guard.uid}
     >
-      <IonModal isOpen={showActivity} cssClass="my-custom-class" onDidDismiss={closeModal} showBackdrop={true}>
+      <IonModal isOpen={showActivity} cssClass="my-custom-class" onDidDismiss={closeModal} showBackdrop={true} backdropDismiss={true}>
         <GuardActivity guard={props.guard} activity={activity}></GuardActivity>
       </IonModal>
       <div className="report-item-content">

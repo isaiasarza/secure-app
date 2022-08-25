@@ -259,6 +259,7 @@ export default class HomePage extends React.Component<IAppProps, IAppState> {
               cssClass="my-custom-class"
               showBackdrop={true}
               onDidDismiss={this.closeModal}
+              backdropDismiss={true}
             >
               <ProfileComponent
                 user={user}

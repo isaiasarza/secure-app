@@ -40,14 +40,16 @@ const LoginComponent: FC<IProps> = (props) => {
   }
   const onSubmit = async (data: any) => {
     setShowLoading(true)
-    console.log("onSubmit", data);
     
-    const res = await authService.auth(data.email, data.password)
-    console.log("login", res ? "successful" : "failed");
-    if (res) {
-      presentSuccessToast(present, "Se inicio sesión de forma satisfactoria");
-      history.push("/home",{props:{user: res}});
-    } else {
+    try {
+      const res = await authService.auth(data.email, data.password)
+      if (res) {
+        presentSuccessToast(present, "Se inicio sesión de forma satisfactoria");
+        history.push("/home",{props:{user: res}});
+      } else {
+        presentErrorToast(present,"No se pudo iniciar sesión, intente nuevamente");
+      }
+    } catch (error) {
       presentErrorToast(present,"No se pudo iniciar sesión, intente nuevamente");
     }
     setShowLoading(false)

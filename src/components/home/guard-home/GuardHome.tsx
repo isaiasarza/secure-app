@@ -40,6 +40,7 @@ const GuardHomeComponent: FC<IProps> = (props) => {
         cssClass="my-custom-class"
         showBackdrop={true}
         onDidDismiss={closeModal}
+        backdropDismiss={true}
       >
         <FaceScannerComponent
           closeAction={closeModal}
